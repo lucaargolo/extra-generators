@@ -1,0 +1,47 @@
+[
+  {
+    "ingredient": {
+      "item": "minecraft:ice"
+    },
+    "fuel": {
+      "burnTime": 20,
+      "energyOutput": 1600
+    }
+  },
+  {
+    "ingredient": {
+      "item": "minecraft:packed_ice"
+    },
+    "fuel": {
+      "burnTime": 20,
+      "energyOutput": 1600
+    }
+  },
+  {
+    "ingredient": {
+      "item": "minecraft:snowball"
+    },
+    "fuel": {
+      "burnTime": 20,
+      "energyOutput": 200
+    }
+  },
+  {
+    "ingredient": {
+      "item": "minecraft:snow_block"
+    },
+    "fuel": {
+      "burnTime": 20,
+      "energyOutput": 1600
+    }
+  },
+  {
+    "ingredient": {
+      "item": "minecraft:snow"
+    },
+    "fuel": {
+      "burnTime": 25,
+      "energyOutput": 100
+    }
+  }
+]

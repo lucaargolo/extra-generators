@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "extragenerators",
+  "version": "${version}",
+  "name": "Extra Generators",
+  "description": "A technology mod that adds a variety of generators to your world.",
+  "authors": [
+    "D4rkness_King"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/extra-generators",
+    "sources": "https://github.com/lucaargolo/extra-generators",
+    "issues": "https://github.com/lucaargolo/extra-generators/issues"
+  },
+
+  "license": "Mozilla Public License 2.0",
+  "icon": "assets/extragenerators/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.lucaargolo.extragenerators.client.ExtraGeneratorsClient"
+    ],
+    "main": [
+      "io.github.lucaargolo.extragenerators.ExtraGenerators"
+    ]
+  },
+  "mixins": [
+    "extragenerators.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": ">=0.32.0+1.16",
+    "fabric-language-kotlin": ">=1.5.0+kotlin.1.4.31",
+    "minecraft": "1.16.x"
+  }
+}
