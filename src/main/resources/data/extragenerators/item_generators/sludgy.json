@@ -1,0 +1,20 @@
+[
+  {
+    "ingredient": {
+      "tag": "c:slime_balls"
+    },
+    "fuel": {
+      "burnTime": 400,
+      "energyOutput": 16000
+    }
+  },
+  {
+    "ingredient": {
+      "tag": "c:slime_blocks"
+    },
+    "fuel": {
+      "burnTime": 3600,
+      "energyOutput": 144000
+    }
+  }
+]

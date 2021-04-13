@@ -13,9 +13,10 @@ class ModConfig {
         fun getEnumTier(): EnergyTier = EnergyTier.valueOf(energyTier)
     }
 
-    val furnaceGenerator = Generator(EnergyTier.LOW, 128000.0)
-    val culinaryGenerator = Generator(EnergyTier.MEDIUM, 128000.0)
-    val frostyGenerator = Generator(EnergyTier.LOW, 128000.0)
+    val burnableGenerator = Generator(EnergyTier.LOW, 128000.0)
+    val gluttonyGenerator = Generator(EnergyTier.MEDIUM, 128000.0)
+    val icyGenerator = Generator(EnergyTier.LOW, 128000.0)
+    val sludgyGenerator = Generator(EnergyTier.LOW, 128000.0)
 
 
 }

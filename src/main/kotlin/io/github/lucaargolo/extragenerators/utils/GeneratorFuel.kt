@@ -52,11 +52,7 @@ data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOu
         }
 
         fun fromResource(id: String, itemStack: ItemStack): GeneratorFuel? {
-            val resource = ResourceCompendium.getGeneratorFuelResource(id)
-            resource?.ingredientsMap?.forEach { (ingredient, fuel) ->
-                if(ingredient.test(itemStack)) return fuel
-            }
-            return null
+            return ResourceCompendium.ITEM_GENERATORS.test(id, itemStack)
         }
 
         fun fromFurnaceGeneratorFuel(item: Item): GeneratorFuel? {
