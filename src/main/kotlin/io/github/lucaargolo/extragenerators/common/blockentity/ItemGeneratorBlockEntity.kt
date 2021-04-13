@@ -1,6 +1,6 @@
 package io.github.lucaargolo.extragenerators.common.blockentity
 
-import alexiil.mc.lib.attributes.Simulation
+import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv
 import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.common.block.ItemGeneratorBlock
@@ -14,9 +14,8 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
     private var itemFuelMap: ((itemStack: ItemStack) -> GeneratorFuel?)? = null
 
     val itemInv = object: FullFixedItemInv(1) {
-        override fun setInvStack(slot: Int, to: ItemStack, simulation: Simulation): Boolean {
-            return initialized && (to.isEmpty || itemFuelMap?.invoke(to) != null) && super.setInvStack(slot, to, simulation)
-        }
+        override fun getFilterForSlot(slot: Int): ItemFilter = ItemFilter { initialized && (it.isEmpty || itemFuelMap?.invoke(it) != null) }
+        override fun isItemValidForSlot(slot: Int, item: ItemStack) = getFilterForSlot(slot).matches(item)
     }
 
     var burningFuel: GeneratorFuel? = null
