@@ -22,8 +22,8 @@ import net.minecraft.util.registry.Registry
 object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
 
     val FURNACE_GENERATOR = register("furnace_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.furnaceGenerator) { GeneratorFuel.fromFurnaceGeneratorFuel(it.item) })
-    val CULINARY_GENERATOR = register("culinary_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.culinaryGenerator) { GeneratorFuel.fromCulinaryGeneratorFuel(it.item) } )
-    val FROSTY_GENERATOR = register("frosty_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.frostyGenerator) { GeneratorFuel.fromResource("frosty", it) } )
+    val GLUTTONY_GENERATOR = register("gluttony_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.culinaryGenerator) { GeneratorFuel.fromCulinaryGeneratorFuel(it.item) } )
+    val ICY_GENERATOR = register("icy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.frostyGenerator) { GeneratorFuel.fromResource("icy", it) } )
 
     fun registerBlockItems(itemMap: MutableMap<Identifier, Item>) {
         map.forEach { (identifier, block) ->

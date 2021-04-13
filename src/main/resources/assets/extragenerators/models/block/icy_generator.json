@@ -1,6 +1,6 @@
 {
   "parent": "extragenerators:block/base_generator",
   "textures": {
-    "color": "extragenerators:block/culinary_generator"
+    "color": "extragenerators:block/icy_generator"
   }
 }

@@ -8,7 +8,7 @@ import net.minecraft.resource.ResourceType
 
 object ResourceCompendium: GenericCompendium<SimpleSynchronousResourceReloadListener>() {
 
-    val FROSTY_RESOURCES = register("frosty", GeneratorFuelResource("frosty"))
+    val ICY_RESOURCES = register("icy", GeneratorFuelResource("icy"))
 
     fun getGeneratorFuelResource(id: String): GeneratorFuelResource? = map[ModIdentifier(id)] as? GeneratorFuelResource
 
