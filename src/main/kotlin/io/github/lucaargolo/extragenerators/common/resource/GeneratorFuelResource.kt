@@ -8,7 +8,7 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.resource.ResourceManager
 import java.io.InputStreamReader
 
-class GeneratorFuelResource(val id: String): SimpleSynchronousResourceReloadListener {
+class GeneratorFuelResource(private val id: String): SimpleSynchronousResourceReloadListener {
 
     val ingredientsMap = linkedMapOf<Ingredient, GeneratorFuel>()
 
@@ -17,7 +17,7 @@ class GeneratorFuelResource(val id: String): SimpleSynchronousResourceReloadList
     override fun apply(manager: ResourceManager) {
         ingredientsMap.clear()
         ExtraGenerators.LOGGER.info("Loading $id items resource.")
-        manager.findResources(id) { r -> r.endsWith(".json")}.forEach { itemsResource ->
+        manager.findResources("item_generators") { r -> r.equals("$id.json")}.forEach { itemsResource ->
             val resource = manager.getResource(itemsResource)
             ExtraGenerators.LOGGER.info("Found $id items resource at $itemsResource. Trying to read...")
             try {
