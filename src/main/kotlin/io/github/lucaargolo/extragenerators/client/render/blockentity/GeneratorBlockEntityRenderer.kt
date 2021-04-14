@@ -1,6 +1,7 @@
 package io.github.lucaargolo.extragenerators.client.render.blockentity
 
 import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.mixin.BakedModelManagerAccessor
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
@@ -21,7 +22,7 @@ class GeneratorBlockEntityRenderer(dispatcher: BlockEntityRenderDispatcher?) : B
 
     override fun render(entity: AbstractGeneratorBlockEntity<*>, tickDelta: Float, matrices: MatrixStack, vertexConsumers: VertexConsumerProvider, light: Int, overlay: Int) {
         val client = MinecraftClient.getInstance()
-        val model = client.bakedModelManager.getModel(ModelIdentifier(ModIdentifier("generator_wheels"), ""))
+        val model = (client.bakedModelManager as? BakedModelManagerAccessor)?.models?.get(ModIdentifier("block/cog_wheels")) ?: return
         val facing = entity.cachedState[Properties.HORIZONTAL_FACING]
         val random = Random()
         matrices.push()

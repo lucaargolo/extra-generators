@@ -4,6 +4,7 @@
   "package": "io.github.lucaargolo.extragenerators.mixin",
   "compatibilityLevel": "JAVA_8",
   "client": [
+    "BakedModelManagerAccessor",
     "KeyBindingAccessor"
   ],
   "injectors": {

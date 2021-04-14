@@ -21,7 +21,7 @@ class ExtraGeneratorsClient: ClientModInitializer {
         BakedModelCompendium.initialize()
 
         ModelLoadingRegistry.INSTANCE.registerModelProvider { _, out ->
-            out.accept(ModelIdentifier(ModIdentifier("generator_wheels"), ""))
+            out.accept(ModIdentifier("block/cog_wheels"))
         }
     }
 
