@@ -75,8 +75,9 @@ data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOu
                 Registry.ENCHANTMENT.getOrEmpty(Identifier.tryParse(compoundTag.getString("id"))).ifPresent { enchantment: Enchantment ->
 
                 }
+                return null
             }
-            return GeneratorFuel(0, 0, 0.0)
+            return null
         }
 
     }

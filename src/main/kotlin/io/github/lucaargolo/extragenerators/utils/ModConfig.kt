@@ -1,22 +1,19 @@
 package io.github.lucaargolo.extragenerators.utils
 
-import team.reborn.energy.EnergyTier
-
 class ModConfig {
 
     class Generator(
-        val energyTier: String = "micro",
-        val maxStoredPower: Double = 0.0
-    ) {
-        constructor(energyTier: EnergyTier, maxStoredPower: Double): this(energyTier.name.toLowerCase(), maxStoredPower)
+        val output: Double = 0.0,
+        val storage: Double = 0.0
+    )
 
-        fun getEnumTier(): EnergyTier = EnergyTier.valueOf(energyTier)
-    }
-
-    val burnableGenerator = Generator(EnergyTier.LOW, 128000.0)
-    val gluttonyGenerator = Generator(EnergyTier.MEDIUM, 128000.0)
-    val icyGenerator = Generator(EnergyTier.LOW, 128000.0)
-    val sludgyGenerator = Generator(EnergyTier.LOW, 128000.0)
+    val burnableGenerator = Generator(40.0, 100000.0)
+    val gluttonyGenerator = Generator(64.0, 100000.0)
+    val icyGenerator = Generator(40.0, 100000.0)
+    val sludgyGenerator = Generator(400.0, 100000.0)
+    val witheredGenerator = Generator(4000.0, 400000.0)
+    val teleportGenerator = Generator(80.0, 100000.0)
+    val dragonGenerator = Generator(40.0, 1000000.0)
 
 
 }

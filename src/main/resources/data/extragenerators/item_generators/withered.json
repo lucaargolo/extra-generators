@@ -1,0 +1,20 @@
+[
+  {
+    "ingredient": {
+      "item": "minecraft:nether_star"
+    },
+    "fuel": {
+      "burnTime": 2400,
+      "energyOutput": 9600000
+    }
+  },
+  {
+    "ingredient": {
+      "item": "minecraft:wither_skeleton_skull"
+    },
+    "fuel": {
+      "burnTime": 2400,
+      "energyOutput": 2400000
+    }
+  }
+]

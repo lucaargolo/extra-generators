@@ -1,10 +1,6 @@
 {
   "itemGroup.extragenerators.creative_tab": "Extra Generators",
 
-  "block.extragenerators.furnace_generator": "Furnace Generator",
-  "block.extragenerators.culinary_generator": "Culinary Generator",
-  "block.extragenerators.frosty_generator": "Frosty Generator",
-
   "tooltip.extragenerators.sneak_for_more": "Press %s to see more info.",
 
   "screen.extragenerators.common.stored_energy": "Stored Energy"

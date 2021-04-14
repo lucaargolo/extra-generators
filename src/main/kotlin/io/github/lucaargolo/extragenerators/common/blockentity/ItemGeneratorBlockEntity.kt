@@ -11,7 +11,8 @@ import net.minecraft.nbt.CompoundTag
 
 class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockEntity>(BlockEntityCompendium.ITEM_GENERATOR_TYPE) {
 
-    private var itemFuelMap: ((itemStack: ItemStack) -> GeneratorFuel?)? = null
+    private var itemFuelMap: ((ItemStack) -> GeneratorFuel?)? = null
+    private var burnCallback: ((ItemGeneratorBlockEntity, GeneratorFuel) -> Unit)? = null
 
     val itemInv = object: FullFixedItemInv(1) {
         override fun getFilterForSlot(slot: Int): ItemFilter = ItemFilter { initialized && (it.isEmpty || itemFuelMap?.invoke(it) != null) }
@@ -20,33 +21,38 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
 
     var burningFuel: GeneratorFuel? = null
 
-    override fun isRunning() = burningFuel?.let { storedPower + (it.energyOutput/it.totalBurnTime) <= maxStoredPower } ?: false
+    override fun isServerRunning() = burningFuel?.let { storedPower + (it.energyOutput/it.totalBurnTime) <= maxStoredPower } ?: false
 
     override fun initialize(block: AbstractGeneratorBlock): Boolean {
         val superInitialized = super.initialize(block)
-        itemFuelMap = (block as? ItemGeneratorBlock)?.itemFuelMap
-        return itemFuelMap != null && superInitialized
+        (block as? ItemGeneratorBlock)?.let {
+            itemFuelMap = it.itemFuelMap
+            burnCallback = it.burnCallback
+        }
+        return itemFuelMap != null && burnCallback != null && superInitialized
     }
 
     override fun tick() {
         super.tick()
-        if(!initialized) return
-        burningFuel?.let {
-            val energyPerTick = it.energyOutput/it.totalBurnTime
-            if(storedPower + energyPerTick <= maxStoredPower) {
-                storedPower += energyPerTick
-                it.burnTime--
+        if(world?.isClient == false) {
+            burningFuel?.let {
+                val energyPerTick = it.energyOutput / it.totalBurnTime
+                if (storedPower + energyPerTick <= maxStoredPower) {
+                    storedPower += energyPerTick
+                    it.burnTime--
+                }
+                if (it.burnTime <= 0) {
+                    burningFuel = null
+                    markDirtyAndSync()
+                }
             }
-            if(it.burnTime <= 0) {
-                burningFuel = null
-                markDirtyAndSync()
-            }
-        }
-        if(burningFuel == null) {
-            val stack = itemInv.extract(1)
-            if(!stack.isEmpty) {
-                burningFuel = itemFuelMap?.invoke(stack)?.copy()
-                markDirtyAndSync()
+            if (burningFuel == null) {
+                val stack = itemInv.extract(1)
+                if (!stack.isEmpty) {
+                    burningFuel = itemFuelMap?.invoke(stack)?.copy()
+                    burningFuel?.let { burnCallback?.invoke(this, it) }
+                    markDirtyAndSync()
+                }
             }
         }
     }
@@ -66,10 +72,11 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
     override fun toClientTag(tag: CompoundTag): CompoundTag {
         tag.put("itemInv", itemInv.toTag())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
-        return tag
+        return super.toClientTag(tag)
     }
 
     override fun fromClientTag(tag: CompoundTag) {
+        super.fromClientTag(tag)
         itemInv.fromTag(tag.getCompound("itemInv"))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }

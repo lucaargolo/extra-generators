@@ -1,13 +1,18 @@
 package io.github.lucaargolo.extragenerators.common.blockentity
 
+import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.common.block.ItemGeneratorBlock
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import io.github.lucaargolo.extragenerators.utils.SynchronizeableBlockEntity
+import net.minecraft.block.Block
 import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.particle.ParticleTypes
+import net.minecraft.server.world.ServerWorld
+import net.minecraft.util.ItemScatterer
 import net.minecraft.util.Tickable
 import team.reborn.energy.EnergySide
 import team.reborn.energy.EnergyStorage
@@ -20,12 +25,15 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     private var generatorConfig: ModConfig.Generator? = null
 
     var cogWheelRotationDegree = 0
-    abstract fun isRunning(): Boolean
+    var isClientRunning = false
+    open fun isRunning() = if(world?.isClient == true) isClientRunning else isServerRunning()
+    abstract fun isServerRunning(): Boolean
 
     var storedPower = 0.0
-    override fun getMaxStoredPower() = generatorConfig?.maxStoredPower ?: 0.0
-    override fun getTier(): EnergyTier = generatorConfig?.getEnumTier() ?: EnergyTier.MICRO
+    override fun getMaxStoredPower() = generatorConfig?.storage ?: 0.0
+    override fun getTier(): EnergyTier = EnergyTier.INSANE
     override fun getMaxInput(side: EnergySide?) = 0.0
+    override fun getMaxOutput(side: EnergySide?) = generatorConfig?.output ?: 0.0
     override fun getStored(face: EnergySide?) = storedPower
     override fun setStored(amount: Double) { storedPower = amount }
 
@@ -35,7 +43,11 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     }
 
     override fun tick() {
-        if(isRunning()) {
+        if(isClientRunning != isRunning()) {
+            isClientRunning = isRunning()
+            markDirtyAndSync()
+        }
+        if(isRunning() && world?.isClient == true) {
             if(cogWheelRotationDegree++ >= 360) {
                 cogWheelRotationDegree = 0
             }
@@ -43,6 +55,16 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         }
         if(!initialized) {
             initialized = (world?.getBlockState(pos)?.block as? AbstractGeneratorBlock)?.let { initialize(it) } ?: false
+            if(!initialized) {
+                ExtraGenerators.LOGGER.error("Failed to initialize generator! This is a bug.")
+                (world as? ServerWorld)?.let { serverWorld ->
+                    val stacks = Block.getDroppedStacks(cachedState, serverWorld, pos, this)
+                    stacks.forEach {
+                        ItemScatterer.spawn(serverWorld, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(), it)
+                    }
+                }
+                world?.setBlockState(pos, Blocks.AIR.defaultState)
+            }
         }
     }
 
@@ -58,11 +80,13 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
 
     override fun toClientTag(tag: CompoundTag): CompoundTag {
         tag.putDouble("storedPower", storedPower)
+        tag.putBoolean("isClientRunning", isClientRunning)
         return tag
     }
 
     override fun fromClientTag(tag: CompoundTag) {
         storedPower = tag.getDouble("storedPower")
+        isClientRunning = tag.getBoolean("isClientRunning")
     }
 
 }

@@ -8,7 +8,7 @@ import net.minecraft.resource.ResourceType
 
 object ResourceCompendium: GenericCompendium<SimpleSynchronousResourceReloadListener>() {
 
-    val ITEM_GENERATORS = register("item_generators", GeneratorFuelResource("icy", "sludgy"))
+    val ITEM_GENERATORS = register("item_generators", GeneratorFuelResource())
 
     override fun initialize() {
         map.forEach { (_, resource) ->

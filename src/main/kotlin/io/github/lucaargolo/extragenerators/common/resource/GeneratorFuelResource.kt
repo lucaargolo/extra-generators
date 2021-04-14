@@ -10,7 +10,7 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.resource.ResourceManager
 import java.io.InputStreamReader
 
-class GeneratorFuelResource(private vararg val ids: String): SimpleSynchronousResourceReloadListener {
+class GeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
     private val ingredientsMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
 
@@ -27,7 +27,7 @@ class GeneratorFuelResource(private vararg val ids: String): SimpleSynchronousRe
         ingredientsMap.clear()
         ExtraGenerators.LOGGER.info("Loading item generators resource.")
         manager.findResources("item_generators") { r -> r.endsWith(".json") }.forEach { itemsResource ->
-            val id = itemsResource.path.split("/").lastOrNull()?.replace(".json", "").takeIf { ids.contains(it) } ?: return@forEach
+            val id = itemsResource.path.split("/").lastOrNull()?.replace(".json", "") ?: return@forEach
             val resource = manager.getResource(itemsResource)
             ExtraGenerators.LOGGER.info("Loading $id item generators resource at $itemsResource.")
             try {
