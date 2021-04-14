@@ -38,7 +38,7 @@ class ExtraGenerators: ModInitializer {
     companion object {
         const val MOD_ID = "extragenerators"
 
-        private val creativeTab = FabricItemGroupBuilder.create(ModIdentifier("creative_tab")).icon{ ItemStack(Items.ITEM_FRAME) }.build()
+        private val creativeTab = FabricItemGroupBuilder.create(ModIdentifier("creative_tab")).icon{ ItemStack(BlockCompendium.BURNABLE_GENERATOR) }.build()
 
         val PARSER = JsonParser()
         val GSON = GsonBuilder().setPrettyPrinting().create()

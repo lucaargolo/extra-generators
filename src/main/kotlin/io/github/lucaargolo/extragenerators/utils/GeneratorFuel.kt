@@ -5,15 +5,18 @@ import com.google.gson.JsonObject
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl
 import net.minecraft.enchantment.Enchantment
+import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.item.EnchantedBookItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.item.PotionItem
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
+import net.minecraft.potion.PotionUtil
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.registry.Registry
-import kotlin.math.floor
+import kotlin.math.*
 
 data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOutput: Double) {
 
@@ -55,12 +58,12 @@ data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOu
             return ResourceCompendium.ITEM_GENERATORS.test(id, itemStack)
         }
 
-        fun fromFurnaceGeneratorFuel(item: Item): GeneratorFuel? {
+        fun fromBurnableGeneratorFuel(item: Item): GeneratorFuel? {
             val burnTicks = FuelRegistryImpl.INSTANCE.get(item) ?: return null
             return GeneratorFuel(burnTicks/4, burnTicks/4, burnTicks*10.0)
         }
 
-        fun fromCulinaryGeneratorFuel(item: Item): GeneratorFuel? {
+        fun fromGluttonyGeneratorFuel(item: Item): GeneratorFuel? {
             val foodComponent = item.foodComponent ?: return null
             val energyOutput = foodComponent.hunger * foodComponent.saturationModifier * 8000.0
             val energyPerTick = foodComponent.hunger * 8
@@ -68,15 +71,15 @@ data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOu
             return GeneratorFuel(MathHelper.floor(burnTime), MathHelper.floor(burnTime), floor(energyOutput))
         }
 
-        fun fromDisenchantmentGeneratorFuel(itemStack: ItemStack): GeneratorFuel? {
-            val enchantments = EnchantedBookItem.getEnchantmentTag(itemStack)
-            enchantments?.forEach {
-                val compoundTag = it as? CompoundTag ?: return@forEach
-                Registry.ENCHANTMENT.getOrEmpty(Identifier.tryParse(compoundTag.getString("id"))).ifPresent { enchantment: Enchantment ->
+        fun fromEnchantedGeneratorFuel(itemStack: ItemStack): GeneratorFuel? {
+            val energyOutput = ceil(EnchantmentHelper.get(itemStack).map { (sqrt(min((it.value + 1), it.key.maxLevel) / it.key.maxLevel+0.0) * it.key.maxLevel * it.key.maxLevel * (it.value + 1)) / sqrt(it.key.rarity.weight+0.0) * max(1, it.key.getMinPower(it.value)) }.sum()) * 400
+            val burnTime = MathHelper.ceil(energyOutput/40)
+            return if(energyOutput <= 0.0) null else GeneratorFuel(burnTime, burnTime, energyOutput)
+        }
 
-                }
-                return null
-            }
+        fun fromBrewGeneratorFuel(itemStack: ItemStack): GeneratorFuel? {
+            val potionItem = itemStack.item as? PotionItem ?: return null
+            val potion = PotionUtil.getPotion(itemStack)
             return null
         }
 
