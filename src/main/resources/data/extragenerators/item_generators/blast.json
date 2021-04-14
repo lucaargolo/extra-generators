@@ -1,0 +1,20 @@
+[
+  {
+    "ingredient": {
+      "item": "minecraft:gunpowder"
+    },
+    "fuel": {
+      "burnTime": 400,
+      "energyOutput": 64000
+    }
+  },
+  {
+    "ingredient": {
+      "item": "minecraft:tnt"
+    },
+    "fuel": {
+      "burnTime": 3200,
+      "energyOutput": 512000
+    }
+  }
+]

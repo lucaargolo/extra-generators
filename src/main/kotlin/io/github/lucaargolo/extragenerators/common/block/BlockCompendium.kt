@@ -20,6 +20,7 @@ import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.explosion.Explosion
 
 
 object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
@@ -31,12 +32,20 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
     val DRAGON_GENERATOR = register("dragon_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.dragonGenerator, { GeneratorFuel.fromResource("dragon", it) })  )
     val TELEPORT_GENERATOR = register("teleport_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.teleportGenerator, { GeneratorFuel.fromResource("teleport", it) })  )
 
-    val WITHERED_GENERATOR = register("withered_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.witheredGenerator, { GeneratorFuel.fromResource("withered", it) }) { blockEntity, fuel ->
-        val world = blockEntity.world as? ServerWorld ?: return@ItemGeneratorBlock
-        val entity = GeneratorAreaEffectCloudEntity(world, blockEntity, StatusEffects.WITHER)
-        world.spawnEntity(entity)
+    val WITHERED_GENERATOR = register("withered_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.witheredGenerator, { GeneratorFuel.fromResource("withered", it) }) {
+        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
+        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.WITHER)
     } )
 
+//    val DEMISE_GENERATOR = register("demise_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.demiseGenerator, { GeneratorFuel.fromResource("demise", it) }) {
+//        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
+//        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.INSTANT_DAMAGE)
+//    } )
+
+    val BLAST_GENERATOR = register("blast_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.blastGenerator, { GeneratorFuel.fromResource("blast", it) }) {
+        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
+        world.createExplosion(null, it.pos.x+0.5, it.pos.y+0.0, it.pos.z+0.5, 2f, Explosion.DestructionType.NONE)
+    } )
 
     fun itemGeneratorArray() = map.values.filterIsInstance<ItemGeneratorBlock>().toTypedArray()
 

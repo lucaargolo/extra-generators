@@ -21,7 +21,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
 
-class ItemGeneratorBlock(settings: Settings, val generatorConfig: ModConfig.Generator, val itemFuelMap: (ItemStack) -> GeneratorFuel?, val burnCallback: (ItemGeneratorBlockEntity, GeneratorFuel) -> Unit = { _, _ -> }): AbstractGeneratorBlock(settings) {
+class ItemGeneratorBlock(settings: Settings, val generatorConfig: ModConfig.Generator, val itemFuelMap: (ItemStack) -> GeneratorFuel?, val burnCallback: (ItemGeneratorBlockEntity) -> Unit = {  }): AbstractGeneratorBlock(settings) {
 
     override fun addAllAttributes(world: World, pos: BlockPos, state: BlockState, to: AttributeList<*>) {
         (world.getBlockEntity(pos) as? ItemGeneratorBlockEntity)?.let{

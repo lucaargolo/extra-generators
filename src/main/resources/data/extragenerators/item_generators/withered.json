@@ -16,5 +16,14 @@
       "burnTime": 2400,
       "energyOutput": 2400000
     }
+  },
+  {
+    "ingredient": {
+      "item": "minecraft:wither_rose"
+    },
+    "fuel": {
+      "burnTime": 400,
+      "energyOutput": 16000
+    }
   }
 ]

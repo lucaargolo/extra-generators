@@ -23,14 +23,6 @@ class GeneratorAreaEffectCloudEntity(entityType: EntityType<GeneratorAreaEffectC
         updatePosition(x, y, z)
     }
 
-    constructor(world: World, generatorBlockEntity: ItemGeneratorBlockEntity, statusEffect: StatusEffect): this(world, generatorBlockEntity.pos.x+0.5, generatorBlockEntity.pos.y+0.0, generatorBlockEntity.pos.z+0.5) {
-        this.generatorBlockEntity = generatorBlockEntity
-        this.blockEntityPos = generatorBlockEntity.pos
-        this.radius = 3.0f
-        this.duration = generatorBlockEntity.burningFuel?.totalBurnTime ?: 0
-        this.addEffect(StatusEffectInstance(StatusEffectInstance(statusEffect, 200)))
-    }
-
     override fun tick() {
         if(generatorBlockEntity?.isRemoved == true) {
             this.remove()
@@ -66,6 +58,20 @@ class GeneratorAreaEffectCloudEntity(entityType: EntityType<GeneratorAreaEffectC
         buf.writeBlockPos(blockEntityPos!!)
 
         return ServerPlayNetworking.createS2CPacket(PacketCompendium.SPAWN_GENERATOR_AREA_EFFECT_CLOUD, buf)
+    }
+
+    companion object {
+
+        fun createAndSpawn(world: World, generatorBlockEntity: ItemGeneratorBlockEntity, statusEffect: StatusEffect) {
+            val cloud = GeneratorAreaEffectCloudEntity(world, generatorBlockEntity.pos.x+0.5, generatorBlockEntity.pos.y+0.0, generatorBlockEntity.pos.z+0.5)
+            cloud.generatorBlockEntity = generatorBlockEntity
+            cloud.blockEntityPos = generatorBlockEntity.pos
+            cloud.radius = 3.0f
+            cloud.duration = generatorBlockEntity.burningFuel?.totalBurnTime ?: 0
+            cloud.addEffect(StatusEffectInstance(StatusEffectInstance(statusEffect, 200)))
+            world.spawnEntity(cloud)
+        }
+
     }
 
 }

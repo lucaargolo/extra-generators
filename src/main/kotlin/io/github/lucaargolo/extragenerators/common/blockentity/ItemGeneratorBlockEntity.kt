@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag
 class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockEntity>(BlockEntityCompendium.ITEM_GENERATOR_TYPE) {
 
     private var itemFuelMap: ((ItemStack) -> GeneratorFuel?)? = null
-    private var burnCallback: ((ItemGeneratorBlockEntity, GeneratorFuel) -> Unit)? = null
+    private var burnCallback: ((ItemGeneratorBlockEntity) -> Unit)? = null
 
     val itemInv = object: FullFixedItemInv(1) {
         override fun getFilterForSlot(slot: Int): ItemFilter = ItemFilter { initialized && (it.isEmpty || itemFuelMap?.invoke(it) != null) }
@@ -50,7 +50,7 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
                 val stack = itemInv.extract(1)
                 if (!stack.isEmpty) {
                     burningFuel = itemFuelMap?.invoke(stack)?.copy()
-                    burningFuel?.let { burnCallback?.invoke(this, it) }
+                    burningFuel?.let { burnCallback?.invoke(this) }
                     markDirtyAndSync()
                 }
             }
