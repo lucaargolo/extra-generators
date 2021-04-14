@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": {"model": "extragenerators:block/generator_wheels"}
+  }
+}

@@ -1,3 +1,6 @@
 {
-  "parent": "extragenerators:block/enchanted_generator"
+  "parent": "extragenerators:item/base_generator",
+  "textures": {
+    "color": "extragenerators:block/enchanted_generator"
+  }
 }

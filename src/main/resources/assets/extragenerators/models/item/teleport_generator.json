@@ -1,3 +1,6 @@
 {
-  "parent": "extragenerators:block/teleport_generator"
+  "parent": "extragenerators:item/base_generator",
+  "textures": {
+    "color": "extragenerators:block/teleport_generator"
+  }
 }

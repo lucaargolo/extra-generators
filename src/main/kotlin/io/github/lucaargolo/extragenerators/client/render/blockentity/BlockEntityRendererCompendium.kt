@@ -11,7 +11,9 @@ import java.util.function.Function
 
 object BlockEntityRendererCompendium: GenericCompendium<Function<BlockEntityRenderDispatcher, BlockEntityRenderer<*>>>() {
 
-    //val SCREEN_FACTORY = register("screen") { ScreenBlockEntityRenderer(it) }
+    init {
+        register("item_generator", Function { GeneratorBlockEntityRenderer(it) })
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun initialize() {

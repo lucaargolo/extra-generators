@@ -2,7 +2,7 @@
   "variants": {
     "facing=north": {"model": "extragenerators:block/sludgy_generator", "y": 270},
     "facing=south": {"model": "extragenerators:block/sludgy_generator", "y": 90},
-    "facing=east": {"model": "extragenerators:block/sludgy_generator", "y": 180},
-    "facing=west": {"model": "extragenerators:block/sludgy_generator"}
+    "facing=east": {"model": "extragenerators:block/sludgy_generator"},
+    "facing=west": {"model": "extragenerators:block/sludgy_generator", "y": 180}
   }
 }

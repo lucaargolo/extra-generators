@@ -24,10 +24,12 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         private set
     private var generatorConfig: ModConfig.Generator? = null
 
-    var cogWheelRotationDegree = 0
+    var lastCogWheelRotationDegree = 0f
+    var cogWheelRotationDegree = 0f
     var isClientRunning = false
     open fun isRunning() = if(world?.isClient == true) isClientRunning else isServerRunning()
     abstract fun isServerRunning(): Boolean
+    abstract fun getCogWheelRotation(): Float
 
     var storedPower = 0.0
     override fun getMaxStoredPower() = generatorConfig?.storage ?: 0.0
@@ -48,8 +50,10 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
             markDirtyAndSync()
         }
         if(isRunning() && world?.isClient == true) {
-            if(cogWheelRotationDegree++ >= 360) {
-                cogWheelRotationDegree = 0
+            cogWheelRotationDegree += getCogWheelRotation()
+            if(cogWheelRotationDegree >= 360f) {
+                cogWheelRotationDegree %= 360f
+                lastCogWheelRotationDegree -= 360f
             }
             world?.addParticle(ParticleTypes.SMOKE, pos.x+0.5, pos.y+0.825, pos.z+0.5, 0.0, 0.1, 0.0)
         }

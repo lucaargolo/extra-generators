@@ -23,6 +23,8 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
 
     override fun isServerRunning() = burningFuel?.let { storedPower + (it.energyOutput/it.totalBurnTime) <= maxStoredPower } ?: false
 
+    override fun getCogWheelRotation(): Float = burningFuel?.let { (it.energyOutput.toFloat()/it.totalBurnTime)/10f } ?: 0f
+
     override fun initialize(block: AbstractGeneratorBlock): Boolean {
         val superInitialized = super.initialize(block)
         (block as? ItemGeneratorBlock)?.let {

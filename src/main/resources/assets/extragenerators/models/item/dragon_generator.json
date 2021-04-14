@@ -1,3 +1,6 @@
 {
-  "parent": "extragenerators:block/dragon_generator"
+  "parent": "extragenerators:item/base_generator",
+  "textures": {
+    "color": "extragenerators:block/dragon_generator"
+  }
 }
