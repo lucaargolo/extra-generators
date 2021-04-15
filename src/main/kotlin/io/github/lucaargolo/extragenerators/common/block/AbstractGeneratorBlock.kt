@@ -1,6 +1,7 @@
 package io.github.lucaargolo.extragenerators.common.block
 
 import alexiil.mc.lib.attributes.AttributeProvider
+import io.github.lucaargolo.extragenerators.utils.ModConfig
 import net.minecraft.block.Block
 import net.minecraft.block.BlockEntityProvider
 import net.minecraft.block.BlockState
@@ -9,7 +10,7 @@ import net.minecraft.state.StateManager
 import net.minecraft.state.property.Properties
 import net.minecraft.util.math.Direction
 
-abstract class AbstractGeneratorBlock(settings: Settings): Block(settings), BlockEntityProvider, AttributeProvider {
+abstract class AbstractGeneratorBlock(settings: Settings, val generatorConfig: ModConfig.Generator): Block(settings), BlockEntityProvider, AttributeProvider {
 
     init {
         defaultState = stateManager.defaultState.with(Properties.HORIZONTAL_FACING, Direction.SOUTH)

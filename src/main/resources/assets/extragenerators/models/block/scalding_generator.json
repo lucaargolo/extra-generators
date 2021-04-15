@@ -1,0 +1,6 @@
+{
+  "parent": "extragenerators:block/base_generator",
+  "textures": {
+    "color": "extragenerators:block/scalding_generator"
+  }
+}

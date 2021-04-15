@@ -1,15 +1,15 @@
 package io.github.lucaargolo.extragenerators.common.block
 
 import alexiil.mc.lib.attributes.AttributeList
-import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.containers.ItemGeneratorScreenHandler
+import alexiil.mc.lib.attributes.fluid.volume.FluidKey
+import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.containers.FluidGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
@@ -21,11 +21,12 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
 
-class ItemGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator, val itemFuelMap: (ItemStack) -> GeneratorFuel?, val burnCallback: (ItemGeneratorBlockEntity) -> Unit = {  }): AbstractGeneratorBlock(settings, generatorConfig) {
+class FluidGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator, val fluidFuelMap: (FluidKey) -> GeneratorFuel?): AbstractGeneratorBlock(settings, generatorConfig) {
 
     override fun addAllAttributes(world: World, pos: BlockPos, state: BlockState, to: AttributeList<*>) {
-        (world.getBlockEntity(pos) as? ItemGeneratorBlockEntity)?.let{
+        (world.getBlockEntity(pos) as? FluidGeneratorBlockEntity)?.let{
             to.offer(it.itemInv)
+            to.offer(it.fluidInv)
         }
     }
 
@@ -34,7 +35,7 @@ class ItemGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generato
             override fun getDisplayName() = name
 
             override fun createMenu(syncId: Int, inv: PlayerInventory, player: PlayerEntity): ScreenHandler {
-                return ItemGeneratorScreenHandler(syncId, inv, world.getBlockEntity(pos) as ItemGeneratorBlockEntity, ScreenHandlerContext.create(world, pos))
+                return FluidGeneratorScreenHandler(syncId, inv, world.getBlockEntity(pos) as FluidGeneratorBlockEntity, ScreenHandlerContext.create(world, pos))
             }
 
             override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
@@ -44,6 +45,6 @@ class ItemGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generato
         return ActionResult.SUCCESS
     }
 
-    override fun createBlockEntity(world: BlockView?) = ItemGeneratorBlockEntity()
+    override fun createBlockEntity(world: BlockView?) = FluidGeneratorBlockEntity()
 
 }

@@ -18,6 +18,7 @@ class ModConfig {
     val blastGenerator = Generator(160.0, 100000.0)
     val enchantedGenerator = Generator(40.0, 100000.0)
     val brewGenerator = Generator(40.0, 100000.0)
+    val scaldingGenerator = Generator(40.0, 100000.0)
 
 
 }

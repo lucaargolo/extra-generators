@@ -1,5 +1,6 @@
 package io.github.lucaargolo.extragenerators.utils
 
+import alexiil.mc.lib.attributes.fluid.volume.FluidKey
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
@@ -51,11 +52,15 @@ data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOu
         fun fromJson(jsonObject: JsonObject): GeneratorFuel? {
             val burnTime = jsonObject.get("burnTime").asInt
             val energyOutput = jsonObject.get("energyOutput").asDouble
-            return if(energyOutput == 0.0) null else GeneratorFuel(burnTime, burnTime, energyOutput)
+            return if (energyOutput == 0.0) null else GeneratorFuel(burnTime, burnTime, energyOutput)
         }
 
-        fun fromResource(id: String, itemStack: ItemStack): GeneratorFuel? {
+        fun fromItemResource(id: String, itemStack: ItemStack): GeneratorFuel? {
             return ResourceCompendium.ITEM_GENERATORS.test(id, itemStack)
+        }
+
+        fun fromFluidResource(id: String, fluidKey: FluidKey): GeneratorFuel? {
+            return ResourceCompendium.FLUID_GENERATORS.test(id, fluidKey)
         }
 
         fun fromBurnableGeneratorFuel(item: Item): GeneratorFuel? {

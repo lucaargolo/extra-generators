@@ -1,7 +1,20 @@
 {
   "itemGroup.extragenerators.creative_tab": "Extra Generators",
 
+  "block.extragenerators.blast_generator": "Blast Generator",
+  "block.extragenerators.brew_generator": "Brew Generator",
+  "block.extragenerators.burnable_generator": "Burnable Generator",
+  "block.extragenerators.dragon_generator": "Dragon Generator",
+  "block.extragenerators.enchanted_generator": "Enchanted Generator",
+  "block.extragenerators.gluttony_generator": "Gluttony Generator",
+  "block.extragenerators.icy_generator": "Icy Generator",
+  "block.extragenerators.scalding_generator": "Scalding Generator",
+  "block.extragenerators.sludgy_generator": "Sludgy Generator",
+  "block.extragenerators.teleport_generator": "Teleport Generator",
+  "block.extragenerators.withered_generator": "Withered Generator",
+
   "tooltip.extragenerators.sneak_for_more": "Press %s to see more info.",
+  "tooltip.extragenerators.empty": "Empty",
 
   "screen.extragenerators.common.stored_energy": "Stored Energy"
 }

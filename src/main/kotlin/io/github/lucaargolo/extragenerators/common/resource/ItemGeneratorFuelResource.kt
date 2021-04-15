@@ -10,7 +10,7 @@ import net.minecraft.recipe.Ingredient
 import net.minecraft.resource.ResourceManager
 import java.io.InputStreamReader
 
-class GeneratorFuelResource: SimpleSynchronousResourceReloadListener {
+class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
     private val ingredientsMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
 

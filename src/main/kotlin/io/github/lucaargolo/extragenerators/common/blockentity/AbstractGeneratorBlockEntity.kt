@@ -40,7 +40,7 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     override fun setStored(amount: Double) { storedPower = amount }
 
     open fun initialize(block: AbstractGeneratorBlock): Boolean {
-        generatorConfig = (world?.getBlockState(pos)?.block as? ItemGeneratorBlock)?.generatorConfig
+        generatorConfig = (world?.getBlockState(pos)?.block as? AbstractGeneratorBlock)?.generatorConfig
         return generatorConfig != null
     }
 

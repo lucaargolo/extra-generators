@@ -27,15 +27,15 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
 
     val BURNABLE_GENERATOR = register("burnable_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.burnableGenerator, { GeneratorFuel.fromBurnableGeneratorFuel(it.item) }))
     val GLUTTONY_GENERATOR = register("gluttony_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.gluttonyGenerator, { GeneratorFuel.fromGluttonyGeneratorFuel(it.item) })  )
-    val ICY_GENERATOR = register("icy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.icyGenerator, { GeneratorFuel.fromResource("icy", it) })  )
-    val SLUDGY_GENERATOR = register("sludgy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.sludgyGenerator, { GeneratorFuel.fromResource("sludgy", it) })  )
-    val DRAGON_GENERATOR = register("dragon_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.dragonGenerator, { GeneratorFuel.fromResource("dragon", it) })  )
-    val TELEPORT_GENERATOR = register("teleport_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.teleportGenerator, { GeneratorFuel.fromResource("teleport", it) })  )
+    val ICY_GENERATOR = register("icy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.icyGenerator, { GeneratorFuel.fromItemResource("icy", it) })  )
+    val SLUDGY_GENERATOR = register("sludgy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.sludgyGenerator, { GeneratorFuel.fromItemResource("sludgy", it) })  )
+    val DRAGON_GENERATOR = register("dragon_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.dragonGenerator, { GeneratorFuel.fromItemResource("dragon", it) })  )
+    val TELEPORT_GENERATOR = register("teleport_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.teleportGenerator, { GeneratorFuel.fromItemResource("teleport", it) })  )
 
     val ENCHANTED_GENERATOR = register("enchanted_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.enchantedGenerator, { GeneratorFuel.fromEnchantedGeneratorFuel(it) })  )
     val BREW_GENERATOR = register("brew_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.brewGenerator, { GeneratorFuel.fromBrewGeneratorFuel(it) })  )
 
-    val WITHERED_GENERATOR = register("withered_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.witheredGenerator, { GeneratorFuel.fromResource("withered", it) }) {
+    val WITHERED_GENERATOR = register("withered_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.witheredGenerator, { GeneratorFuel.fromItemResource("withered", it) }) {
         val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
         GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.WITHER)
     } )
@@ -45,12 +45,16 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
 //        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.INSTANT_DAMAGE)
 //    } )
 
-    val BLAST_GENERATOR = register("blast_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.blastGenerator, { GeneratorFuel.fromResource("blast", it) }) {
+    val BLAST_GENERATOR = register("blast_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.blastGenerator, { GeneratorFuel.fromItemResource("blast", it) }) {
         val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
         world.createExplosion(null, it.pos.x+0.5, it.pos.y+0.0, it.pos.z+0.5, 2f, Explosion.DestructionType.NONE)
     } )
 
+    val SCALDING_GENERATOR = register("scalding_generator", FluidGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator) { GeneratorFuel.fromFluidResource("scalding", it) })
+
     fun itemGeneratorArray() = map.values.filterIsInstance<ItemGeneratorBlock>().toTypedArray()
+
+    fun fluidGeneratorArray() = map.values.filterIsInstance<FluidGeneratorBlock>().toTypedArray()
 
     fun registerBlockItems(itemMap: MutableMap<Identifier, Item>) {
         map.forEach { (identifier, block) ->
