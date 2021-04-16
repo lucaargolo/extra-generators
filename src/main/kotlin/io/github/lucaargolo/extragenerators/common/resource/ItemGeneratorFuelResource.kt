@@ -43,7 +43,7 @@ class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
                 ExtraGenerators.LOGGER.error("Unknown error while trying to read $id item generators resource at $itemsResource", e)
             }
         }
-        ExtraGenerators.LOGGER.info("Finished loading item generators resource (${ingredientsMap.size} entries loaded).")
+        ExtraGenerators.LOGGER.info("Finished loading item generators resource (${ingredientsMap.map { it.value.size }.sum()} entries loaded).")
     }
 
 }

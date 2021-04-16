@@ -18,8 +18,8 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
     constructor(burnTime: Int, energyOutput: Double): this(burnTime, burnTime, energyOutput)
 
     fun toTag(): CompoundTag = CompoundTag().also {
-        it.putInt("totalBurnTime", burnTime)
-        it.putInt("burnTime", currentBurnTime)
+        it.putInt("burnTime", burnTime)
+        it.putInt("currentBurnTime", currentBurnTime)
         it.putDouble("energyOutput", energyOutput)
     }
 

@@ -42,7 +42,7 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
                 ExtraGenerators.LOGGER.error("Unknown error while trying to read $id fluid generators resource at $fluidsResource", e)
             }
         }
-        ExtraGenerators.LOGGER.info("Finished loading fluid generators resource (${fluidKeysMap.size} entries loaded).")
+        ExtraGenerators.LOGGER.info("Finished loading fluid generators resource (${fluidKeysMap.map { it.value.size }.sum()} entries loaded).")
     }
 
 }

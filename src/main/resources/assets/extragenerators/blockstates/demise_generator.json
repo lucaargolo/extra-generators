@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": {"model": "extragenerators:block/demise_generator", "y": 270},
+    "facing=south": {"model": "extragenerators:block/demise_generator", "y": 90},
+    "facing=east": {"model": "extragenerators:block/demise_generator"},
+    "facing=west": {"model": "extragenerators:block/demise_generator", "y": 180}
+  }
+}

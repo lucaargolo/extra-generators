@@ -42,10 +42,10 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
         GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.WITHER)
     } )
 
-//    val DEMISE_GENERATOR = register("demise_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.demiseGenerator, { GeneratorFuel.fromResource("demise", it) }) {
-//        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
-//        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.INSTANT_DAMAGE)
-//    } )
+    val DEMISE_GENERATOR = register("demise_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.demiseGenerator, { GeneratorFuel.fromItemResource("demise", it) }) {
+        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
+        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.INSTANT_DAMAGE)
+    } )
 
     val BLAST_GENERATOR = register("blast_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.blastGenerator, { GeneratorFuel.fromItemResource("blast", it) }) {
         val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock

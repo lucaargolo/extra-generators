@@ -24,14 +24,12 @@ class GeneratorAreaEffectCloudEntity(entityType: EntityType<GeneratorAreaEffectC
     }
 
     override fun tick() {
-        if(generatorBlockEntity?.isRemoved == true) {
-            this.remove()
+        val gbe = generatorBlockEntity ?: blockEntityPos?.let{ world.getBlockEntity(it) as? ItemGeneratorBlockEntity}?.also { generatorBlockEntity = it } ?: return this.remove()
+        when {
+            gbe.isRemoved -> this.remove()
+            gbe.isRunning() -> super.tick()
+            else -> --this.age
         }
-        if(generatorBlockEntity == null) {
-            generatorBlockEntity = blockEntityPos?.let{ world.getBlockEntity(it) as? ItemGeneratorBlockEntity} ?: return this.remove()
-        }
-        if(generatorBlockEntity?.isRunning() == true)
-            super.tick()
     }
 
     override fun writeCustomDataToTag(tag: CompoundTag) {
