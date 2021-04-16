@@ -1,0 +1,58 @@
+[
+  {
+    "block": "minecraft:lava",
+    "temperature": 1200
+  },
+  {
+    "block": "minecraft:magma_block",
+    "temperature": 600
+  },
+  {
+    "block": "minecraft:fire",
+    "temperature": 300
+  },
+  {
+    "block": "minecraft:soul_fire",
+    "temperature": 600
+  },
+  {
+    "block": "minecraft:campfire",
+    "temperature": 300
+  },
+  {
+    "block": "minecraft:soul_campfire",
+    "temperature": 600
+  },
+  {
+    "block": "minecraft:torch",
+    "temperature": 100
+  },
+  {
+    "block": "minecraft:soul_torch",
+    "temperature": 200
+  },
+  {
+    "block": "minecraft:lantern",
+    "temperature": 100
+  },
+  {
+    "block": "minecraft:soul_lantern",
+    "temperature": 200
+  },
+  {
+    "block": "minecraft:water",
+    "temperature": 30
+  },
+  {
+    "block": "minecraft:ice",
+    "temperature": -30
+  },
+  {
+    "block": "minecraft:packed_ice",
+    "temperature": -40
+  },
+  {
+  "block": "minecraft:blue_ice",
+  "temperature": -50
+  }
+]

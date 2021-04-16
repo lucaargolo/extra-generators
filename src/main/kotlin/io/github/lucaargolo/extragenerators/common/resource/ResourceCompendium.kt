@@ -9,6 +9,7 @@ object ResourceCompendium: GenericCompendium<SimpleSynchronousResourceReloadList
 
     val ITEM_GENERATORS = register("item_generators", ItemGeneratorFuelResource())
     val FLUID_GENERATORS = register("fluid_generators", FluidGeneratorFuelResource())
+    val BLOCK_TEMPERATURE = register("block_temperature", BlockTemperatureResource())
 
     override fun initialize() {
         map.forEach { (_, resource) ->

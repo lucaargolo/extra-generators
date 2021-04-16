@@ -19,6 +19,11 @@ class ModConfig {
     val enchantedGenerator = Generator(40.0, 100000.0)
     val brewGenerator = Generator(40.0, 100000.0)
     val scaldingGenerator = Generator(40.0, 100000.0)
+    val steamGenerator = Generator(40.0, 100000.0)
+    val redstoneGenerator = Generator(40.0, 100000.0)
+    val colorfulGenerator = Generator(40.0, 100000.0)
+    val thermoelectricGenerator = Generator(40.0, 100000.0)
+
 
 
 }

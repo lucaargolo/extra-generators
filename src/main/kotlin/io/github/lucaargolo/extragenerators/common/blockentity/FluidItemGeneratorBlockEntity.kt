@@ -1,19 +1,17 @@
 package io.github.lucaargolo.extragenerators.common.blockentity
 
 import alexiil.mc.lib.attributes.Simulation
+import alexiil.mc.lib.attributes.fluid.FluidContainerRegistry
 import alexiil.mc.lib.attributes.fluid.amount.FluidAmount
 import alexiil.mc.lib.attributes.fluid.filter.FluidFilter
 import alexiil.mc.lib.attributes.fluid.impl.SimpleFixedFluidInv
 import alexiil.mc.lib.attributes.fluid.volume.FluidKey
-import alexiil.mc.lib.attributes.fluid.volume.FluidKeys
 import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv
 import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.common.block.FluidItemGeneratorBlock
-import io.github.lucaargolo.extragenerators.mixin.BucketItemAccessor
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import net.minecraft.block.BlockState
-import net.minecraft.item.BucketItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
@@ -27,7 +25,7 @@ class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGener
         override fun getFilterForSlot(slot: Int): ItemFilter {
             return when(slot) {
                 0 -> ItemFilter { initialized && (it.isEmpty || fluidItemFuelMap?.invoke(it) != null) }
-                1 -> ItemFilter { initialized && (it.isEmpty || (it.item as? BucketItemAccessor)?.fluid?.let { fluid -> FluidKeys.get(fluid) }?.let{ key -> key == fluidKey } == true) }
+                1 -> ItemFilter { initialized && (it.isEmpty || FluidContainerRegistry.getContainedFluid(it.item).fluidKey == fluidKey) }
                 2 -> ItemFilter { it.isEmpty || it.item == Items.BUCKET }
                 else -> ItemFilter { true }
             }
@@ -92,19 +90,18 @@ class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGener
             }
             if(!itemInv.getInvStack(1).isEmpty) {
                 val inputStack = itemInv.getSlot(1).get()
-                val bucketItem = inputStack.item as? BucketItem ?: return
-                val bucketFluid = (bucketItem as? BucketItemAccessor)?.fluid?.let { FluidKeys.get(it).withAmount(FluidAmount.BUCKET) } ?: return
-                if(fluidInv.getTank(0).attemptInsertion(bucketFluid.copy(), Simulation.SIMULATE).isEmpty) {
+                val stackFluid = FluidContainerRegistry.getContainedFluid(inputStack.item)
+                if(fluidInv.getTank(0).attemptInsertion(stackFluid.copy(), Simulation.SIMULATE).isEmpty) {
                     val outputStack = itemInv.getSlot(2).get()
                     if (outputStack.isEmpty) {
                         itemInv.getSlot(1).set(inputStack.also { it.decrement(1) })
                         itemInv.getSlot(2).set(ItemStack(Items.BUCKET))
-                        fluidInv.getTank(0).insert(bucketFluid.copy())
+                        fluidInv.getTank(0).insert(stackFluid.copy())
                         markDirtyAndSync()
                     } else if (outputStack.isItemEqual(ItemStack(Items.BUCKET)) && outputStack.count + 1 < outputStack.maxCount) {
                         itemInv.getSlot(1).set(inputStack.also { it.decrement(1) })
                         itemInv.getSlot(2).set(outputStack.also { it.increment(1) })
-                        fluidInv.getTank(0).insert(bucketFluid.copy())
+                        fluidInv.getTank(0).insert(stackFluid.copy())
                         markDirtyAndSync()
                     }
                 }

@@ -54,10 +54,12 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
 
     val SCALDING_GENERATOR = register("scalding_generator", FluidGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator) { FluidGeneratorFuel.fromFluidResource("scalding", it) })
 
-    val STEAM_GENERATOR = register("steam_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator, FluidKeys.WATER) { FluidGeneratorFuel.fromSteamGeneratorFuel(it) })
-    val REDSTONE_GENERATOR = register("redstone_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator, FluidKeys.LAVA) { FluidGeneratorFuel.fromRedstoneGeneratorFuel(it) })
+    val STEAM_GENERATOR = register("steam_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.steamGenerator, FluidKeys.WATER) { FluidGeneratorFuel.fromSteamGeneratorFuel(it) })
+    val REDSTONE_GENERATOR = register("redstone_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.redstoneGenerator, FluidKeys.LAVA) { FluidGeneratorFuel.fromRedstoneGeneratorFuel(it) })
 
-    val COLORFUL_GENERATOR = register("colorful_generator", ColorfulGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator))
+    val COLORFUL_GENERATOR = register("colorful_generator", ColorfulGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.colorfulGenerator))
+
+    val THERMOELECTRIC_GENERATOR = register("thermoelectric_generator", ThermoelectricGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.thermoelectricGenerator))
 
     fun itemGeneratorArray() = map.values.filterIsInstance<ItemGeneratorBlock>().toTypedArray()
 

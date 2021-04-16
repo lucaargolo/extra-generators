@@ -9,9 +9,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "BucketItemAccessor",
-    "SpriteAccessor"
-  ]
+  }
 }

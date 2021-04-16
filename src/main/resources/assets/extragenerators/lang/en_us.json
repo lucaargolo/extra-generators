@@ -15,6 +15,7 @@
   "block.extragenerators.steam_generator": "Steam Generator",
   "block.extragenerators.redstone_generator": "Redstone Generator",
   "block.extragenerators.colorful_generator": "Colorful Generator",
+  "block.extragenerators.thermoelectric_generator": "Thermoelectric Generator",
 
   "tooltip.extragenerators.sneak_for_more": "Press %s to see more info.",
   "tooltip.extragenerators.empty": "Empty",
