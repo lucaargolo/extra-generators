@@ -1,11 +1,7 @@
 package io.github.lucaargolo.extragenerators.client.screen
 
-import alexiil.mc.lib.attributes.fluid.amount.FluidAmount
-import alexiil.mc.lib.attributes.fluid.volume.FluidKeys
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.FluidGeneratorScreenHandler
-import io.github.lucaargolo.extragenerators.common.containers.ItemGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory

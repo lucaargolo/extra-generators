@@ -8,8 +8,6 @@ import io.github.lucaargolo.extragenerators.network.PacketCompendium
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry
-import net.fabricmc.fabric.impl.client.model.ModelLoadingRegistryImpl
-import net.minecraft.client.util.ModelIdentifier
 
 class ExtraGeneratorsClient: ClientModInitializer {
 

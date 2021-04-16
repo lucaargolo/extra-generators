@@ -1,7 +1,6 @@
 package io.github.lucaargolo.extragenerators.common.containers
 
 import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.network.PacketCompendium
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.minecraft.entity.player.PlayerEntity

@@ -12,7 +12,6 @@ import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.common.block.FluidGeneratorBlock
 import io.github.lucaargolo.extragenerators.mixin.BucketItemAccessor
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
-import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import net.minecraft.block.BlockState
 import net.minecraft.item.BucketItem
 import net.minecraft.item.ItemStack

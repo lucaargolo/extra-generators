@@ -3,10 +3,8 @@ package io.github.lucaargolo.extragenerators.common.resource
 import alexiil.mc.lib.attributes.fluid.volume.FluidKey
 import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
-import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
-import net.minecraft.recipe.Ingredient
 import net.minecraft.resource.ResourceManager
 import java.io.InputStreamReader
 

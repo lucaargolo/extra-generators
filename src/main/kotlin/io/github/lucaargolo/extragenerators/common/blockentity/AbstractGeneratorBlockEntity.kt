@@ -2,7 +2,6 @@ package io.github.lucaargolo.extragenerators.common.blockentity
 
 import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
-import io.github.lucaargolo.extragenerators.common.block.ItemGeneratorBlock
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import io.github.lucaargolo.extragenerators.utils.SynchronizeableBlockEntity
 import net.minecraft.block.Block
