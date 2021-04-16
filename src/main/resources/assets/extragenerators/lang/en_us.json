@@ -12,6 +12,7 @@
   "block.extragenerators.sludgy_generator": "Sludgy Generator",
   "block.extragenerators.teleport_generator": "Teleport Generator",
   "block.extragenerators.withered_generator": "Withered Generator",
+  "block.extragenerators.steam_generator": "Steam Generator",
 
   "tooltip.extragenerators.sneak_for_more": "Press %s to see more info.",
   "tooltip.extragenerators.empty": "Empty",

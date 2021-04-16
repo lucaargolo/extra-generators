@@ -2,9 +2,11 @@ package io.github.lucaargolo.extragenerators.network
 
 import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
 import io.github.lucaargolo.extragenerators.client.screen.FluidGeneratorScreen
+import io.github.lucaargolo.extragenerators.client.screen.FluidItemGeneratorScreen
 import io.github.lucaargolo.extragenerators.client.screen.ItemGeneratorScreen
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.entity.GeneratorAreaEffectCloudEntity
+import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
@@ -13,6 +15,7 @@ object PacketCompendium {
 
     val UPDATE_ITEM_GENERATOR_SCREEN = ModIdentifier("update_item_generator_screen")
     val UPDATE_FLUID_GENERATOR_SCREEN = ModIdentifier("update_fluid_generator_screen")
+    val UPDATE_FLUID_ITEM_GENERATOR_SCREEN = ModIdentifier("update_item_fluid_generator_screen")
     val SPAWN_GENERATOR_AREA_EFFECT_CLOUD = ModIdentifier("spawn_generator_area_effect_cloud")
 
     fun onInitializeClient() {
@@ -28,10 +31,22 @@ object PacketCompendium {
         }
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_FLUID_GENERATOR_SCREEN) { client, _, buf, _ ->
             val double = buf.readDouble()
-            val burningFuel = GeneratorFuel.fromBuf(buf)
+            val burningFuel = FluidGeneratorFuel.fromBuf(buf)
             val fluidVolume = FluidVolume.fromMcBuffer(buf)
             client.execute {
                 (client.currentScreen as? FluidGeneratorScreen)?.screenHandler?.let {
+                    it.energyStored = double
+                    it.burningFuel = burningFuel
+                    it.fluidVolume = fluidVolume
+                }
+            }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(UPDATE_FLUID_ITEM_GENERATOR_SCREEN) { client, _, buf, _ ->
+            val double = buf.readDouble()
+            val burningFuel = FluidGeneratorFuel.fromBuf(buf)
+            val fluidVolume = FluidVolume.fromMcBuffer(buf)
+            client.execute {
+                (client.currentScreen as? FluidItemGeneratorScreen)?.screenHandler?.let {
                     it.energyStored = double
                     it.burningFuel = burningFuel
                     it.fluidVolume = fluidVolume

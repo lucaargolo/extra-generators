@@ -1,11 +1,12 @@
 [
   {
-    "ingredient": {
-      "fluid": "minecraft:lava"
-    },
     "fuel": {
-      "burnTime": 2500,
-      "energyOutput": 100000
+      "burnTime": 125,
+      "fluidInput": {
+        "fluid": "minecraft:lava",
+        "amount":"1/20"
+      },
+      "energyOutput": 5000
     }
   }
 ]

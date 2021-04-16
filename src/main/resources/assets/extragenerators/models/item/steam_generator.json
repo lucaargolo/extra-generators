@@ -1,0 +1,6 @@
+{
+  "parent": "extragenerators:item/base_generator",
+  "textures": {
+    "color": "extragenerators:block/steam_generator"
+  }
+}

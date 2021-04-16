@@ -1,11 +1,7 @@
 package io.github.lucaargolo.extragenerators.client.screen
 
-import alexiil.mc.lib.attributes.fluid.amount.FluidAmount
-import alexiil.mc.lib.attributes.fluid.volume.FluidKeys
-import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.containers.FluidGeneratorScreenHandler
-import io.github.lucaargolo.extragenerators.common.containers.ItemGeneratorScreenHandler
+import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.containers.FluidItemGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
@@ -15,9 +11,9 @@ import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.MathHelper
 
-class FluidGeneratorScreen(handler: FluidGeneratorScreenHandler, inventory: PlayerInventory, title: Text): AbstractGeneratorScreen<FluidGeneratorScreenHandler, FluidGeneratorBlockEntity>(handler, inventory, title) {
+class FluidItemGeneratorScreen(handler: FluidItemGeneratorScreenHandler, inventory: PlayerInventory, title: Text): AbstractGeneratorScreen<FluidItemGeneratorScreenHandler, FluidItemGeneratorBlockEntity>(handler, inventory, title) {
 
-    private val texture = ModIdentifier("textures/gui/fluid_generator.png")
+    private val texture = ModIdentifier("textures/gui/fluid_item_generator.png")
 
     override fun init() {
         super.init()
@@ -35,10 +31,10 @@ class FluidGeneratorScreen(handler: FluidGeneratorScreenHandler, inventory: Play
         }
         if((x+134..x+150).contains(mouseX) && (y+17..y+69).contains(mouseY)) {
             val tank = handler.entity.fluidInv.getTank(0)
-            val volume = tank.get()
-            val stored = volume.amount()
+            val volume = handler.fluidVolume
+            val stored = handler.fluidVolume?.amount()
             val capacity = tank.maxAmount_F
-            renderTooltip(matrices, listOf(if(volume.isEmpty) TranslatableText("tooltip.extragenerators.empty") else volume.name, LiteralText("${stored.asInt(1000)} / ${capacity.asInt(1000)} mB").formatted(Formatting.GRAY)), mouseX, mouseY)
+            renderTooltip(matrices, listOf(if(volume?.isEmpty != false) TranslatableText("tooltip.extragenerators.empty") else volume.name, LiteralText("${stored?.asInt(1000) ?: 0} / ${capacity.asInt(1000)} mB").formatted(Formatting.GRAY)), mouseX, mouseY)
         }
     }
 

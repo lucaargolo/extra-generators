@@ -2,6 +2,7 @@ package io.github.lucaargolo.extragenerators.common.resource
 
 import alexiil.mc.lib.attributes.fluid.volume.FluidKey
 import io.github.lucaargolo.extragenerators.ExtraGenerators
+import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
@@ -11,9 +12,9 @@ import java.io.InputStreamReader
 
 class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
-    private val fluidKeysMap = linkedMapOf<String, LinkedHashMap<FluidKey, GeneratorFuel>>()
+    private val fluidKeysMap = linkedMapOf<String, LinkedHashMap<FluidKey, FluidGeneratorFuel>>()
 
-    fun test(id: String, fluidKey: FluidKey): GeneratorFuel? {
+    fun test(id: String, fluidKey: FluidKey): FluidGeneratorFuel? {
         fluidKeysMap[id]?.forEach { (key, fuel) ->
             if(key == fluidKey) return fuel
         }
@@ -34,9 +35,9 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
                 val jsonArray = json.asJsonArray
                 jsonArray.forEach { jsonElement ->
                     val jsonObject = jsonElement.asJsonObject
-                    val generatorFuel = GeneratorFuel.fromJson(jsonObject.get("fuel").asJsonObject)
+                    val generatorFuel = FluidGeneratorFuel.fromJson(jsonObject.get("fuel").asJsonObject)
                     generatorFuel?.let {
-                        fluidKeysMap.getOrPut(id) { linkedMapOf() }[FluidKey.fromJson(jsonObject.get("ingredient").asJsonObject)] = it
+                        fluidKeysMap.getOrPut(id) { linkedMapOf() }[it.fluidInput.fluidKey] = it
                     }
                 }
             }catch (e: Exception) {

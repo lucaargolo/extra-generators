@@ -10,6 +10,7 @@ object BlockEntityCompendium: RegistryCompendium<BlockEntityType<*>>(Registry.BL
 
     val ITEM_GENERATOR_TYPE = register("item_generator", BlockEntityType.Builder.create( { ItemGeneratorBlockEntity() }, *BlockCompendium.itemGeneratorArray() ).build(null)) as BlockEntityType<ItemGeneratorBlockEntity>
     val FLUID_GENERATOR_TYPE = register("fluid_generator", BlockEntityType.Builder.create( { FluidGeneratorBlockEntity() }, *BlockCompendium.fluidGeneratorArray() ).build(null)) as BlockEntityType<FluidGeneratorBlockEntity>
+    val FLUID_ITEM_GENERATOR_TYPE = register("fluid_item_generator", BlockEntityType.Builder.create( { FluidItemGeneratorBlockEntity() }, *BlockCompendium.fluidItemGeneratorArray() ).build(null)) as BlockEntityType<FluidItemGeneratorBlockEntity>
 
 
 }

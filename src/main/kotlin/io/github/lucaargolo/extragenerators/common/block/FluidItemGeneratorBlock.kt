@@ -2,8 +2,11 @@ package io.github.lucaargolo.extragenerators.common.block
 
 import alexiil.mc.lib.attributes.AttributeList
 import alexiil.mc.lib.attributes.fluid.volume.FluidKey
+import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.FluidGeneratorScreenHandler
+import io.github.lucaargolo.extragenerators.common.containers.FluidItemGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModConfig
@@ -11,6 +14,8 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
@@ -22,10 +27,10 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.world.BlockView
 import net.minecraft.world.World
 
-class FluidGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator, val fluidFuelMap: (FluidKey) -> FluidGeneratorFuel?): AbstractGeneratorBlock(settings, generatorConfig) {
+class FluidItemGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator, val fluidKey: FluidKey, val fluidItemFuelMap: (ItemStack) -> FluidGeneratorFuel?): AbstractGeneratorBlock(settings, generatorConfig) {
 
     override fun addAllAttributes(world: World, pos: BlockPos, state: BlockState, to: AttributeList<*>) {
-        (world.getBlockEntity(pos) as? FluidGeneratorBlockEntity)?.let{
+        (world.getBlockEntity(pos) as? FluidItemGeneratorBlockEntity)?.let{
             to.offer(it.itemInv)
             to.offer(it.fluidInv)
         }
@@ -36,7 +41,7 @@ class FluidGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generat
             override fun getDisplayName() = name
 
             override fun createMenu(syncId: Int, inv: PlayerInventory, player: PlayerEntity): ScreenHandler {
-                return FluidGeneratorScreenHandler(syncId, inv, world.getBlockEntity(pos) as FluidGeneratorBlockEntity, ScreenHandlerContext.create(world, pos))
+                return FluidItemGeneratorScreenHandler(syncId, inv, world.getBlockEntity(pos) as FluidItemGeneratorBlockEntity, ScreenHandlerContext.create(world, pos))
             }
 
             override fun writeScreenOpeningData(player: ServerPlayerEntity, buf: PacketByteBuf) {
@@ -46,6 +51,6 @@ class FluidGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generat
         return ActionResult.SUCCESS
     }
 
-    override fun createBlockEntity(world: BlockView?) = FluidGeneratorBlockEntity()
+    override fun createBlockEntity(world: BlockView?) = FluidItemGeneratorBlockEntity()
 
 }

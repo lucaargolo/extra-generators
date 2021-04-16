@@ -1,8 +1,10 @@
 package io.github.lucaargolo.extragenerators.common.containers
 
 import io.github.lucaargolo.extragenerators.client.screen.FluidGeneratorScreen
+import io.github.lucaargolo.extragenerators.client.screen.FluidItemGeneratorScreen
 import io.github.lucaargolo.extragenerators.client.screen.ItemGeneratorScreen
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.utils.RegistryCompendium
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
@@ -30,10 +32,19 @@ object ScreenHandlerCompendium: RegistryCompendium<ScreenHandlerType<*>>(Registr
         FluidGeneratorScreenHandler(i, playerInventory, be, ScreenHandlerContext.create(world, pos))
     }) as ScreenHandlerType<FluidGeneratorScreenHandler>
 
+    val FLUID_ITEM_GENERATOR = register("fluid_item_generator", ExtendedScreenHandlerType { i, playerInventory, packetByteBuf ->
+        val pos = packetByteBuf.readBlockPos()
+        val player = playerInventory.player
+        val world = player.world
+        val be = world.getBlockEntity(pos) as FluidItemGeneratorBlockEntity
+        FluidItemGeneratorScreenHandler(i, playerInventory, be, ScreenHandlerContext.create(world, pos))
+    }) as ScreenHandlerType<FluidItemGeneratorScreenHandler>
+
 
     fun onInitializeClient() {
         ScreenRegistry.register(ITEM_GENERATOR) { handler, playerInventory, title -> ItemGeneratorScreen(handler, playerInventory, title) }
         ScreenRegistry.register(FLUID_GENERATOR) { handler, playerInventory, title -> FluidGeneratorScreen(handler, playerInventory, title) }
+        ScreenRegistry.register(FLUID_ITEM_GENERATOR) { handler, playerInventory, title -> FluidItemGeneratorScreen(handler, playerInventory, title) }
     }
 
 }

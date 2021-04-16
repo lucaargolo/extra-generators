@@ -5,6 +5,7 @@ import alexiil.mc.lib.attributes.fluid.volume.FluidKeys
 import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
 import alexiil.mc.lib.attributes.item.compat.SlotFixedItemInv
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.network.PacketCompendium
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
@@ -15,14 +16,15 @@ import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandlerContext
 
-class FluidGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInventory, entity: FluidGeneratorBlockEntity, context: ScreenHandlerContext): AbstractGeneratorScreenHandler<FluidGeneratorScreenHandler, FluidGeneratorBlockEntity>(ScreenHandlerCompendium.FLUID_GENERATOR, syncId, playerInventory, entity, context, PacketCompendium.UPDATE_FLUID_GENERATOR_SCREEN)  {
+class FluidItemGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInventory, entity: FluidItemGeneratorBlockEntity, context: ScreenHandlerContext): AbstractGeneratorScreenHandler<FluidItemGeneratorScreenHandler, FluidItemGeneratorBlockEntity>(ScreenHandlerCompendium.FLUID_ITEM_GENERATOR, syncId, playerInventory, entity, context, PacketCompendium.UPDATE_FLUID_ITEM_GENERATOR_SCREEN)  {
 
     var burningFuel: FluidGeneratorFuel? = null
     var fluidVolume: FluidVolume? = null
 
     init {
-        addSlot(SlotFixedItemInv(this, entity.itemInv, server, 0,116, 17))
-        addSlot(object: SlotFixedItemInv(this, entity.itemInv, server, 1,116, 53) {
+        addSlot(SlotFixedItemInv(this, entity.itemInv, server, 0,80, 53))
+        addSlot(SlotFixedItemInv(this, entity.itemInv, server, 1,116, 17))
+        addSlot(object: SlotFixedItemInv(this, entity.itemInv, server, 2,116, 53) {
             override fun canInsert(stack: ItemStack?) = false
         })
     }
@@ -36,7 +38,7 @@ class FluidGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInventory,
     override fun postSync() {
         super.postSync()
         burningFuel = entity.burningFuel?.copy()
-        fluidVolume = entity.fluidInv.getInvFluid(0)
+        fluidVolume = entity.fluidInv.getInvFluid(0).copy()
     }
 
     override fun writeToBuf(buf: PacketByteBuf) {

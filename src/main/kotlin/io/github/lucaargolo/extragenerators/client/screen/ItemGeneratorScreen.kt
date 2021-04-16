@@ -35,7 +35,7 @@ class ItemGeneratorScreen(handler: ItemGeneratorScreenHandler, inventory: Player
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight)
         val energyPercentage = handler.energyStored/handler.entity.maxStoredPower
         val energyOffset = MathHelper.lerp(energyPercentage, 0.0, 52.0).toInt()
-        drawTexture(matrices, x+25, y+17+(52-energyOffset), 176, 0, 8, energyOffset)
+        drawTexture(matrices, x+25, y+17+(52-energyOffset), 176, 52-energyOffset, 8, energyOffset)
         handler.burningFuel?.let {
             val p = (it.burnTime * 13f /it.totalBurnTime).toInt()
             drawTexture(matrices, x+81, y+37+(12-p), 184, 12-p, 14, p+1)

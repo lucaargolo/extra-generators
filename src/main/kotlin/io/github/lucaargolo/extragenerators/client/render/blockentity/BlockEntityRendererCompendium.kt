@@ -14,6 +14,7 @@ object BlockEntityRendererCompendium: GenericCompendium<Function<BlockEntityRend
     init {
         register("item_generator", Function { GeneratorBlockEntityRenderer(it) })
         register("fluid_generator", Function { GeneratorBlockEntityRenderer(it) })
+        register("fluid_item_generator", Function { GeneratorBlockEntityRenderer(it) })
     }
 
     @Suppress("UNCHECKED_CAST")

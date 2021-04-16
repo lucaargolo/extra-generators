@@ -15,7 +15,7 @@ class ItemGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInventory, 
     var burningFuel: GeneratorFuel? = null
 
     init {
-        addSlot(SlotFixedItemInv(this, entity.itemInv, server, 0,8+18*4, 53))
+        addSlot(SlotFixedItemInv(this, entity.itemInv, server, 0,80, 53))
     }
 
     override fun transferSlot(player: PlayerEntity?, index: Int): ItemStack {
