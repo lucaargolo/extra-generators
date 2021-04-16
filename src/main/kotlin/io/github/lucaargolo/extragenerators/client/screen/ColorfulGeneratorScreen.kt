@@ -1,7 +1,7 @@
 package io.github.lucaargolo.extragenerators.client.screen
 
-import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.containers.ItemGeneratorScreenHandler
+import io.github.lucaargolo.extragenerators.common.blockentity.ColorfulGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.containers.ColorfulGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
@@ -10,9 +10,9 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.math.MathHelper
 
-class ItemGeneratorScreen(handler: ItemGeneratorScreenHandler, inventory: PlayerInventory, title: Text): AbstractGeneratorScreen<ItemGeneratorScreenHandler, ItemGeneratorBlockEntity>(handler, inventory, title) {
+class ColorfulGeneratorScreen(handler: ColorfulGeneratorScreenHandler, inventory: PlayerInventory, title: Text): AbstractGeneratorScreen<ColorfulGeneratorScreenHandler, ColorfulGeneratorBlockEntity>(handler, inventory, title) {
 
-    private val texture = ModIdentifier("textures/gui/item_generator.png")
+    private val texture = ModIdentifier("textures/gui/colorful_generator.png")
 
     override fun init() {
         super.init()
@@ -38,7 +38,9 @@ class ItemGeneratorScreen(handler: ItemGeneratorScreenHandler, inventory: Player
         drawTexture(matrices, x+25, y+17+(52-energyOffset), 176, 52-energyOffset, 8, energyOffset)
         handler.burningFuel?.let {
             val p = (it.currentBurnTime * 13f /it.burnTime).toInt()
-            drawTexture(matrices, x+81, y+37+(12-p), 184, 12-p, 14, p+1)
+            drawTexture(matrices, x+45, y+37+(12-p), 184, 12-p, 14, p+1)
+            drawTexture(matrices, x+81, y+37+(12-p), 198, 12-p, 14, p+1)
+            drawTexture(matrices, x+117, y+37+(12-p), 212, 12-p, 14, p+1)
         }
 
     }

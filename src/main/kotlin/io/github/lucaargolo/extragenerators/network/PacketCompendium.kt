@@ -1,6 +1,7 @@
 package io.github.lucaargolo.extragenerators.network
 
 import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
+import io.github.lucaargolo.extragenerators.client.screen.ColorfulGeneratorScreen
 import io.github.lucaargolo.extragenerators.client.screen.FluidGeneratorScreen
 import io.github.lucaargolo.extragenerators.client.screen.FluidItemGeneratorScreen
 import io.github.lucaargolo.extragenerators.client.screen.ItemGeneratorScreen
@@ -16,6 +17,7 @@ object PacketCompendium {
     val UPDATE_ITEM_GENERATOR_SCREEN = ModIdentifier("update_item_generator_screen")
     val UPDATE_FLUID_GENERATOR_SCREEN = ModIdentifier("update_fluid_generator_screen")
     val UPDATE_FLUID_ITEM_GENERATOR_SCREEN = ModIdentifier("update_item_fluid_generator_screen")
+    val UPDATE_COLORFUL_GENERATOR_SCREEN = ModIdentifier("update_colorful_generator_screen")
     val SPAWN_GENERATOR_AREA_EFFECT_CLOUD = ModIdentifier("spawn_generator_area_effect_cloud")
 
     fun onInitializeClient() {
@@ -50,6 +52,16 @@ object PacketCompendium {
                     it.energyStored = double
                     it.burningFuel = burningFuel
                     it.fluidVolume = fluidVolume
+                }
+            }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(UPDATE_COLORFUL_GENERATOR_SCREEN) { client, _, buf, _ ->
+            val double = buf.readDouble()
+            val burningFuel = GeneratorFuel.fromBuf(buf)
+            client.execute {
+                (client.currentScreen as? ColorfulGeneratorScreen)?.screenHandler?.let {
+                    it.energyStored = double
+                    it.burningFuel = burningFuel
                 }
             }
         }

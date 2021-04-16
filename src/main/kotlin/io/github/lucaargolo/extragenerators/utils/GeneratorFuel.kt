@@ -13,40 +13,42 @@ import net.minecraft.potion.PotionUtil
 import net.minecraft.util.math.MathHelper
 import kotlin.math.*
 
-data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOutput: Double) {
+data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energyOutput: Double) {
+
+    constructor(burnTime: Int, energyOutput: Double): this(burnTime, burnTime, energyOutput)
 
     fun toTag(): CompoundTag = CompoundTag().also {
-        it.putInt("totalBurnTime", totalBurnTime)
-        it.putInt("burnTime", burnTime)
+        it.putInt("totalBurnTime", burnTime)
+        it.putInt("burnTime", currentBurnTime)
         it.putDouble("energyOutput", energyOutput)
     }
 
     fun toBuf(buf: PacketByteBuf) {
-        buf.writeInt(totalBurnTime)
         buf.writeInt(burnTime)
+        buf.writeInt(currentBurnTime)
         buf.writeDouble(energyOutput)
     }
 
     companion object {
 
         fun fromTag(tag: CompoundTag): GeneratorFuel? {
-            val totalBurnTime = tag.getInt("totalBurnTime")
             val burnTime = tag.getInt("burnTime")
+            val currentBurnTime = tag.getInt("currentBurnTime")
             val energyOutput = tag.getDouble("energyOutput")
-            return if(energyOutput == 0.0) null else GeneratorFuel(totalBurnTime, burnTime, energyOutput)
+            return if(energyOutput == 0.0) null else GeneratorFuel(burnTime, currentBurnTime, energyOutput)
         }
 
         fun fromBuf(buf: PacketByteBuf): GeneratorFuel? {
-            val totalBurnTime = buf.readInt()
             val burnTime = buf.readInt()
+            val currentBurnTime = buf.readInt()
             val energyOutput = buf.readDouble()
-            return if(energyOutput == 0.0) null else GeneratorFuel(totalBurnTime, burnTime, energyOutput)
+            return if(energyOutput == 0.0) null else GeneratorFuel(burnTime, currentBurnTime, energyOutput)
         }
 
         fun fromJson(jsonObject: JsonObject): GeneratorFuel? {
             val burnTime = jsonObject.get("burnTime").asInt
             val energyOutput = jsonObject.get("energyOutput").asDouble
-            return if (energyOutput == 0.0) null else GeneratorFuel(burnTime, burnTime, energyOutput)
+            return if (energyOutput == 0.0) null else GeneratorFuel(burnTime, energyOutput)
         }
 
         fun fromItemResource(id: String, itemStack: ItemStack): GeneratorFuel? {
@@ -55,7 +57,7 @@ data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOu
 
         fun fromBurnableGeneratorFuel(item: Item): GeneratorFuel? {
             val burnTicks = FuelRegistryImpl.INSTANCE.get(item) ?: return null
-            return GeneratorFuel(burnTicks/4, burnTicks/4, burnTicks*10.0)
+            return GeneratorFuel(burnTicks/4, burnTicks*10.0)
         }
 
         fun fromGluttonyGeneratorFuel(item: Item): GeneratorFuel? {
@@ -63,13 +65,13 @@ data class GeneratorFuel(val totalBurnTime: Int, var burnTime: Int, val energyOu
             val energyOutput = foodComponent.hunger * foodComponent.saturationModifier * 8000.0
             val energyPerTick = foodComponent.hunger * 8
             val burnTime = energyOutput/energyPerTick
-            return GeneratorFuel(MathHelper.floor(burnTime), MathHelper.floor(burnTime), floor(energyOutput))
+            return GeneratorFuel(MathHelper.floor(burnTime), floor(energyOutput))
         }
 
         fun fromEnchantedGeneratorFuel(itemStack: ItemStack): GeneratorFuel? {
             val energyOutput = ceil(EnchantmentHelper.get(itemStack).map { (sqrt(min((it.value + 1), it.key.maxLevel) / it.key.maxLevel+0.0) * it.key.maxLevel * it.key.maxLevel * (it.value + 1)) / sqrt(it.key.rarity.weight+0.0) * max(1, it.key.getMinPower(it.value)) }.sum()) * 400
             val burnTime = MathHelper.ceil(energyOutput/40)
-            return if(energyOutput <= 0.0) null else GeneratorFuel(burnTime, burnTime, energyOutput)
+            return if(energyOutput <= 0.0) null else GeneratorFuel(burnTime, energyOutput)
         }
 
         fun fromBrewGeneratorFuel(itemStack: ItemStack): GeneratorFuel? {

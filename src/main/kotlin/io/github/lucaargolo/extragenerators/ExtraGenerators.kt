@@ -13,9 +13,11 @@ import io.github.lucaargolo.extragenerators.utils.ModConfig
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
+import net.fabricmc.fabric.api.tag.TagRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.tag.Tag
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
@@ -68,6 +70,18 @@ class ExtraGenerators: ModInitializer {
                 LOGGER.warn("Defaulting to original config.")
             }
             finalConfig
+        }
+
+        val RED_ITEMS: Tag<Item> by lazy {
+            TagRegistry.item(ModIdentifier("red_items"))
+        }
+
+        val GREEN_ITEMS: Tag<Item> by lazy {
+            TagRegistry.item(ModIdentifier("green_items"))
+        }
+
+        val BLUE_ITEMS: Tag<Item> by lazy {
+            TagRegistry.item(ModIdentifier("blue_items"))
         }
 
         fun creativeGroupSettings(): Item.Settings = Item.Settings().group(creativeTab)

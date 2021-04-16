@@ -12,9 +12,9 @@ import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 
-data class FluidGeneratorFuel(val burnTime: Int, val fluidInput: FluidVolume, val energyOutput: Double) {
+data class FluidGeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val fluidInput: FluidVolume, val energyOutput: Double) {
 
-    var currentBurnTime = burnTime
+    constructor(burnTime: Int, fluidInput: FluidVolume, energyOutput: Double): this(burnTime, burnTime, fluidInput, energyOutput)
 
     fun toTag(): CompoundTag = CompoundTag().also {
         it.putInt("burnTime", burnTime)
@@ -37,9 +37,7 @@ data class FluidGeneratorFuel(val burnTime: Int, val fluidInput: FluidVolume, va
             val currentBurnTime = tag.getInt("currentBurnTime")
             val fluidInput = FluidVolume.fromTag(tag.getCompound("fluidInput"))
             val energyOutput = tag.getDouble("energyOutput")
-            return if (energyOutput == 0.0) null else FluidGeneratorFuel(burnTime, fluidInput, energyOutput).also {
-                it.currentBurnTime = currentBurnTime
-            }
+            return if (energyOutput == 0.0) null else FluidGeneratorFuel(burnTime, currentBurnTime, fluidInput, energyOutput)
         }
 
         fun fromBuf(buf: PacketByteBuf): FluidGeneratorFuel? {
@@ -47,9 +45,7 @@ data class FluidGeneratorFuel(val burnTime: Int, val fluidInput: FluidVolume, va
             val currentBurnTime = buf.readInt()
             val fluidInput = FluidVolume.fromMcBuffer(buf)
             val energyOutput = buf.readDouble()
-            return if (energyOutput == 0.0) null else FluidGeneratorFuel(burnTime, fluidInput, energyOutput).also {
-                it.currentBurnTime = currentBurnTime
-            }
+            return if (energyOutput == 0.0) null else FluidGeneratorFuel(burnTime, currentBurnTime, fluidInput, energyOutput)
         }
 
         fun fromJson(jsonObject: JsonObject): FluidGeneratorFuel? {

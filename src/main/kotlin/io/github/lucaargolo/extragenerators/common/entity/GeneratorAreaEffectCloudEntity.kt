@@ -67,7 +67,7 @@ class GeneratorAreaEffectCloudEntity(entityType: EntityType<GeneratorAreaEffectC
             cloud.generatorBlockEntity = generatorBlockEntity
             cloud.blockEntityPos = generatorBlockEntity.pos
             cloud.radius = 3.0f
-            cloud.duration = generatorBlockEntity.burningFuel?.totalBurnTime ?: 0
+            cloud.duration = generatorBlockEntity.burningFuel?.burnTime ?: 0
             cloud.addEffect(StatusEffectInstance(StatusEffectInstance(statusEffect, 200)))
             world.spawnEntity(cloud)
         }

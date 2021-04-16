@@ -2,20 +2,21 @@ package io.github.lucaargolo.extragenerators.common.blockentity
 
 import alexiil.mc.lib.attributes.item.filter.ItemFilter
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv
-import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
-import io.github.lucaargolo.extragenerators.common.block.ItemGeneratorBlock
+import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 
-class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockEntity>(BlockEntityCompendium.ITEM_GENERATOR_TYPE) {
+class ColorfulGeneratorBlockEntity: AbstractGeneratorBlockEntity<ColorfulGeneratorBlockEntity>(BlockEntityCompendium.COLORFUL_GENERATOR_TYPE) {
 
-    private var itemFuelMap: ((ItemStack) -> GeneratorFuel?)? = null
-    private var burnCallback: ((ItemGeneratorBlockEntity) -> Unit)? = null
-
-    val itemInv = object: FullFixedItemInv(1) {
-        override fun getFilterForSlot(slot: Int): ItemFilter = ItemFilter { initialized && (it.isEmpty || itemFuelMap?.invoke(it) != null) }
+    val itemInv = object: FullFixedItemInv(3) {
+        override fun getFilterForSlot(slot: Int): ItemFilter = when(slot) {
+            0 -> ItemFilter { initialized && (it.isEmpty || ExtraGenerators.RED_ITEMS.contains(it.item)) }
+            1 -> ItemFilter { initialized && (it.isEmpty || ExtraGenerators.GREEN_ITEMS.contains(it.item)) }
+            2 -> ItemFilter { initialized && (it.isEmpty || ExtraGenerators.BLUE_ITEMS.contains(it.item)) }
+            else -> ItemFilter { true }
+        }
         override fun isItemValidForSlot(slot: Int, item: ItemStack) = getFilterForSlot(slot).matches(item)
     }
 
@@ -24,15 +25,6 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
     override fun isServerRunning() = burningFuel?.let { storedPower + (it.energyOutput/it.burnTime) <= maxStoredPower } ?: false
 
     override fun getCogWheelRotation(): Float = burningFuel?.let { (it.energyOutput.toFloat()/it.burnTime)/10f } ?: 0f
-
-    override fun initialize(block: AbstractGeneratorBlock): Boolean {
-        val superInitialized = super.initialize(block)
-        (block as? ItemGeneratorBlock)?.let {
-            itemFuelMap = it.itemFuelMap
-            burnCallback = it.burnCallback
-        }
-        return itemFuelMap != null && burnCallback != null && superInitialized
-    }
 
     override fun tick() {
         super.tick()
@@ -49,10 +41,14 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
                 }
             }
             if (burningFuel == null) {
-                val stack = itemInv.extract(1)
-                if (!stack.isEmpty) {
-                    burningFuel = itemFuelMap?.invoke(stack)?.copy()
-                    burningFuel?.let { burnCallback?.invoke(this) }
+                val redStack = itemInv.getInvStack(0)
+                val greenStack = itemInv.getInvStack(1)
+                val blueStack = itemInv.getInvStack(2)
+                if (!redStack.isEmpty && !greenStack.isEmpty && !blueStack.isEmpty) {
+                    itemInv.getSlot(0).extract(1)
+                    itemInv.getSlot(1).extract(1)
+                    itemInv.getSlot(2).extract(1)
+                    burningFuel = GeneratorFuel(400, 100000.0)
                     markDirtyAndSync()
                 }
             }
