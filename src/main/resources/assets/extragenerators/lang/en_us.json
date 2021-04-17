@@ -9,6 +9,7 @@
   "block.extragenerators.gluttony_generator": "Gluttony Generator",
   "block.extragenerators.icy_generator": "Icy Generator",
   "block.extragenerators.scalding_generator": "Scalding Generator",
+  "block.extragenerators.demise_generator": "Demise Generator",
   "block.extragenerators.sludgy_generator": "Sludgy Generator",
   "block.extragenerators.teleport_generator": "Teleport Generator",
   "block.extragenerators.withered_generator": "Withered Generator",

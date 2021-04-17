@@ -7,22 +7,31 @@ class ModConfig {
         val storage: Double = 0.0
     )
 
-    val burnableGenerator = Generator(40.0, 100000.0)
-    val gluttonyGenerator = Generator(64.0, 100000.0)
-    val icyGenerator = Generator(40.0, 100000.0)
-    val sludgyGenerator = Generator(400.0, 100000.0)
-    val witheredGenerator = Generator(4000.0, 400000.0)
-    val teleportGenerator = Generator(80.0, 100000.0)
-    val dragonGenerator = Generator(40.0, 1000000.0)
-    val demiseGenerator = Generator(666.0, 100000.0)
-    val blastGenerator = Generator(160.0, 100000.0)
-    val enchantedGenerator = Generator(40.0, 100000.0)
-    val brewGenerator = Generator(40.0, 100000.0)
-    val scaldingGenerator = Generator(40.0, 100000.0)
-    val steamGenerator = Generator(40.0, 100000.0)
-    val redstoneGenerator = Generator(40.0, 100000.0)
-    val colorfulGenerator = Generator(40.0, 100000.0)
-    val thermoelectricGenerator = Generator(40.0, 100000.0)
+    //Tier 1 Generators
+    val thermoelectricGenerator = Generator(32.0, 100000.0)
+    val burnableGenerator = Generator(32.0, 100000.0)
+    val icyGenerator = Generator(32.0, 100000.0)
+    val colorfulGenerator = Generator(32.0, 100000.0)
+
+    //Tier 2 Generators
+    val sludgyGenerator = Generator(64.0, 200000.0)
+    val teleportGenerator = Generator(64.0, 200000.0)
+    val scaldingGenerator = Generator(64.0, 200000.0)
+    val steamGenerator = Generator(64.0, 200000.0)
+
+    //Tier 3 Generators
+    val gluttonyGenerator = Generator(128.0, 400000.0)
+    val brewGenerator = Generator(128.0, 400000.0)
+    val redstoneGenerator = Generator(128.0, 400000.0)
+    val blastGenerator = Generator(128.0, 400000.0)
+
+    //Tier 4 Generators
+    val enchantedGenerator = Generator(256.0, 800000.0)
+    val demiseGenerator = Generator(256.0, 800000.0)
+
+    //Tier 5 Generators
+    val dragonGenerator = Generator(2048.0, 64000000.0)
+    val witheredGenerator = Generator(2048.0, 6400000.0)
 
 
 

@@ -15,6 +15,7 @@ import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.util.math.MathHelper
 
 class FluidGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidGeneratorBlockEntity>(BlockEntityCompendium.FLUID_GENERATOR_TYPE) {
 
@@ -38,9 +39,9 @@ class FluidGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidGeneratorBloc
 
     var burningFuel: FluidGeneratorFuel? = null
 
-    override fun isServerRunning() = burningFuel?.let { storedPower + (it.energyOutput/it.burnTime) <= maxStoredPower } ?: false
+    override fun isServerRunning() = burningFuel?.let { storedPower + MathHelper.floor(it.energyOutput/it.burnTime) <= maxStoredPower } ?: false
 
-    override fun getCogWheelRotation(): Float = burningFuel?.let { (it.energyOutput.toFloat()/it.burnTime)/10f } ?: 0f
+    override fun getCogWheelRotation(): Float = burningFuel?.let { MathHelper.floor(it.energyOutput/it.burnTime)/10f } ?: 0f
 
     override fun initialize(block: AbstractGeneratorBlock): Boolean {
         val superInitialized = super.initialize(block)
@@ -54,7 +55,7 @@ class FluidGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidGeneratorBloc
         super.tick()
         if(world?.isClient == false) {
             burningFuel?.let {
-                val energyPerTick = it.energyOutput / it.burnTime
+                val energyPerTick = MathHelper.floor(it.energyOutput/it.burnTime)
                 if (storedPower + energyPerTick <= maxStoredPower) {
                     storedPower += energyPerTick
                     it.currentBurnTime--

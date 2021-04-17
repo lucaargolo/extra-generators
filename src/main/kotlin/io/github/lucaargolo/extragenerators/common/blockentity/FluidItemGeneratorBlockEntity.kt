@@ -15,6 +15,7 @@ import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.util.math.MathHelper
 
 class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGeneratorBlockEntity>(BlockEntityCompendium.FLUID_ITEM_GENERATOR_TYPE) {
 
@@ -43,11 +44,11 @@ class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGener
     override fun isServerRunning() = burningFuel?.let {
         val volume = fluidInv.attemptAnyExtraction(FluidAmount.ABSOLUTE_MAXIMUM, Simulation.SIMULATE)
         val fluidPerTick = it.fluidInput.amount().div(it.burnTime.toLong())
-        val energyPerTick = it.energyOutput / it.burnTime
+        val energyPerTick = MathHelper.floor(it.energyOutput / it.burnTime)
         storedPower + energyPerTick <= maxStoredPower && !volume.split(fluidPerTick).isEmpty
     } ?: false
 
-    override fun getCogWheelRotation(): Float = burningFuel?.let { (it.energyOutput.toFloat()/it.burnTime)/10f } ?: 0f
+    override fun getCogWheelRotation(): Float = burningFuel?.let { MathHelper.floor(it.energyOutput/it.burnTime)/10f } ?: 0f
 
     override fun initialize(block: AbstractGeneratorBlock): Boolean {
         val superInitialized = super.initialize(block)
@@ -64,7 +65,7 @@ class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGener
             burningFuel?.let {
                 val volume = fluidInv.attemptAnyExtraction(FluidAmount.ABSOLUTE_MAXIMUM, Simulation.SIMULATE)
                 val fluidPerTick = it.fluidInput.amount().div(it.burnTime.toLong())
-                val energyPerTick = it.energyOutput / it.burnTime
+                val energyPerTick = MathHelper.floor(it.energyOutput/it.burnTime)
                 if (storedPower + energyPerTick <= maxStoredPower && !volume.split(fluidPerTick).isEmpty) {
                     fluidInv.extract(fluidPerTick)
                     storedPower += energyPerTick
