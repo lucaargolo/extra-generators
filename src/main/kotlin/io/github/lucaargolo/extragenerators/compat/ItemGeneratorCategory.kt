@@ -74,6 +74,8 @@ class ItemGeneratorCategory(private val id: String, private val block: Block): R
     companion object {
         private val set = linkedSetOf<ItemGeneratorCategory>()
 
+        fun getMatching(id: String) = set.firstOrNull { id == it.identifier.toString().split(":")[1].replace("_generator", "") }
+
         fun registerCategories(recipeHelper: RecipeHelper) = set.forEach { recipeHelper.registerCategory(it) }
 
         fun registerOthers(recipeHelper: RecipeHelper) = set.forEach {

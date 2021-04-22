@@ -7,10 +7,13 @@ import io.github.lucaargolo.extragenerators.client.screen.FluidItemGeneratorScre
 import io.github.lucaargolo.extragenerators.client.screen.ItemGeneratorScreen
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.entity.GeneratorAreaEffectCloudEntity
+import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 
 object PacketCompendium {
 
@@ -19,6 +22,11 @@ object PacketCompendium {
     val UPDATE_FLUID_ITEM_GENERATOR_SCREEN = ModIdentifier("update_item_fluid_generator_screen")
     val UPDATE_COLORFUL_GENERATOR_SCREEN = ModIdentifier("update_colorful_generator_screen")
     val SPAWN_GENERATOR_AREA_EFFECT_CLOUD = ModIdentifier("spawn_generator_area_effect_cloud")
+
+    val SYNC_ITEM_GENERATORS = ModIdentifier("sync_item_generators")
+    val SYNC_FLUID_GENERATORS = ModIdentifier("sync_fluid_generators")
+    val SYNC_BLOCK_TEMPERATURE = ModIdentifier("sync_block_temperature")
+    val REQUEST_RESOURCES = ModIdentifier("request_resources")
 
     fun onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_ITEM_GENERATOR_SCREEN) { client, _, buf, _ ->
@@ -90,10 +98,15 @@ object PacketCompendium {
                 world.addEntity(id, entity)
             }
         }
+        ClientPlayNetworking.registerGlobalReceiver(SYNC_ITEM_GENERATORS) { _, _, buf, _ ->
+            ResourceCompendium.ITEM_GENERATORS.fromBuf(buf)
+        }
     }
 
     fun onInitialize() {
-
+        ServerPlayNetworking.registerGlobalReceiver(REQUEST_RESOURCES) { _, player, _, _, _ ->
+            ServerPlayNetworking.send(player, SYNC_ITEM_GENERATORS, PacketByteBufs.create().also { ResourceCompendium.ITEM_GENERATORS.toBuf(it) })
+        }
     }
 
 }

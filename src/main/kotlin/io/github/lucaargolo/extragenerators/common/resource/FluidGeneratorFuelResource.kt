@@ -11,6 +11,7 @@ import java.io.InputStreamReader
 class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
     private val fluidKeysMap = linkedMapOf<String, LinkedHashMap<FluidKey, FluidGeneratorFuel>>()
+    val clientFluidKeysMap = linkedMapOf<String, LinkedHashMap<FluidKey, FluidGeneratorFuel>>()
 
     fun test(id: String, fluidKey: FluidKey): FluidGeneratorFuel? {
         fluidKeysMap[id]?.forEach { (key, fuel) ->

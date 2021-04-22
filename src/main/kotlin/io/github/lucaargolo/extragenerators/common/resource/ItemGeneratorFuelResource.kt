@@ -5,6 +5,7 @@ import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.item.ItemStack
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.recipe.Ingredient
 import net.minecraft.resource.ResourceManager
 import java.io.InputStreamReader
@@ -12,12 +13,39 @@ import java.io.InputStreamReader
 class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
     private val ingredientsMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
+    val clientIngredientMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
 
     fun test(id: String, itemStack: ItemStack): GeneratorFuel? {
         ingredientsMap[id]?.forEach { (ingredient, fuel) ->
             if(ingredient.test(itemStack)) return fuel
         }
         return null
+    }
+
+    fun toBuf(buf: PacketByteBuf) {
+        buf.writeInt(ingredientsMap.size)
+        ingredientsMap.forEach { (id, ingredientMap) ->
+            buf.writeString(id)
+            buf.writeInt(ingredientMap.size)
+            ingredientMap.forEach { (ingredient, fuel) ->
+                ingredient.write(buf)
+                fuel.toBuf(buf)
+            }
+        }
+    }
+
+    fun fromBuf(buf: PacketByteBuf) {
+        clientIngredientMap.clear()
+        val ingredientsMapSize = buf.readInt()
+        repeat(ingredientsMapSize) {
+            val ingredientsMapId = buf.readString()
+            val ingredientMapSize = buf.readInt()
+            repeat(ingredientMapSize) {
+                val ingredient = Ingredient.fromPacket(buf)
+                val fuel = GeneratorFuel.fromBuf(buf) ?: GeneratorFuel(0, 0.0)
+                clientIngredientMap.getOrPut(ingredientsMapId) { linkedMapOf() } [ingredient] = fuel
+            }
+        }
     }
 
     override fun getFabricId() = ModIdentifier("item_generators")

@@ -12,6 +12,7 @@ import java.io.InputStreamReader
 class BlockTemperatureResource: SimpleSynchronousResourceReloadListener {
 
     private val temperatureMap = linkedMapOf<Block, Int>()
+    val clientTemperatureMap = linkedMapOf<Block, Int>()
 
     fun test(block: Block) = temperatureMap[block]
 
