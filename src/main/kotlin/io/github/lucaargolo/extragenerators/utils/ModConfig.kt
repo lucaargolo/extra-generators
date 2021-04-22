@@ -31,7 +31,7 @@ class ModConfig {
 
     //Tier 5 Generators
     val dragonGenerator = Generator(2048.0, 64000000.0)
-    val witheredGenerator = Generator(2048.0, 6400000.0)
+    val witheredGenerator = Generator(2048.0, 64000000.0)
 
 
 
