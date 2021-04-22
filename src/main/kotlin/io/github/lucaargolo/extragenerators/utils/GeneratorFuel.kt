@@ -57,7 +57,7 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
 
         fun fromBurnableGeneratorFuel(item: Item): GeneratorFuel? {
             val burnTicks = FuelRegistryImpl.INSTANCE.get(item) ?: return null
-            return GeneratorFuel(burnTicks/4, burnTicks*10.0)
+            return GeneratorFuel(burnTicks/4, burnTicks*8.0)
         }
 
         fun fromGluttonyGeneratorFuel(item: Item): GeneratorFuel? {
