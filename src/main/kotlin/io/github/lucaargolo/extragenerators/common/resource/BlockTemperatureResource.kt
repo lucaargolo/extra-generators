@@ -4,6 +4,7 @@ import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
 import net.minecraft.block.Block
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.resource.ResourceManager
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
@@ -15,6 +16,24 @@ class BlockTemperatureResource: SimpleSynchronousResourceReloadListener {
     val clientTemperatureMap = linkedMapOf<Block, Int>()
 
     fun test(block: Block) = temperatureMap[block]
+
+    fun toBuf(buf: PacketByteBuf) {
+        buf.writeInt(temperatureMap.size)
+        temperatureMap.forEach { (block, temperature) ->
+            buf.writeVarInt(Registry.BLOCK.getRawId(block))
+            buf.writeInt(temperature)
+        }
+    }
+
+    fun fromBuf(buf: PacketByteBuf) {
+        clientTemperatureMap.clear()
+        val temperatureMapSize = buf.readInt()
+        repeat(temperatureMapSize) {
+            val block = Registry.BLOCK.get(buf.readVarInt())
+            val temperature = buf.readInt()
+            clientTemperatureMap[block] = temperature
+        }
+    }
 
     override fun getFabricId() = ModIdentifier("block_temperature")
 

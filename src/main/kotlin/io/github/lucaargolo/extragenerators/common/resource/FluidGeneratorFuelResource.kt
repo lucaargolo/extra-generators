@@ -1,10 +1,13 @@
 package io.github.lucaargolo.extragenerators.common.resource
 
+import alexiil.mc.lib.attributes.fluid.amount.FluidAmount
 import alexiil.mc.lib.attributes.fluid.volume.FluidKey
+import alexiil.mc.lib.attributes.fluid.volume.FluidKeys
 import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
+import net.minecraft.network.PacketByteBuf
 import net.minecraft.resource.ResourceManager
 import java.io.InputStreamReader
 
@@ -18,6 +21,32 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
             if(key == fluidKey) return fuel
         }
         return null
+    }
+
+    fun toBuf(buf: PacketByteBuf) {
+        buf.writeInt(fluidKeysMap.size)
+        fluidKeysMap.forEach { (id, fluidKeyMap) ->
+            buf.writeString(id)
+            buf.writeInt(fluidKeyMap.size)
+            fluidKeyMap.forEach { (fluidKey, fuel) ->
+                fluidKey.toMcBuffer(buf)
+                fuel.toBuf(buf)
+            }
+        }
+    }
+
+    fun fromBuf(buf: PacketByteBuf) {
+        clientFluidKeysMap.clear()
+        val fluidKeysMapSize = buf.readInt()
+        repeat(fluidKeysMapSize) {
+            val fluidKeysMapId = buf.readString()
+            val fluidKeyMapSize = buf.readInt()
+            repeat(fluidKeyMapSize) {
+                val fluidKey = FluidKey.fromMcBuffer(buf)
+                val fuel = FluidGeneratorFuel.fromBuf(buf) ?: FluidGeneratorFuel(0, FluidKeys.EMPTY.withAmount(FluidAmount.ZERO), 0.0)
+                clientFluidKeysMap.getOrPut(fluidKeysMapId) { linkedMapOf() } [fluidKey] = fuel
+            }
+        }
     }
 
     override fun getFabricId() = ModIdentifier("fluid_generators")

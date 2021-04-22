@@ -101,11 +101,19 @@ object PacketCompendium {
         ClientPlayNetworking.registerGlobalReceiver(SYNC_ITEM_GENERATORS) { _, _, buf, _ ->
             ResourceCompendium.ITEM_GENERATORS.fromBuf(buf)
         }
+        ClientPlayNetworking.registerGlobalReceiver(SYNC_FLUID_GENERATORS) { _, _, buf, _ ->
+            ResourceCompendium.FLUID_GENERATORS.fromBuf(buf)
+        }
+        ClientPlayNetworking.registerGlobalReceiver(SYNC_BLOCK_TEMPERATURE) { _, _, buf, _ ->
+            ResourceCompendium.BLOCK_TEMPERATURE.fromBuf(buf)
+        }
     }
 
     fun onInitialize() {
         ServerPlayNetworking.registerGlobalReceiver(REQUEST_RESOURCES) { _, player, _, _, _ ->
             ServerPlayNetworking.send(player, SYNC_ITEM_GENERATORS, PacketByteBufs.create().also { ResourceCompendium.ITEM_GENERATORS.toBuf(it) })
+            ServerPlayNetworking.send(player, SYNC_FLUID_GENERATORS, PacketByteBufs.create().also { ResourceCompendium.FLUID_GENERATORS.toBuf(it) })
+            ServerPlayNetworking.send(player, SYNC_BLOCK_TEMPERATURE, PacketByteBufs.create().also { ResourceCompendium.BLOCK_TEMPERATURE.toBuf(it) })
         }
     }
 

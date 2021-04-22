@@ -13,7 +13,7 @@ import java.io.InputStreamReader
 class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
     private val ingredientsMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
-    val clientIngredientMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
+    val clientIngredientsMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
 
     fun test(id: String, itemStack: ItemStack): GeneratorFuel? {
         ingredientsMap[id]?.forEach { (ingredient, fuel) ->
@@ -35,7 +35,7 @@ class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
     }
 
     fun fromBuf(buf: PacketByteBuf) {
-        clientIngredientMap.clear()
+        clientIngredientsMap.clear()
         val ingredientsMapSize = buf.readInt()
         repeat(ingredientsMapSize) {
             val ingredientsMapId = buf.readString()
@@ -43,7 +43,7 @@ class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
             repeat(ingredientMapSize) {
                 val ingredient = Ingredient.fromPacket(buf)
                 val fuel = GeneratorFuel.fromBuf(buf) ?: GeneratorFuel(0, 0.0)
-                clientIngredientMap.getOrPut(ingredientsMapId) { linkedMapOf() } [ingredient] = fuel
+                clientIngredientsMap.getOrPut(ingredientsMapId) { linkedMapOf() } [ingredient] = fuel
             }
         }
     }
