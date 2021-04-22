@@ -55,8 +55,8 @@ dependencies {
     modApi "alexiil.mc.lib:libblockattributes-fluids:${project.lba_version}"
     include("alexiil.mc.lib:libblockattributes-fluids:${project.lba_version}")
 
-    modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modRuntime "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+    modImplementation "me.shedaniel:RoughlyEnoughItems:${project.rei_version}"
+    modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {

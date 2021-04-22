@@ -22,6 +22,12 @@
     ],
     "main": [
       "io.github.lucaargolo.extragenerators.ExtraGenerators"
+    ],
+    "rei_plugins_v0": [
+      {
+        "value": "io.github.lucaargolo.extragenerators.compat.ReiCompat",
+        "adapter": "kotlin"
+      }
     ]
   },
   "mixins": [

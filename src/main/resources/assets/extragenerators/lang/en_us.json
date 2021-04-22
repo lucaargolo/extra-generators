@@ -21,5 +21,9 @@
   "tooltip.extragenerators.sneak_for_more": "Press %s to see more info.",
   "tooltip.extragenerators.empty": "Empty",
 
-  "screen.extragenerators.common.stored_energy": "Stored Energy"
+  "screen.extragenerators.common.stored_energy": "Stored Energy",
+
+  "screen.extragenerators.rei.burn_time": "Burn time: %s Ticks",
+  "screen.extragenerators.rei.burn_rate": "Burn rate: %s E/Tick",
+  "screen.extragenerators.rei.energy_output": "Energy Output:"
 }
