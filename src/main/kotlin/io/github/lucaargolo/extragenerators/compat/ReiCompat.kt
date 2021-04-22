@@ -7,7 +7,9 @@ import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import me.shedaniel.rei.api.EntryStack
 import me.shedaniel.rei.api.RecipeHelper
 import me.shedaniel.rei.api.plugins.REIPluginV0
-import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl
+import net.minecraft.item.ItemGroup
+import net.minecraft.item.ItemStack
+import net.minecraft.util.collection.DefaultedList
 
 object ReiCompat: REIPluginV0 {
 
@@ -19,6 +21,9 @@ object ReiCompat: REIPluginV0 {
     private val SLUDGY_GENERATOR = ItemGeneratorCategory("sludgy_generator", BlockCompendium.SLUDGY_GENERATOR)
     private val TELEPORT_GENERATOR = ItemGeneratorCategory("teleport_generator", BlockCompendium.TELEPORT_GENERATOR)
     private val WITHERED_GENERATOR = ItemGeneratorCategory("withered_generator", BlockCompendium.WITHERED_GENERATOR)
+    private val ENCHANTED_GENERATOR = ItemGeneratorCategory("enchanted_generator", BlockCompendium.ENCHANTED_GENERATOR)
+    private val BREW_GENERATOR = ItemGeneratorCategory("brew_generator", BlockCompendium.BREW_GENERATOR)
+
 
     override fun getPluginIdentifier() = ModIdentifier("rei_compat")
 
@@ -27,16 +32,24 @@ object ReiCompat: REIPluginV0 {
     }
 
     override fun registerRecipeDisplays(recipeHelper: RecipeHelper) {
-        FuelRegistryImpl.INSTANCE.fuelTimes.forEach { (burnableItem, _) ->
-            recipeHelper.registerDisplay(GeneratorFuel.fromBurnableGeneratorFuel(burnableItem)?.run {
-                BURNABLE_GENERATOR.createDisplay(mutableListOf(EntryStack.create(burnableItem)), this)
-            })
-        }
         ResourceCompendium.ITEM_GENERATORS.clientIngredientMap.forEach { (id, ingredientMap) ->
             val category = ItemGeneratorCategory.getMatching(id) ?: return@forEach
             ingredientMap.forEach { (ingredient, fuel) ->
                 recipeHelper.registerDisplay(category.createDisplay(EntryStack.ofIngredient(ingredient), fuel))
             }
+        }
+        val items = DefaultedList.of<ItemStack>()
+        ItemGroup.SEARCH.appendStacks(items)
+        items.forEach { 
+            GeneratorFuel.fromBurnableGeneratorFuel(it.item)?.run {
+                BURNABLE_GENERATOR.createDisplay(mutableListOf(EntryStack.create(it.item)), this)
+            }?.let { display -> recipeHelper.registerDisplay(display) }
+            GeneratorFuel.fromEnchantedGeneratorFuel(it)?.run {
+                ENCHANTED_GENERATOR.createDisplay(mutableListOf(EntryStack.create(it)), this)
+            }?.let { display -> recipeHelper.registerDisplay(display) }
+            GeneratorFuel.fromBrewGeneratorFuel(it)?.run {
+                BREW_GENERATOR.createDisplay(mutableListOf(EntryStack.create(it)), this)
+            }?.let { display -> recipeHelper.registerDisplay(display) }
         }
     }
 
