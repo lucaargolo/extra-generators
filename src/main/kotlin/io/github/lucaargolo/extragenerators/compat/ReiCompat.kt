@@ -13,6 +13,7 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.util.collection.DefaultedList
 
+@Suppress("unused")
 object ReiCompat: REIPluginV0 {
 
     private val BURNABLE_GENERATOR = ItemGeneratorCategory("burnable_generator", BlockCompendium.BURNABLE_GENERATOR)
@@ -29,6 +30,7 @@ object ReiCompat: REIPluginV0 {
     private val SCALDING_GENERATOR = FluidGeneratorCategory("scalding_generator", BlockCompendium.SCALDING_GENERATOR)
     private val REDSTONE_GENERATOR = FluidItemGeneratorCategory("redstone_generator", BlockCompendium.REDSTONE_GENERATOR)
     private val STEAM_GENERATOR = FluidItemGeneratorCategory("steam_generator", BlockCompendium.STEAM_GENERATOR)
+    private val THERMOELECTRIC_GENERATOR = ThermoelectricGeneratorCategory("thermoelectric_generator", BlockCompendium.THERMOELECTRIC_GENERATOR)
 
     override fun getPluginIdentifier() = ModIdentifier("rei_compat")
 
@@ -36,6 +38,7 @@ object ReiCompat: REIPluginV0 {
         ItemGeneratorCategory.registerCategories(recipeHelper)
         FluidGeneratorCategory.registerCategories(recipeHelper)
         FluidItemGeneratorCategory.registerCategories(recipeHelper)
+        ThermoelectricGeneratorCategory.registerCategories(recipeHelper)
     }
 
     override fun registerRecipeDisplays(recipeHelper: RecipeHelper) {
@@ -50,6 +53,9 @@ object ReiCompat: REIPluginV0 {
             fluidKeyMap.forEach { (fluidKey, fuel) ->
                 recipeHelper.registerDisplay(category.createDisplay(EntryStack.create(fluidKey.rawFluid, fuel.fluidInput.amount().run { Fraction.of(whole, numerator, denominator) }), fuel))
             }
+        }
+        ResourceCompendium.BLOCK_TEMPERATURE.clientTemperatureMap.forEach { (block, temperature) ->
+            THERMOELECTRIC_GENERATOR.createDisplay(block, temperature).let { recipeHelper.registerDisplay(it) }
         }
         val items = DefaultedList.of<ItemStack>()
         ItemGroup.SEARCH.appendStacks(items)
@@ -79,6 +85,7 @@ object ReiCompat: REIPluginV0 {
         ItemGeneratorCategory.registerOthers(recipeHelper)
         FluidGeneratorCategory.registerOthers(recipeHelper)
         FluidItemGeneratorCategory.registerOthers(recipeHelper)
+        ThermoelectricGeneratorCategory.registerOthers(recipeHelper)
     }
 
 
