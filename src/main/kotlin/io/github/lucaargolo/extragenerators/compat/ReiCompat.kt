@@ -1,6 +1,7 @@
 package io.github.lucaargolo.extragenerators.compat
 
 import io.github.lucaargolo.extragenerators.common.block.BlockCompendium
+import io.github.lucaargolo.extragenerators.common.blockentity.ColorfulGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
@@ -9,6 +10,7 @@ import me.shedaniel.rei.api.EntryStack
 import me.shedaniel.rei.api.RecipeHelper
 import me.shedaniel.rei.api.fractions.Fraction
 import me.shedaniel.rei.api.plugins.REIPluginV0
+import net.fabricmc.fabric.api.tag.TagRegistry
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.util.collection.DefaultedList
@@ -31,6 +33,7 @@ object ReiCompat: REIPluginV0 {
     private val REDSTONE_GENERATOR = FluidItemGeneratorCategory("redstone_generator", BlockCompendium.REDSTONE_GENERATOR)
     private val STEAM_GENERATOR = FluidItemGeneratorCategory("steam_generator", BlockCompendium.STEAM_GENERATOR)
     private val THERMOELECTRIC_GENERATOR = ThermoelectricGeneratorCategory("thermoelectric_generator", BlockCompendium.THERMOELECTRIC_GENERATOR)
+    private val COLORFUL_GENERATOR = ColorfulGeneratorCategory("colorful_generator", BlockCompendium.COLORFUL_GENERATOR)
 
     override fun getPluginIdentifier() = ModIdentifier("rei_compat")
 
@@ -39,6 +42,7 @@ object ReiCompat: REIPluginV0 {
         FluidGeneratorCategory.registerCategories(recipeHelper)
         FluidItemGeneratorCategory.registerCategories(recipeHelper)
         ThermoelectricGeneratorCategory.registerCategories(recipeHelper)
+        ColorfulGeneratorCategory.registerCategories(recipeHelper)
     }
 
     override fun registerRecipeDisplays(recipeHelper: RecipeHelper) {
@@ -79,6 +83,10 @@ object ReiCompat: REIPluginV0 {
                 STEAM_GENERATOR.createDisplay(mutableListOf(EntryStack.create(it)), EntryStack.create(fluidInput.rawFluid, fluidInput.amount().run { Fraction.of(whole, numerator, denominator) }), this)
             }?.let { display -> recipeHelper.registerDisplay(display) }
         }
+        val redInput = TagRegistry.item(ModIdentifier("red_items")).values().map { EntryStack.create(it) }
+        val blueInput = TagRegistry.item(ModIdentifier("green_items")).values().map { EntryStack.create(it) }
+        val greenInput = TagRegistry.item(ModIdentifier("blue_items")).values().map { EntryStack.create(it) }
+        COLORFUL_GENERATOR.createDisplay(redInput, blueInput, greenInput, ColorfulGeneratorBlockEntity.getFuel()).let { recipeHelper.registerDisplay(it) }
     }
 
     override fun registerOthers(recipeHelper: RecipeHelper) {
@@ -86,6 +94,7 @@ object ReiCompat: REIPluginV0 {
         FluidGeneratorCategory.registerOthers(recipeHelper)
         FluidItemGeneratorCategory.registerOthers(recipeHelper)
         ThermoelectricGeneratorCategory.registerOthers(recipeHelper)
+        ColorfulGeneratorCategory.registerOthers(recipeHelper)
     }
 
 

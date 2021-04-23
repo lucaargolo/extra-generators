@@ -49,7 +49,7 @@ class ColorfulGeneratorBlockEntity: AbstractGeneratorBlockEntity<ColorfulGenerat
                     itemInv.getSlot(0).extract(1)
                     itemInv.getSlot(1).extract(1)
                     itemInv.getSlot(2).extract(1)
-                    burningFuel = GeneratorFuel(400, 100000.0)
+                    burningFuel = getFuel()
                     markDirtyAndSync()
                 }
             }
@@ -78,6 +78,10 @@ class ColorfulGeneratorBlockEntity: AbstractGeneratorBlockEntity<ColorfulGenerat
         super.fromClientTag(tag)
         itemInv.fromTag(tag.getCompound("itemInv"))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
+    }
+
+    companion object {
+        fun getFuel() = GeneratorFuel(100, 3200.0)
     }
 
 }

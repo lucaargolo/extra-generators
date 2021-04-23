@@ -1,6 +1,6 @@
 package io.github.lucaargolo.extragenerators.compat
 
-import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
+import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
@@ -17,7 +17,7 @@ import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
 
-class FluidGeneratorCategory(private val id: String, private val block: Block): RecipeCategory<FluidGeneratorCategory.Display> {
+class ColorfulGeneratorCategory(private val id: String, private val block: Block): RecipeCategory<ColorfulGeneratorCategory.Display> {
 
     init { set.add(this) }
 
@@ -38,7 +38,10 @@ class FluidGeneratorCategory(private val id: String, private val block: Block): 
         widgets.add(Widgets.createDrawableWidget { _, m, _, _, _ -> m.scale(0.5f, 0.5f, 1f)})
 
         widgets.add(Widgets.createBurningFire(Point(bounds.x+44, bounds.y+4)).animationDurationTicks(display.output.burnTime.toDouble()))
-        widgets.add(Widgets.createSlot(Point(bounds.x+44, bounds.y+22)).entries(display.input))
+        widgets.add(Widgets.createSlot(Point(bounds.x+44, bounds.y+22)).entries(display.redInput))
+        widgets.add(Widgets.createSlot(Point(bounds.x+62, bounds.y+22)).entries(display.greenInput))
+        widgets.add(Widgets.createSlot(Point(bounds.x+80, bounds.y+22)).entries(display.blueInput))
+
         widgets.add(Widgets.createLabel(Point(bounds.x+67, bounds.y+8), TranslatableText("screen.extragenerators.rei.energy_output")).leftAligned())
         widgets.add(Widgets.createLabel(Point(bounds.x+145, bounds.y+26), Text.of("${display.output.energyOutput} E")).rightAligned())
 
@@ -57,18 +60,18 @@ class FluidGeneratorCategory(private val id: String, private val block: Block): 
 
     override fun getDisplayHeight() = 44
 
-    fun createDisplay(input: EntryStack, output: FluidGeneratorFuel) = Display(identifier, mutableListOf(input), output)
+    fun createDisplay(redInput: List<EntryStack>, greenInput: List<EntryStack>, blueInput: List<EntryStack>, output: GeneratorFuel) = Display(identifier, redInput, greenInput, blueInput, output)
 
-    class Display(private val category: Identifier, val input: MutableList<EntryStack>, val output: FluidGeneratorFuel): RecipeDisplay {
+    class Display(private val category: Identifier, val redInput: List<EntryStack>, val greenInput: List<EntryStack>, val blueInput: List<EntryStack>, val output: GeneratorFuel): RecipeDisplay {
 
-        override fun getInputEntries() = mutableListOf(input)
+        override fun getInputEntries() = mutableListOf(redInput, greenInput, blueInput)
 
         override fun getRecipeCategory() = category
 
     }
 
     companion object {
-        private val set = linkedSetOf<FluidGeneratorCategory>()
+        private val set = linkedSetOf<ColorfulGeneratorCategory>()
 
         fun getMatching(id: String) = set.firstOrNull { id == it.identifier.toString().split(":")[1].replace("_generator", "") }
 

@@ -1,6 +1,5 @@
 package io.github.lucaargolo.extragenerators.compat
 
-import com.mojang.blaze3d.systems.RenderSystem
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import me.shedaniel.math.Point
@@ -14,7 +13,6 @@ import me.shedaniel.rei.gui.widget.Widget
 import net.minecraft.block.Block
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.resource.language.I18n
-import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
@@ -35,11 +33,9 @@ class FluidItemGeneratorCategory(private val id: String, private val block: Bloc
 
         widgets.add(Widgets.createCategoryBase(bounds))
 
-        widgets.add(Widgets.createDrawableWidget { _, _, _, _, _ ->
-            RenderSystem.scalef(2f, 2f, 1f)
-            MinecraftClient.getInstance().itemRenderer.renderInGui(ItemStack(block), bounds.x/2 + 3, bounds.y/2 + 3)
-            RenderSystem.scalef(0.5f, 0.5f, 1f)
-        })
+        widgets.add(Widgets.createDrawableWidget { _, m, _, _, _ -> m.scale(2f, 2f, 1f)})
+        widgets.add(Widgets.createSlot(Point(bounds.x/2 + 3, bounds.y/2 + 3)).entry(EntryStack.create(block)).disableBackground().disableHighlight().disableTooltips())
+        widgets.add(Widgets.createDrawableWidget { _, m, _, _, _ -> m.scale(0.5f, 0.5f, 1f)})
 
         widgets.add(Widgets.createBurningFire(Point(bounds.x+44, bounds.y+4)).animationDurationTicks(display.output.burnTime.toDouble()))
         widgets.add(Widgets.createSlot(Point(bounds.x+44, bounds.y+22)).entries(display.itemInput))
