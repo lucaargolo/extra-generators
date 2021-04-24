@@ -4,8 +4,8 @@
       "item": "minecraft:ice"
     },
     "fuel": {
-      "burnTime": 20,
-      "energyOutput": 1600
+      "burnTime": 40,
+      "energyOutput": 1280
     }
   },
   {
@@ -13,8 +13,8 @@
       "item": "minecraft:packed_ice"
     },
     "fuel": {
-      "burnTime": 180,
-      "energyOutput": 14400
+      "burnTime": 360,
+      "energyOutput": 11520
     }
   },
   {
@@ -22,8 +22,8 @@
       "item": "minecraft:blue_ice"
     },
     "fuel": {
-      "burnTime": 1620,
-      "energyOutput": 129.600
+      "burnTime": 3240,
+      "energyOutput": 103680
     }
   },
   {
@@ -32,7 +32,7 @@
     },
     "fuel": {
       "burnTime": 5,
-      "energyOutput": 100
+      "energyOutput": 160
     }
   },
   {
@@ -41,7 +41,7 @@
     },
     "fuel": {
       "burnTime": 20,
-      "energyOutput": 400
+      "energyOutput": 640
     }
   },
   {
@@ -50,7 +50,7 @@
     },
     "fuel": {
       "burnTime": 10,
-      "energyOutput": 200
+      "energyOutput": 320
     }
   }
 ]

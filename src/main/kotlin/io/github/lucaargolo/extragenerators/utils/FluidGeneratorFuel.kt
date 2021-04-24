@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
+import kotlin.math.*
 
 data class FluidGeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val fluidInput: FluidVolume, val energyOutput: Double) {
 
@@ -61,13 +62,13 @@ data class FluidGeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val f
 
         fun fromSteamGeneratorFuel(itemStack: ItemStack): FluidGeneratorFuel? {
             val burnTicks = FuelRegistryImpl.INSTANCE.get(itemStack.item) ?: return null
-            return FluidGeneratorFuel(burnTicks/4, FluidKeys.WATER.withAmount(FluidAmount.of(burnTicks.toLong(), 1000)), burnTicks*40.0)
+            return FluidGeneratorFuel(round(burnTicks/4.0).toInt(), FluidKeys.WATER.withAmount(FluidAmount.of(burnTicks.toLong(), 1000)), burnTicks*16.0)
         }
 
         fun fromRedstoneGeneratorFuel(itemStack: ItemStack): FluidGeneratorFuel? {
             return when(itemStack.item) {
-                Items.REDSTONE -> FluidGeneratorFuel(125, FluidKeys.LAVA.withAmount(FluidAmount.of(50, 1000)), 20000.0)
-                Items.REDSTONE_BLOCK -> FluidGeneratorFuel(1125, FluidKeys.LAVA.withAmount(FluidAmount.of(450, 1000)), 180000.0)
+                Items.REDSTONE -> FluidGeneratorFuel(100, FluidKeys.LAVA.withAmount(FluidAmount.of(50, 1000)), 12800.0)
+                Items.REDSTONE_BLOCK -> FluidGeneratorFuel(900, FluidKeys.LAVA.withAmount(FluidAmount.of(450, 1000)), 115200.0)
                 else -> null
             }
         }

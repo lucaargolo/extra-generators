@@ -57,15 +57,20 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
 
         fun fromBurnableGeneratorFuel(item: Item): GeneratorFuel? {
             val burnTicks = FuelRegistryImpl.INSTANCE.get(item) ?: return null
-            return GeneratorFuel(burnTicks/4, burnTicks*8.0)
+            return GeneratorFuel(round(burnTicks/4.0).toInt(), burnTicks*8.0)
         }
 
         fun fromGluttonyGeneratorFuel(item: Item): GeneratorFuel? {
             val foodComponent = item.foodComponent ?: return null
-            val energyOutput = foodComponent.hunger * foodComponent.saturationModifier * 8000.0
-            val energyPerTick = max(foodComponent.hunger * 8, 128)
+            val energyBonus = foodComponent.statusEffects.map {
+                val statusEffectInstance = it.first
+                val statusEffect = statusEffectInstance.effectType
+                statusEffectInstance.duration * statusEffectInstance.amplifier * if(statusEffect.isBeneficial) { 1 } else { 0 }
+            }.sum()
+            val energyOutput = (foodComponent.hunger * foodComponent.saturationModifier * 8000.0) + (energyBonus * 100.0)
+            val energyPerTick = MathHelper.clamp((foodComponent.hunger * 8.0) + (energyBonus * 0.1), 32.0, 128.0)
             val burnTime = energyOutput/energyPerTick
-            return GeneratorFuel(MathHelper.floor(burnTime), floor(energyOutput))
+            return GeneratorFuel(round(burnTime).toInt(), round(energyOutput))
         }
 
         fun fromEnchantedGeneratorFuel(itemStack: ItemStack): GeneratorFuel? {
@@ -84,7 +89,7 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
                 in (102400.0..256000.0) -> 128.0
                 else -> 256.0
             }
-            val burnTime = MathHelper.ceil(energyOutput/energyTick)
+            val burnTime = round(energyOutput/energyTick).toInt()
             return if(energyOutput <= 0.0) null else GeneratorFuel(burnTime, energyOutput)
         }
 

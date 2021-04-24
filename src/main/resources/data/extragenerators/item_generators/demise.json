@@ -4,8 +4,8 @@
       "item": "minecraft:rotten_flesh"
     },
     "fuel": {
-      "burnTime": 400,
-      "energyOutput": 16000
+      "burnTime": 10,
+      "energyOutput": 2560
     }
   },
   {
@@ -13,8 +13,8 @@
       "item": "minecraft:bone"
     },
     "fuel": {
-      "burnTime": 400,
-      "energyOutput": 16000
+      "burnTime": 10,
+      "energyOutput": 2560
     }
   },
   {
@@ -22,8 +22,8 @@
       "item": "minecraft:spider_eye"
     },
     "fuel": {
-      "burnTime": 400,
-      "energyOutput": 32000
+      "burnTime": 20,
+      "energyOutput": 5120
     }
   },
   {
@@ -31,8 +31,8 @@
       "item": "minecraft:bone_block"
     },
     "fuel": {
-      "burnTime": 3600,
-      "energyOutput": 144000
+      "burnTime": 90,
+      "energyOutput": 23040
     }
   },
   {
@@ -40,8 +40,8 @@
       "item": "minecraft:zombie_head"
     },
     "fuel": {
-      "burnTime": 3600,
-      "energyOutput": 240000
+      "burnTime": 1800,
+      "energyOutput": 460800
     }
   },
   {
@@ -49,8 +49,8 @@
       "item": "minecraft:skeleton_skull"
     },
     "fuel": {
-      "burnTime": 3600,
-      "energyOutput": 240000
+      "burnTime": 1800,
+      "energyOutput": 460800
     }
   },
   {
@@ -59,7 +59,7 @@
     },
     "fuel": {
       "burnTime": 3600,
-      "energyOutput": 2400000
+      "energyOutput": 921600
     }
   }
 ]

@@ -4,8 +4,8 @@
       "item": "minecraft:nether_star"
     },
     "fuel": {
-      "burnTime": 2400,
-      "energyOutput": 9600000
+      "burnTime": 6000,
+      "energyOutput": 12288000
     }
   },
   {
@@ -13,8 +13,8 @@
       "item": "minecraft:wither_skeleton_skull"
     },
     "fuel": {
-      "burnTime": 2400,
-      "energyOutput": 2400000
+      "burnTime": 450,
+      "energyOutput": 921600
     }
   },
   {
@@ -22,8 +22,8 @@
       "item": "minecraft:wither_rose"
     },
     "fuel": {
-      "burnTime": 400,
-      "energyOutput": 16000
+      "burnTime": 20,
+      "energyOutput": 40690
     }
   }
 ]

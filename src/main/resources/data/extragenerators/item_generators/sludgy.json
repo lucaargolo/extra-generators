@@ -4,8 +4,8 @@
       "tag": "c:slime_balls"
     },
     "fuel": {
-      "burnTime": 400,
-      "energyOutput": 16000
+      "burnTime": 200,
+      "energyOutput": 12800
     }
   },
   {
@@ -13,8 +13,8 @@
       "tag": "c:slime_blocks"
     },
     "fuel": {
-      "burnTime": 3600,
-      "energyOutput": 144000
+      "burnTime": 1800,
+      "energyOutput": 115200
     }
   }
 ]

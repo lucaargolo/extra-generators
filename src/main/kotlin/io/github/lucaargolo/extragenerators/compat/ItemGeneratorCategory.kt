@@ -16,6 +16,7 @@ import net.minecraft.client.resource.language.I18n
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Identifier
+import net.minecraft.util.math.MathHelper
 
 class ItemGeneratorCategory(private val id: String, private val block: Block): RecipeCategory<ItemGeneratorCategory.Display> {
 
@@ -45,7 +46,7 @@ class ItemGeneratorCategory(private val id: String, private val block: Block): R
         widgets.add(Widgets.createDrawableWidget { _, matrices, mouseX, mouseY, _ ->
             val tooltip = listOf(
                 TranslatableText("screen.extragenerators.rei.burn_time", display.output.burnTime),
-                TranslatableText("screen.extragenerators.rei.burn_rate", display.output.energyOutput/display.output.burnTime)
+                TranslatableText("screen.extragenerators.rei.burn_rate", MathHelper.floor(display.output.energyOutput/display.output.burnTime))
             )
             if(mouseX in (bounds.x+44..bounds.x+62) && mouseY in (bounds.y+4..bounds.y+22)) {
                 MinecraftClient.getInstance().currentScreen?.renderTooltip(matrices, tooltip, mouseX, mouseY)

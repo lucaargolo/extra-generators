@@ -4,8 +4,8 @@
       "item": "minecraft:gunpowder"
     },
     "fuel": {
-      "burnTime": 400,
-      "energyOutput": 64000
+      "burnTime": 100,
+      "energyOutput": 12800
     }
   },
   {
@@ -13,8 +13,8 @@
       "item": "minecraft:tnt"
     },
     "fuel": {
-      "burnTime": 3200,
-      "energyOutput": 512000
+      "burnTime": 600,
+      "energyOutput": 76800
     }
   }
 ]

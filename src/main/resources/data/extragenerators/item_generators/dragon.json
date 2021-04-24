@@ -4,8 +4,8 @@
       "item": "minecraft:dragon_breath"
     },
     "fuel": {
-      "burnTime": 12000,
-      "energyOutput": 480000
+      "burnTime": 20,
+      "energyOutput": 40690
     }
   },
   {
@@ -13,8 +13,8 @@
       "item": "minecraft:dragon_egg"
     },
     "fuel": {
-      "burnTime": 72000,
-      "energyOutput": 2880000
+      "burnTime": 24000,
+      "energyOutput": 49152000
     }
   }
 ]
