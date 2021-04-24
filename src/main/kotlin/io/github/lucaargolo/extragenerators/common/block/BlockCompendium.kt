@@ -16,50 +16,58 @@ import net.minecraft.client.util.InputUtil
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.*
 import net.minecraft.util.Formatting
 import net.minecraft.util.Identifier
+import net.minecraft.util.Rarity
+import net.minecraft.util.Util
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.explosion.Explosion
+import java.awt.Color
 
 
 object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
 
+    //Tier 1 Generators
+    val THERMOELECTRIC_GENERATOR = register("thermoelectric_generator", ThermoelectricGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.thermoelectricGenerator))
     val BURNABLE_GENERATOR = register("burnable_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.burnableGenerator, { GeneratorFuel.fromBurnableGeneratorFuel(it.item) }))
-    val GLUTTONY_GENERATOR = register("gluttony_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.gluttonyGenerator, { GeneratorFuel.fromGluttonyGeneratorFuel(it.item) })  )
     val ICY_GENERATOR = register("icy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.icyGenerator, { GeneratorFuel.fromItemResource("icy", it) })  )
+    val COLORFUL_GENERATOR = register("colorful_generator", ColorfulGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.colorfulGenerator))
+
+    //Tier 2 Generators
     val SLUDGY_GENERATOR = register("sludgy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.sludgyGenerator, { GeneratorFuel.fromItemResource("sludgy", it) })  )
-    val DRAGON_GENERATOR = register("dragon_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.dragonGenerator, { GeneratorFuel.fromItemResource("dragon", it) })  )
     val TELEPORT_GENERATOR = register("teleport_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.teleportGenerator, { GeneratorFuel.fromItemResource("teleport", it) })  )
+    val SCALDING_GENERATOR = register("scalding_generator", FluidGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator) { FluidGeneratorFuel.fromFluidResource("scalding", it) })
+    val STEAM_GENERATOR = register("steam_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.steamGenerator, FluidKeys.WATER) { FluidGeneratorFuel.fromSteamGeneratorFuel(it) })
 
-    val ENCHANTED_GENERATOR = register("enchanted_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.enchantedGenerator, { GeneratorFuel.fromEnchantedGeneratorFuel(it) })  )
+    //Tier 3 Generators
+    val GLUTTONY_GENERATOR = register("gluttony_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.gluttonyGenerator, { GeneratorFuel.fromGluttonyGeneratorFuel(it.item) })  )
     val BREW_GENERATOR = register("brew_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.brewGenerator, { GeneratorFuel.fromBrewGeneratorFuel(it) })  )
-
-    val WITHERED_GENERATOR = register("withered_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.witheredGenerator, { GeneratorFuel.fromItemResource("withered", it) }) {
-        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
-        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.WITHER)
-    } )
-
-    val DEMISE_GENERATOR = register("demise_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.demiseGenerator, { GeneratorFuel.fromItemResource("demise", it) }) {
-        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
-        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.INSTANT_DAMAGE)
-    } )
-
+    val REDSTONE_GENERATOR = register("redstone_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.redstoneGenerator, FluidKeys.LAVA) { FluidGeneratorFuel.fromRedstoneGeneratorFuel(it) })
     val BLAST_GENERATOR = register("blast_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.blastGenerator, { GeneratorFuel.fromItemResource("blast", it) }) {
         val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
         world.createExplosion(null, it.pos.x+0.5, it.pos.y+0.0, it.pos.z+0.5, 2f, Explosion.DestructionType.NONE)
     } )
 
-    val SCALDING_GENERATOR = register("scalding_generator", FluidGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator) { FluidGeneratorFuel.fromFluidResource("scalding", it) })
+    //Tier 4 Generators
+    val ENCHANTED_GENERATOR = register("enchanted_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.enchantedGenerator, { GeneratorFuel.fromEnchantedGeneratorFuel(it) })  )
+    val DEMISE_GENERATOR = register("demise_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.demiseGenerator, { GeneratorFuel.fromItemResource("demise", it) }) {
+        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
+        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.INSTANT_DAMAGE)
+    } )
 
-    val STEAM_GENERATOR = register("steam_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.steamGenerator, FluidKeys.WATER) { FluidGeneratorFuel.fromSteamGeneratorFuel(it) })
-    val REDSTONE_GENERATOR = register("redstone_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.redstoneGenerator, FluidKeys.LAVA) { FluidGeneratorFuel.fromRedstoneGeneratorFuel(it) })
+    //Tier 5 Generators
+    val DRAGON_GENERATOR = register("dragon_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.dragonGenerator, { GeneratorFuel.fromItemResource("dragon", it) })  )
+    val WITHERED_GENERATOR = register("withered_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.witheredGenerator, { GeneratorFuel.fromItemResource("withered", it) }) {
+        val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
+        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.WITHER)
+    } )
 
-    val COLORFUL_GENERATOR = register("colorful_generator", ColorfulGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.colorfulGenerator))
-
-    val THERMOELECTRIC_GENERATOR = register("thermoelectric_generator", ThermoelectricGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.thermoelectricGenerator))
+    //Tier ∞ Generators
+    val HEAVENLY_GENERATOR = register("heavenly_generator", InfiniteGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.heavenlyGenerator) )
+    val INFERNAL_GENERATOR = register("infernal_generator", InfiniteGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.infernalGenerator) )
 
     fun itemGeneratorArray() = map.values.filterIsInstance<ItemGeneratorBlock>().toTypedArray()
 
@@ -69,7 +77,29 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
 
     fun registerBlockItems(itemMap: MutableMap<Identifier, Item>) {
         map.forEach { (identifier, block) ->
-            itemMap[identifier] = BlockItem(block, creativeGroupSettings())
+            itemMap[identifier] = when(block) {
+                THERMOELECTRIC_GENERATOR, BURNABLE_GENERATOR, ICY_GENERATOR, COLORFUL_GENERATOR -> BlockItem(block, creativeGroupSettings())
+                SLUDGY_GENERATOR, TELEPORT_GENERATOR, SCALDING_GENERATOR, STEAM_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.COMMON))
+                GLUTTONY_GENERATOR, BREW_GENERATOR, REDSTONE_GENERATOR, BLAST_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.UNCOMMON))
+                ENCHANTED_GENERATOR, DEMISE_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.RARE))
+                DRAGON_GENERATOR, WITHERED_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.EPIC))
+                HEAVENLY_GENERATOR, INFERNAL_GENERATOR -> object: BlockItem(block, creativeGroupSettings()) {
+                    override fun getName(stack: ItemStack): MutableText {
+                        val name = super.getName()
+                        var finalText: MutableText = LiteralText("")
+                        name.string.forEachIndexed { x, c ->
+                            val color = Color.HSBtoRGB((Util.getMeasuringTimeMs() - x * 10) % 2000 / 2000f, 0.8f, 0.95f)
+                            val textColor = TextColor.fromRgb(color)
+                            val charText = LiteralText("$c")
+                            val textStyle = charText.style.withColor(textColor)
+                            charText.style = textStyle
+                            finalText = finalText.append(charText)
+                        }
+                        return finalText
+                    }
+                }
+                else -> BlockItem(block, creativeGroupSettings())
+            }
         }
     }
 
