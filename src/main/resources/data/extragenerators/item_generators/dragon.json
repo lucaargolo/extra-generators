@@ -10,6 +10,15 @@
   },
   {
     "ingredient": {
+      "item": "minecraft:dragon_head"
+    },
+    "fuel": {
+      "burnTime": 2000,
+      "energyOutput": 4069000
+    }
+  },
+  {
+    "ingredient": {
       "item": "minecraft:dragon_egg"
     },
     "fuel": {
