@@ -27,6 +27,7 @@ class ColorfulGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInvento
     override fun shouldSync() = entity.burningFuel != burningFuel || super.shouldSync()
 
     override fun postSync() {
+        super.postSync()
         burningFuel = entity.burningFuel?.copy()
     }
 

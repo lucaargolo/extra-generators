@@ -1,6 +1,5 @@
 package io.github.lucaargolo.extragenerators.client
 
-import io.github.lucaargolo.extragenerators.client.render.bakedmodel.BakedModelCompendium
 import io.github.lucaargolo.extragenerators.client.render.blockentity.BlockEntityRendererCompendium
 import io.github.lucaargolo.extragenerators.client.render.entity.EntityRendererCompendium
 import io.github.lucaargolo.extragenerators.common.block.BlockCompendium
@@ -23,7 +22,6 @@ class ExtraGeneratorsClient: ClientModInitializer {
         ScreenHandlerCompendium.onInitializeClient()
         BlockEntityRendererCompendium.initialize()
         EntityRendererCompendium.initialize()
-        BakedModelCompendium.initialize()
 
         ClientPlayConnectionEvents.INIT.register{ handler, _ ->
             if(FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {

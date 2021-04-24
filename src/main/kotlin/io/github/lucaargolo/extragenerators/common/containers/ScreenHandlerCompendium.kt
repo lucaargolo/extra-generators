@@ -1,13 +1,7 @@
 package io.github.lucaargolo.extragenerators.common.containers
 
-import io.github.lucaargolo.extragenerators.client.screen.ColorfulGeneratorScreen
-import io.github.lucaargolo.extragenerators.client.screen.FluidGeneratorScreen
-import io.github.lucaargolo.extragenerators.client.screen.FluidItemGeneratorScreen
-import io.github.lucaargolo.extragenerators.client.screen.ItemGeneratorScreen
-import io.github.lucaargolo.extragenerators.common.blockentity.ColorfulGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
-import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.client.screen.*
+import io.github.lucaargolo.extragenerators.common.blockentity.*
 import io.github.lucaargolo.extragenerators.utils.RegistryCompendium
 import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
 import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType
@@ -50,11 +44,21 @@ object ScreenHandlerCompendium: RegistryCompendium<ScreenHandlerType<*>>(Registr
         ColorfulGeneratorScreenHandler(i, playerInventory, be, ScreenHandlerContext.create(world, pos))
     }) as ScreenHandlerType<ColorfulGeneratorScreenHandler>
 
+    val INFINITE_GENERATOR = register("infinite_generator", ExtendedScreenHandlerType { i, playerInventory, packetByteBuf ->
+        val pos = packetByteBuf.readBlockPos()
+        val player = playerInventory.player
+        val world = player.world
+        val be = world.getBlockEntity(pos) as InfiniteGeneratorBlockEntity
+        InfiniteGeneratorScreenHandler(i, playerInventory, be, ScreenHandlerContext.create(world, pos))
+    }) as ScreenHandlerType<InfiniteGeneratorScreenHandler>
+
     fun onInitializeClient() {
         ScreenRegistry.register(ITEM_GENERATOR) { handler, playerInventory, title -> ItemGeneratorScreen(handler, playerInventory, title) }
         ScreenRegistry.register(FLUID_GENERATOR) { handler, playerInventory, title -> FluidGeneratorScreen(handler, playerInventory, title) }
         ScreenRegistry.register(FLUID_ITEM_GENERATOR) { handler, playerInventory, title -> FluidItemGeneratorScreen(handler, playerInventory, title) }
         ScreenRegistry.register(COLORFUL_GENERATOR) { handler, playerInventory, title -> ColorfulGeneratorScreen(handler, playerInventory, title) }
+        ScreenRegistry.register(INFINITE_GENERATOR) { handler, playerInventory, title -> InfiniteGeneratorScreen(handler, playerInventory, title) }
+
     }
 
 }

@@ -7,11 +7,13 @@ import io.github.lucaargolo.extragenerators.common.entity.GeneratorAreaEffectClo
 import io.github.lucaargolo.extragenerators.mixin.KeyBindingAccessor
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
+import io.github.lucaargolo.extragenerators.utils.ModConfig
 import io.github.lucaargolo.extragenerators.utils.RegistryCompendium
 import net.fabricmc.fabric.api.`object`.builder.v1.block.FabricBlockSettings
 import net.minecraft.block.Block
 import net.minecraft.block.Blocks
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.item.TooltipContext
 import net.minecraft.client.util.InputUtil
 import net.minecraft.entity.effect.StatusEffects
 import net.minecraft.item.BlockItem
@@ -24,6 +26,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.Rarity
 import net.minecraft.util.Util
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.World
 import net.minecraft.world.explosion.Explosion
 import java.awt.Color
 
@@ -69,6 +72,9 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
     val HEAVENLY_GENERATOR = register("heavenly_generator", InfiniteGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.heavenlyGenerator) )
     val INFERNAL_GENERATOR = register("infernal_generator", InfiniteGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.infernalGenerator) )
 
+    fun generatorIdentifierMap() = map.filter { it.value is AbstractGeneratorBlock }
+    fun generatorIdentifierArray() = map.filter { it.value is AbstractGeneratorBlock }.map { it.key }.toTypedArray()
+
     fun itemGeneratorArray() = map.values.filterIsInstance<ItemGeneratorBlock>().toTypedArray()
 
     fun fluidGeneratorArray() = map.values.filterIsInstance<FluidGeneratorBlock>().toTypedArray()
@@ -78,27 +84,56 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
     fun registerBlockItems(itemMap: MutableMap<Identifier, Item>) {
         map.forEach { (identifier, block) ->
             itemMap[identifier] = when(block) {
-                THERMOELECTRIC_GENERATOR, BURNABLE_GENERATOR, ICY_GENERATOR, COLORFUL_GENERATOR -> BlockItem(block, creativeGroupSettings())
-                SLUDGY_GENERATOR, TELEPORT_GENERATOR, SCALDING_GENERATOR, STEAM_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.COMMON))
-                GLUTTONY_GENERATOR, BREW_GENERATOR, REDSTONE_GENERATOR, BLAST_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.UNCOMMON))
-                ENCHANTED_GENERATOR, DEMISE_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.RARE))
-                DRAGON_GENERATOR, WITHERED_GENERATOR -> BlockItem(block, creativeGroupSettings().rarity(Rarity.EPIC))
+                THERMOELECTRIC_GENERATOR, BURNABLE_GENERATOR, ICY_GENERATOR, COLORFUL_GENERATOR -> object: BlockItem(block, creativeGroupSettings()) {
+                    override fun appendTooltip(stack: ItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+                        super.appendTooltip(stack, world, tooltip, context)
+                        world?.let { displayHiddenTooltip(tooltip) { appendGeneratorTooltip(stack, tooltip, (block as AbstractGeneratorBlock).generatorConfig, "1")} }
+                    }
+                }
+                SLUDGY_GENERATOR, TELEPORT_GENERATOR, SCALDING_GENERATOR, STEAM_GENERATOR -> object: BlockItem(block, creativeGroupSettings().rarity(Rarity.COMMON)) {
+                    override fun appendTooltip(stack: ItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+                        super.appendTooltip(stack, world, tooltip, context)
+                        world?.let { displayHiddenTooltip(tooltip) { appendGeneratorTooltip(stack, tooltip, (block as AbstractGeneratorBlock).generatorConfig, "2")} }
+                    }
+                }
+                GLUTTONY_GENERATOR, BREW_GENERATOR, REDSTONE_GENERATOR, BLAST_GENERATOR -> object: BlockItem(block, creativeGroupSettings().rarity(Rarity.UNCOMMON)) {
+                    override fun appendTooltip(stack: ItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+                        super.appendTooltip(stack, world, tooltip, context)
+                        world?.let { displayHiddenTooltip(tooltip) { appendGeneratorTooltip(stack, tooltip, (block as AbstractGeneratorBlock).generatorConfig, "3")} }
+                    }
+                }
+                ENCHANTED_GENERATOR, DEMISE_GENERATOR -> object: BlockItem(block, creativeGroupSettings().rarity(Rarity.RARE)) {
+                    override fun appendTooltip(stack: ItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+                        super.appendTooltip(stack, world, tooltip, context)
+                        world?.let { displayHiddenTooltip(tooltip) { appendGeneratorTooltip(stack, tooltip, (block as AbstractGeneratorBlock).generatorConfig, "4")} }
+                    }
+                }
+                DRAGON_GENERATOR, WITHERED_GENERATOR -> object: BlockItem(block, creativeGroupSettings().rarity(Rarity.EPIC)) {
+                    override fun appendTooltip(stack: ItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+                        super.appendTooltip(stack, world, tooltip, context)
+                        world?.let { displayHiddenTooltip(tooltip) { appendGeneratorTooltip(stack, tooltip, (block as AbstractGeneratorBlock).generatorConfig, "5")} }
+                    }
+                }
                 HEAVENLY_GENERATOR, INFERNAL_GENERATOR -> object: BlockItem(block, creativeGroupSettings()) {
-                    override fun getName(stack: ItemStack): MutableText {
-                        val name = super.getName()
-                        var finalText: MutableText = LiteralText("")
-                        name.string.forEachIndexed { x, c ->
-                            val color = Color.HSBtoRGB((Util.getMeasuringTimeMs() - x * 10) % 2000 / 2000f, 0.8f, 0.95f)
-                            val textColor = TextColor.fromRgb(color)
-                            val charText = LiteralText("$c")
-                            val textStyle = charText.style.withColor(textColor)
-                            charText.style = textStyle
-                            finalText = finalText.append(charText)
-                        }
-                        return finalText
+                    override fun getName(stack: ItemStack): MutableText = getRainbowText(super.getName().string)
+                    override fun appendTooltip(stack: ItemStack, world: World?, tooltip: MutableList<Text>, context: TooltipContext) {
+                        super.appendTooltip(stack, world, tooltip, context)
+                        world?.let { displayHiddenTooltip(tooltip) { appendGeneratorTooltip(stack, tooltip, (block as AbstractGeneratorBlock).generatorConfig, "∞")} }
                     }
                 }
                 else -> BlockItem(block, creativeGroupSettings())
+            }
+        }
+    }
+
+    fun appendGeneratorTooltip(stack: ItemStack, tooltip: MutableList<Text>, generatorConfig: ModConfig.Generator, tier: String) {
+        tooltip.add(TranslatableText("tooltip.extragenerators.tier", tier).formatted(Formatting.DARK_GRAY))
+        tooltip.add(TranslatableText("tooltip.extragenerators.total_storage", LiteralText(generatorConfig.storage.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
+        tooltip.add(TranslatableText("tooltip.extragenerators.output", LiteralText(generatorConfig.output.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
+        if(stack.hasTag()) {
+            val blockEntityTag = stack.orCreateTag.getCompound("BlockEntityTag")
+            if(blockEntityTag.contains("storedPower")) {
+                tooltip.add(TranslatableText("tooltip.extragenerators.stored_energy", LiteralText(blockEntityTag.getDouble("storedPower").toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
             }
         }
     }
@@ -112,6 +147,19 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
         }else{
             runnable.run()
         }
+    }
+
+    fun getRainbowText(string: String): MutableText {
+        var finalText: MutableText = LiteralText("")
+        string.forEachIndexed { x, c ->
+            val color = Color.HSBtoRGB((Util.getMeasuringTimeMs() - x*100) % 2000 / 2000f, 0.8f, 0.95f)
+            val textColor = TextColor.fromRgb(color)
+            val charText = LiteralText("$c")
+            val textStyle = charText.style.withColor(textColor)
+            charText.style = textStyle
+            finalText = finalText.append(charText)
+        }
+        return finalText
     }
 
 }

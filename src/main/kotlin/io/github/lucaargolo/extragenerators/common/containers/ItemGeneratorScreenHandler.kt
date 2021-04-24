@@ -25,6 +25,7 @@ class ItemGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInventory, 
     override fun shouldSync() = entity.burningFuel != burningFuel || super.shouldSync()
 
     override fun postSync() {
+        super.postSync()
         burningFuel = entity.burningFuel?.copy()
     }
 

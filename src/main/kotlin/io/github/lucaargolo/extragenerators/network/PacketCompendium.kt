@@ -1,10 +1,7 @@
 package io.github.lucaargolo.extragenerators.network
 
 import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
-import io.github.lucaargolo.extragenerators.client.screen.ColorfulGeneratorScreen
-import io.github.lucaargolo.extragenerators.client.screen.FluidGeneratorScreen
-import io.github.lucaargolo.extragenerators.client.screen.FluidItemGeneratorScreen
-import io.github.lucaargolo.extragenerators.client.screen.ItemGeneratorScreen
+import io.github.lucaargolo.extragenerators.client.screen.*
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.entity.GeneratorAreaEffectCloudEntity
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
@@ -14,6 +11,7 @@ import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.minecraft.util.Identifier
 
 object PacketCompendium {
 
@@ -21,6 +19,7 @@ object PacketCompendium {
     val UPDATE_FLUID_GENERATOR_SCREEN = ModIdentifier("update_fluid_generator_screen")
     val UPDATE_FLUID_ITEM_GENERATOR_SCREEN = ModIdentifier("update_item_fluid_generator_screen")
     val UPDATE_COLORFUL_GENERATOR_SCREEN = ModIdentifier("update_colorful_generator_screen")
+    val UPDATE_INFINITE_GENERATOR_SCREEN = ModIdentifier("update_infinite_generator_screen")
     val SPAWN_GENERATOR_AREA_EFFECT_CLOUD = ModIdentifier("spawn_generator_area_effect_cloud")
 
     val SYNC_ITEM_GENERATORS = ModIdentifier("sync_item_generators")
@@ -70,6 +69,19 @@ object PacketCompendium {
                 (client.currentScreen as? ColorfulGeneratorScreen)?.screenHandler?.let {
                     it.energyStored = double
                     it.burningFuel = burningFuel
+                }
+            }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(UPDATE_INFINITE_GENERATOR_SCREEN) { client, _, buf, _ ->
+            val double = buf.readDouble()
+            val activeGenerators = linkedMapOf<Identifier, Int>()
+            repeat(buf.readInt()) {
+                activeGenerators[buf.readIdentifier()] = buf.readInt()
+            }
+            client.execute {
+                (client.currentScreen as? InfiniteGeneratorScreen)?.screenHandler?.let {
+                    it.energyStored = double
+                    it.activeGenerators = activeGenerators
                 }
             }
         }

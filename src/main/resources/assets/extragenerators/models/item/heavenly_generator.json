@@ -4,7 +4,7 @@
     "particle": "extragenerators:block/generator_base",
     "base": "extragenerators:block/generator_base",
     "details": "extragenerators:block/generator_details",
-    "color": "extragenerators:block/colorful_generator"
+    "color": "extragenerators:block/heavenly_generator"
   },
   "elements": [
     {

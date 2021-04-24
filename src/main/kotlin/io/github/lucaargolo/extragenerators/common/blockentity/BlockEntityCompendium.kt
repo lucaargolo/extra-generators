@@ -13,5 +13,6 @@ object BlockEntityCompendium: RegistryCompendium<BlockEntityType<*>>(Registry.BL
     val FLUID_ITEM_GENERATOR_TYPE = register("fluid_item_generator", BlockEntityType.Builder.create( { FluidItemGeneratorBlockEntity() }, *BlockCompendium.fluidItemGeneratorArray() ).build(null)) as BlockEntityType<FluidItemGeneratorBlockEntity>
     val COLORFUL_GENERATOR_TYPE = register("colorful_generator", BlockEntityType.Builder.create( { ColorfulGeneratorBlockEntity() }, BlockCompendium.COLORFUL_GENERATOR).build(null)) as BlockEntityType<ColorfulGeneratorBlockEntity>
     val THERMOELECTRIC_GENERATOR_TYPE = register("thermoelectric_generator", BlockEntityType.Builder.create( { ThermoelectricGeneratorBlockEntity() }, BlockCompendium.THERMOELECTRIC_GENERATOR ).build(null)) as BlockEntityType<ThermoelectricGeneratorBlockEntity>
+    val INFINITE_GENERATOR_TYPE = register("infinite_generator", BlockEntityType.Builder.create( { InfiniteGeneratorBlockEntity() }, BlockCompendium.HEAVENLY_GENERATOR, BlockCompendium.INFERNAL_GENERATOR ).build(null)) as BlockEntityType<InfiniteGeneratorBlockEntity>
 
 }

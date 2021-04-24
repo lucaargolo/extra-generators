@@ -1,0 +1,63 @@
+package io.github.lucaargolo.extragenerators.client.screen
+
+import io.github.lucaargolo.extragenerators.common.block.BlockCompendium
+import io.github.lucaargolo.extragenerators.common.blockentity.InfiniteGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.containers.InfiniteGeneratorScreenHandler
+import io.github.lucaargolo.extragenerators.utils.ModIdentifier
+import net.minecraft.client.util.math.MatrixStack
+import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.item.ItemStack
+import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
+import net.minecraft.util.math.MathHelper
+
+class InfiniteGeneratorScreen(handler: InfiniteGeneratorScreenHandler, inventory: PlayerInventory, title: Text): AbstractGeneratorScreen<InfiniteGeneratorScreenHandler, InfiniteGeneratorBlockEntity>(handler, inventory, title) {
+
+    private val texture = ModIdentifier("textures/gui/infinite_generator.png")
+
+    override fun init() {
+        super.init()
+        titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2
+    }
+
+    override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float) {
+        this.renderBackground(matrices)
+        super.render(matrices, mouseX, mouseY, delta)
+        drawMouseoverTooltip(matrices, mouseX, mouseY)
+        if((x+25..x+33).contains(mouseX) && (y+17..y+69).contains(mouseY)) {
+            val a = TranslatableText("screen.extragenerators.common.stored_energy").append(": ")
+            val b = LiteralText("${handler.energyStored}/${handler.entity.maxStoredPower} E")
+            renderTooltip(matrices, listOf(a, b), mouseX, mouseY)
+        }
+        var itemX = 39
+        var itemY = 16
+        BlockCompendium.generatorIdentifierMap().forEach { (identifier, block) ->
+            val qnt = handler.activeGenerators.getOrDefault(identifier, 0)
+            if(qnt == 0) {
+                itemRenderer.renderInGui(ItemStack(block), x+itemX, y+itemY)
+                matrices.translate(0.0, 0.0, 200.0)
+                fill(matrices, x+itemX, y+itemY, x+itemX + 18, y+itemY + 18, 0xC6C6C6C6.toInt())
+                matrices.translate(0.0, 0.0, -200.0)
+            }else{
+                val stack = ItemStack(block, qnt)
+                itemRenderer.renderInGui(stack, x+itemX, y+itemY)
+                itemRenderer.renderGuiItemOverlay(textRenderer, stack, x+itemX, y+itemY)
+            }
+            itemX += 18
+            if(itemX >= 147) {
+                itemX = 39
+                itemY += 18
+            }
+        }
+    }
+
+    override fun drawBackground(matrices: MatrixStack, delta: Float, mouseX: Int, mouseY: Int) {
+        client?.textureManager?.bindTexture(texture)
+        drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight)
+        val energyPercentage = handler.energyStored/handler.entity.maxStoredPower
+        val energyOffset = MathHelper.lerp(energyPercentage, 0.0, 52.0).toInt()
+        drawTexture(matrices, x+25, y+17+(52-energyOffset), 176, 52-energyOffset, 8, energyOffset)
+    }
+
+}

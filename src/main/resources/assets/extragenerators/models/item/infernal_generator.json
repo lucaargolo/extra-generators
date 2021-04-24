@@ -1,0 +1,6 @@
+{
+  "parent": "extragenerators:item/heavenly_generator",
+  "textures": {
+    "color": "extragenerators:block/infernal_generator"
+  }
+}

@@ -3,7 +3,8 @@
 	"textures": {
 		"particle": "extragenerators:block/generator_base",
 		"base": "extragenerators:block/generator_base",
-		"details": "extragenerators:block/generator_details"
+		"details": "extragenerators:block/generator_details",
+		"color": "extragenerators:block/heavenly_generator"
 	},
 	"elements": [
 		{

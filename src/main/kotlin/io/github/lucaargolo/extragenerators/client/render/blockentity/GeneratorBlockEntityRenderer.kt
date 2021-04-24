@@ -1,6 +1,7 @@
 package io.github.lucaargolo.extragenerators.client.render.blockentity
 
 import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.InfiniteGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.mixin.BakedModelManagerAccessor
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.minecraft.client.MinecraftClient
@@ -13,8 +14,10 @@ import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.client.util.math.Vector3f
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.state.property.Properties
+import net.minecraft.util.Util
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
+import java.awt.Color
 import java.util.*
 
 class GeneratorBlockEntityRenderer(dispatcher: BlockEntityRenderDispatcher?) : BlockEntityRenderer<AbstractGeneratorBlockEntity<*>>(dispatcher) {
@@ -42,7 +45,12 @@ class GeneratorBlockEntityRenderer(dispatcher: BlockEntityRenderDispatcher?) : B
         Direction.values().forEach { quads.addAll(model.getQuads(null, it, random)) }.also { quads.addAll(model.getQuads(null, null, random)) }
         val vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntitySolid(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE))
         quads.forEach {
-            vertexConsumer.quad(matrices.peek(), it, 1f, 1f, 1f, light, overlay)
+            if(entity is InfiniteGeneratorBlockEntity && entity.isRunning()) {
+                val c = Color.getHSBColor(Util.getMeasuringTimeMs() % 2000 / 2000f, 0.8f, 0.95f)
+                vertexConsumer.quad(matrices.peek(), it, c.red/255f, c.green/255f, c.blue/255f, light, overlay)
+            }else{
+                vertexConsumer.quad(matrices.peek(), it, 1f, 1f, 1f, light, overlay)
+            }
         }
         matrices.pop()
     }
