@@ -15,11 +15,11 @@ import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.ItemScatterer
 import net.minecraft.util.Tickable
+import net.minecraft.util.math.Direction
 import net.minecraft.util.registry.Registry
-import team.reborn.energy.EnergySide
-import team.reborn.energy.EnergyStorage
-import team.reborn.energy.EnergyTier
+import team.reborn.energy.*
 import java.util.*
+import kotlin.math.floor
 
 abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(type: BlockEntityType<B>): SynchronizeableBlockEntity(type), Tickable, EnergyStorage {
 
@@ -54,10 +54,13 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     }
 
     override fun tick() {
+        //If generator running state changed, sync block entity
         if(isClientRunning != isRunning()) {
             isClientRunning = isRunning()
             markDirtyAndSync()
         }
+
+        //If generator is running on client, rotate cogwheel
         if(isRunning() && world?.isClient == true) {
             cogWheelRotationDegree += getCogWheelRotation()
             if(cogWheelRotationDegree >= 360f) {
@@ -66,11 +69,16 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
             }
             world?.addParticle(ParticleTypes.SMOKE, pos.x+0.5, pos.y+0.825, pos.z+0.5, 0.0, 0.1, 0.0)
         }
-        if(isRunning() && world?.isClient == false) {
-            if(ownerUUID != null && generatorIdentifier != null && this !is InfiniteGeneratorBlockEntity) {
+
+        //If generator is on server move energy and if its running add it to active generators
+        if(world?.isClient == false) {
+            moveEnergy()
+            if(isRunning() && ownerUUID != null && generatorIdentifier != null && this !is InfiniteGeneratorBlockEntity) {
                 ActiveGenerators.add(ownerUUID!!, generatorIdentifier!!)
             }
         }
+
+        //Check if generator was properly initialized
         if(!initialized) {
             initialized = (world?.getBlockState(pos)?.block as? AbstractGeneratorBlock)?.let { initialize(it) } ?: false
             if(!initialized) {
@@ -112,6 +120,31 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         isClientRunning = tag.getBoolean("isClientRunning")
         if(tag.contains("ownerUUID")) {
             ownerUUID = tag.getUuid("ownerUUID")
+        }
+    }
+
+    private fun moveEnergy() {
+        val sourceHandler = Energy.of(this)
+        val targets = linkedMapOf<Direction, EnergyHandler>()
+        Direction.values().forEach { direction ->
+            val targetPos = pos.offset(direction)
+            world?.getBlockEntity(targetPos)?.let { target ->
+                if(Energy.valid(target)) {
+                    val targetHandler = Energy.of(target).side(direction.opposite)
+                    if (targetHandler.energy < targetHandler.maxStored) {
+                        targets[direction] = targetHandler
+                    }
+                }
+            }
+        }
+        val transferAmount = floor(sourceHandler.energy.coerceAtMost(sourceHandler.maxOutput)/targets.size)
+        targets.forEach { (direction, targetHandler) ->
+            sourceHandler.side(direction)
+            if (sourceHandler.energy + transferAmount <= sourceHandler.maxStored) {
+                sourceHandler.into(targetHandler).move(transferAmount)
+            }else{
+                sourceHandler.into(targetHandler).move(sourceHandler.maxStored-sourceHandler.energy)
+            }
         }
     }
 
