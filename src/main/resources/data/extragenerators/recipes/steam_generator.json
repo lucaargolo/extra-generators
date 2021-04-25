@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "LPL",
+    "I#I"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "L": {
+      "item": "minecraft:water_bucket"
+    },
+    "P": {
+      "item": "extragenerators:burnable_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "#": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:steam_generator",
+    "count": 1
+  }
+}

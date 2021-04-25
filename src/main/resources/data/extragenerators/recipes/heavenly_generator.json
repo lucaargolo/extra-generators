@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#WO",
+    "GNM",
+    "PYL"
+  ],
+  "key": {
+    "#": {
+      "item": "extragenerators:icy_generator"
+    },
+    "W": {
+      "item": "extragenerators:colorful_generator"
+    },
+    "O": {
+      "item": "extragenerators:sludgy_generator"
+    },
+    "G": {
+      "item": "extragenerators:teleport_generator"
+    },
+    "M": {
+      "item": "extragenerators:gluttony_generator"
+    },
+    "P": {
+      "item": "extragenerators:brew_generator"
+    },
+    "Y": {
+      "item": "extragenerators:enchanted_generator"
+    },
+    "L": {
+      "item": "extragenerators:dragon_generator"
+    },
+    "N": {
+      "item": "minecraft:netherite_block"
+    }
+  },
+  "result": {
+    "item": "extragenerators:heavenly_generator",
+    "count": 1
+  }
+}

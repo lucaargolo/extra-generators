@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "TPT",
+    "ICI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "T": {
+      "item": "minecraft:tnt"
+    },
+    "P": {
+      "item": "extragenerators:sludgy_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "C": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:blast_generator",
+    "count": 1
+  }
+}

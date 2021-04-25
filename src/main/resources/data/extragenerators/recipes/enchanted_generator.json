@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "EPE",
+    "IYI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "E": {
+      "item": "minecraft:enchanting_table"
+    },
+    "P": {
+      "item": "extragenerators:brew_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "Y": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:enchanted_generator",
+    "count": 1
+  }
+}

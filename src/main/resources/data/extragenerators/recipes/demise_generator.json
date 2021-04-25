@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iSi",
+    "RPB",
+    "IJI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "S": {
+      "item": "minecraft:spider_eye"
+    },
+    "R": {
+      "item": "minecraft:rotten_flesh"
+    },
+    "P": {
+      "item": "extragenerators:gluttony_generator"
+    },
+    "B": {
+      "item": "minecraft:bone"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "J": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:demise_generator",
+    "count": 1
+  }
+}

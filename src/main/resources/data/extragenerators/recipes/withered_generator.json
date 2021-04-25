@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "NPN",
+    "IZI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "P": {
+      "item": "extragenerators:demise_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "Z": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:withered_generator",
+    "count": 1
+  }
+}

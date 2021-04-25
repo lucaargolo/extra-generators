@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "DPD",
+    "ITI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "D": {
+      "item": "minecraft:dragon_breath"
+    },
+    "P": {
+      "item": "extragenerators:enchanted_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "T": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:dragon_generator",
+    "count": 1
+  }
+}

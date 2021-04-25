@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#WO",
+    "GNM",
+    "PYL"
+  ],
+  "key": {
+    "#": {
+      "item": "extragenerators:thermoelectric_generator"
+    },
+    "W": {
+      "item": "extragenerators:burnable_generator"
+    },
+    "O": {
+      "item": "extragenerators:scalding_generator"
+    },
+    "G": {
+      "item": "extragenerators:steam_generator"
+    },
+    "M": {
+      "item": "extragenerators:redstone_generator"
+    },
+    "P": {
+      "item": "extragenerators:blast_generator"
+    },
+    "Y": {
+      "item": "extragenerators:demise_generator"
+    },
+    "L": {
+      "item": "extragenerators:withered_generator"
+    },
+    "N": {
+      "item": "minecraft:netherite_block"
+    }
+  },
+  "result": {
+    "item": "extragenerators:infernal_generator",
+    "count": 1
+  }
+}

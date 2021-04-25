@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "RPR",
+    "ILI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "R": {
+      "tag": "c:redstone_blocks"
+    },
+    "P": {
+      "item": "extragenerators:scalding_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "L": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:redstone_generator",
+    "count": 1
+  }
+}

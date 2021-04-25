@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iEi",
+    "EPE",
+    "IKI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "P": {
+      "item": "extragenerators:burnable_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "K": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:teleport_generator",
+    "count": 1
+  }
+}

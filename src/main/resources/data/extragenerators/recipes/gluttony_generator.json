@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iCi",
+    "SPR",
+    "IYI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "C": {
+      "item": "minecraft:cooked_chicken"
+    },
+    "S": {
+      "item": "minecraft:cooked_beef"
+    },
+    "P": {
+      "item": "extragenerators:sludgy_generator"
+    },
+    "R": {
+      "item": "minecraft:cooked_porkchop"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "Y": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:gluttony_generator",
+    "count": 1
+  }
+}

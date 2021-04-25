@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "SPS",
+    "IXI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "S": {
+      "tag": "c:slime_blocks"
+    },
+    "P": {
+      "item": "extragenerators:icy_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "X": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:sludgy_generator",
+    "count": 1
+  }
+}

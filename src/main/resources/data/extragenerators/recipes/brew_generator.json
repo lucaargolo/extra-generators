@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    "BPB",
+    "IOI"
+  ],
+  "key": {
+    "i": {
+      "tag": "c:iron_ingots"
+    },
+    "B": {
+      "item": "minecraft:brewing_stand"
+    },
+    "P": {
+      "item": "extragenerators:teleport_generator"
+    },
+    "I": {
+      "tag": "c:iron_blocks"
+    },
+    "O": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "item": "extragenerators:brew_generator",
+    "count": 1
+  }
+}
