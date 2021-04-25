@@ -1,9 +1,10 @@
 package io.github.lucaargolo.extragenerators.network
 
-import alexiil.mc.lib.attributes.fluid.FluidAttributes
 import alexiil.mc.lib.attributes.fluid.FluidInvUtil
 import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
 import io.github.lucaargolo.extragenerators.client.screen.*
+import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.entity.GeneratorAreaEffectCloudEntity
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
@@ -136,7 +137,12 @@ object PacketCompendium {
             val world = player.world
             val blockPos = buf.readBlockPos()
             server.execute {
-                FluidInvUtil.interactCursorWithTank(FluidAttributes.FIXED_INV.get(world, blockPos), player)
+                (world.getBlockEntity(blockPos) as? FluidGeneratorBlockEntity)?.let {
+                    FluidInvUtil.interactCursorWithTank(it.fluidInv.transferable, player)
+                }
+                (world.getBlockEntity(blockPos) as? FluidItemGeneratorBlockEntity)?.let {
+                    FluidInvUtil.interactCursorWithTank(it.fluidInv.transferable, player)
+                }
             }
         }
     }

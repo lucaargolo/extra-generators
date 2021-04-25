@@ -3,8 +3,7 @@ package io.github.lucaargolo.extragenerators.utils
 import io.github.lucaargolo.extragenerators.common.block.BlockCompendium
 import net.minecraft.util.Identifier
 import java.util.*
-import kotlin.collections.LinkedHashMap
-import kotlin.math.*
+import kotlin.math.min
 
 object ActiveGenerators {
 

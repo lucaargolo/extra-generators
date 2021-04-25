@@ -58,7 +58,7 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
     val ENCHANTED_GENERATOR = register("enchanted_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.enchantedGenerator, { GeneratorFuel.fromEnchantedGeneratorFuel(it) })  )
     val DEMISE_GENERATOR = register("demise_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.COBBLESTONE).nonOpaque(), ExtraGenerators.CONFIG.demiseGenerator, { GeneratorFuel.fromItemResource("demise", it) }) {
         val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
-        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.INSTANT_DAMAGE)
+        GeneratorAreaEffectCloudEntity.createAndSpawn(world, it, StatusEffects.WEAKNESS)
     } )
 
     //Tier 5 Generators

@@ -26,7 +26,25 @@ class FluidGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInventory,
     }
 
     override fun transferSlot(player: PlayerEntity?, index: Int): ItemStack {
-        return ItemStack.EMPTY
+        var itemStack = ItemStack.EMPTY
+        val slot = this.slots[index]
+        if (slot != null && slot.hasStack()) {
+            val itemStack2 = slot.stack
+            itemStack = itemStack2.copy()
+            if (slot is SlotFixedItemInv) {
+                if (!insertItem(itemStack2, 0, this.slots.size-2, true)) {
+                    return ItemStack.EMPTY
+                }
+            } else if (!insertItem(itemStack2, this.slots.size-2, this.slots.size, false)) {
+                return ItemStack.EMPTY
+            }
+            if (itemStack2.isEmpty) {
+                slot.stack = ItemStack.EMPTY
+            } else {
+                slot.markDirty()
+            }
+        }
+        return itemStack
     }
 
     override fun shouldSync() = entity.burningFuel != burningFuel || entity.fluidInv.getInvFluid(0) != fluidVolume || super.shouldSync()

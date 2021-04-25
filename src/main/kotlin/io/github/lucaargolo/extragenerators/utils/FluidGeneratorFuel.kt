@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
-import kotlin.math.*
+import kotlin.math.round
 
 data class FluidGeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val fluidInput: FluidVolume, val energyOutput: Double) {
 

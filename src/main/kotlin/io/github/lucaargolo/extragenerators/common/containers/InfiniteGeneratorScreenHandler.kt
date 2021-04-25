@@ -3,7 +3,6 @@ package io.github.lucaargolo.extragenerators.common.containers
 import io.github.lucaargolo.extragenerators.common.blockentity.InfiniteGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.network.PacketCompendium
 import io.github.lucaargolo.extragenerators.utils.ActiveGenerators
-import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack

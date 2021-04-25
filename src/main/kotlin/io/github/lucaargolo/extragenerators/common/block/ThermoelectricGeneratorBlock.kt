@@ -15,11 +15,10 @@ class ThermoelectricGeneratorBlock(settings: Settings, generatorConfig: ModConfi
 
     override fun createBlockEntity(world: BlockView?) = ThermoelectricGeneratorBlockEntity()
 
+    @Suppress("deprecation")
     override fun neighborUpdate(state: BlockState, world: World, pos: BlockPos, block: Block?, fromPos: BlockPos?, notify: Boolean) {
         super.neighborUpdate(state, world, pos, block, fromPos, notify)
-        (world.getBlockEntity(pos) as? ThermoelectricGeneratorBlockEntity)?.let {
-            it.axisTemperatureDifferenceCache.clear()
-        }
+        (world.getBlockEntity(pos) as? ThermoelectricGeneratorBlockEntity)?.axisTemperatureDifferenceCache?.clear()
     }
 
 }

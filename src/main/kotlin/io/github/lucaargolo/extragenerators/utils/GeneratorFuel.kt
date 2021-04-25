@@ -4,7 +4,10 @@ import com.google.gson.JsonObject
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl
 import net.minecraft.enchantment.EnchantmentHelper
-import net.minecraft.item.*
+import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
+import net.minecraft.item.LingeringPotionItem
+import net.minecraft.item.SplashPotionItem
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.potion.PotionUtil

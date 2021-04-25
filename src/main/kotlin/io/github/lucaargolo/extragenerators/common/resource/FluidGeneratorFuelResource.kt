@@ -17,7 +17,8 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
     val clientFluidKeysMap = linkedMapOf<String, LinkedHashMap<FluidKey, FluidGeneratorFuel>>()
 
     fun test(id: String, fluidKey: FluidKey): FluidGeneratorFuel? {
-        fluidKeysMap[id]?.forEach { (key, fuel) ->
+        val map = if(clientFluidKeysMap.isEmpty()) fluidKeysMap else clientFluidKeysMap
+        map[id]?.forEach { (key, fuel) ->
             if(key == fluidKey) return fuel
         }
         return null

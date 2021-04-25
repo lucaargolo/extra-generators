@@ -12,6 +12,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.ItemScatterer
@@ -42,7 +43,7 @@ class ColorfulGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Gene
 
     override fun onUse(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, hand: Hand, hit: BlockHitResult): ActionResult {
         player.openHandledScreen(object: ExtendedScreenHandlerFactory {
-            override fun getDisplayName() = name
+            override fun getDisplayName() = TranslatableText(translationKey)
 
             override fun createMenu(syncId: Int, inv: PlayerInventory, player: PlayerEntity): ScreenHandler {
                 return ColorfulGeneratorScreenHandler(syncId, inv, world.getBlockEntity(pos) as ColorfulGeneratorBlockEntity, ScreenHandlerContext.create(world, pos))

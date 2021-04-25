@@ -16,7 +16,8 @@ class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
     val clientIngredientsMap = linkedMapOf<String, LinkedHashMap<Ingredient, GeneratorFuel>>()
 
     fun test(id: String, itemStack: ItemStack): GeneratorFuel? {
-        ingredientsMap[id]?.forEach { (ingredient, fuel) ->
+        val map = if(clientIngredientsMap.isEmpty()) ingredientsMap else clientIngredientsMap
+        map[id]?.forEach { (ingredient, fuel) ->
             if(ingredient.test(itemStack)) return fuel
         }
         return null
