@@ -32,6 +32,14 @@
     "temperature": 200
   },
   {
+    "block": "minecraft:wall_torch",
+    "temperature": 100
+  },
+  {
+    "block": "minecraft:soul_wall_torch",
+    "temperature": 200
+  },
+  {
     "block": "minecraft:lantern",
     "temperature": 100
   },

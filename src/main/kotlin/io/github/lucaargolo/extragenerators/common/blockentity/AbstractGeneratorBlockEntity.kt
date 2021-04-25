@@ -54,6 +54,21 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     }
 
     override fun tick() {
+        //Check if generator was properly initialized
+        if(!initialized) {
+            initialized = (world?.getBlockState(pos)?.block as? AbstractGeneratorBlock)?.let { initialize(it) } ?: false
+            if(!initialized) {
+                ExtraGenerators.LOGGER.error("Failed to initialize generator! This is a bug.")
+                (world as? ServerWorld)?.let { serverWorld ->
+                    val stacks = Block.getDroppedStacks(cachedState, serverWorld, pos, this)
+                    stacks.forEach {
+                        ItemScatterer.spawn(serverWorld, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(), it)
+                    }
+                }
+                world?.setBlockState(pos, Blocks.AIR.defaultState)
+            }
+        }
+
         //If generator running state changed, sync block entity
         if(isClientRunning != isRunning()) {
             isClientRunning = isRunning()
@@ -75,21 +90,6 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
             moveEnergy()
             if(isRunning() && ownerUUID != null && generatorIdentifier != null && this !is InfiniteGeneratorBlockEntity) {
                 ActiveGenerators.add(ownerUUID!!, generatorIdentifier!!)
-            }
-        }
-
-        //Check if generator was properly initialized
-        if(!initialized) {
-            initialized = (world?.getBlockState(pos)?.block as? AbstractGeneratorBlock)?.let { initialize(it) } ?: false
-            if(!initialized) {
-                ExtraGenerators.LOGGER.error("Failed to initialize generator! This is a bug.")
-                (world as? ServerWorld)?.let { serverWorld ->
-                    val stacks = Block.getDroppedStacks(cachedState, serverWorld, pos, this)
-                    stacks.forEach {
-                        ItemScatterer.spawn(serverWorld, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(), it)
-                    }
-                }
-                world?.setBlockState(pos, Blocks.AIR.defaultState)
             }
         }
     }
@@ -131,7 +131,7 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
             world?.getBlockEntity(targetPos)?.let { target ->
                 if(Energy.valid(target)) {
                     val targetHandler = Energy.of(target).side(direction.opposite)
-                    if (targetHandler.energy < targetHandler.maxStored) {
+                    if (targetHandler.maxInput > 0 && targetHandler.energy < targetHandler.maxStored) {
                         targets[direction] = targetHandler
                     }
                 }
@@ -139,11 +139,11 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         }
         val transferAmount = floor(sourceHandler.energy.coerceAtMost(sourceHandler.maxOutput)/targets.size)
         targets.forEach { (direction, targetHandler) ->
-            sourceHandler.side(direction)
-            if (sourceHandler.energy + transferAmount <= sourceHandler.maxStored) {
-                sourceHandler.into(targetHandler).move(transferAmount)
+            val maxTransferAmount = transferAmount.coerceAtMost(targetHandler.maxInput)
+            if (targetHandler.energy + maxTransferAmount <= targetHandler.maxStored) {
+                sourceHandler.side(direction).into(targetHandler).move(maxTransferAmount)
             }else{
-                sourceHandler.into(targetHandler).move(sourceHandler.maxStored-sourceHandler.energy)
+                sourceHandler.side(direction).into(targetHandler).move(targetHandler.maxStored-targetHandler.energy)
             }
         }
     }
