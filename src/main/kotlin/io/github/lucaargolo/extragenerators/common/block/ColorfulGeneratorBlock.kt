@@ -14,6 +14,7 @@ import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
+import net.minecraft.util.ItemScatterer
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.BlockView
@@ -25,6 +26,18 @@ class ColorfulGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Gene
         (world.getBlockEntity(pos) as? ColorfulGeneratorBlockEntity)?.let{
             to.offer(it.itemInv)
         }
+    }
+
+    @Suppress("deprecation")
+    override fun onStateReplaced(state: BlockState, world: World, pos: BlockPos, newState: BlockState, notify: Boolean) {
+        if (!state.isOf(newState.block)) {
+            (world.getBlockEntity(pos) as? ColorfulGeneratorBlockEntity)?.let{
+                it.itemInv.stackIterable().forEach {
+                    ItemScatterer.spawn(world, pos.x+0.0, pos.y+0.0, pos.z+0.0, it)
+                }
+            }
+        }
+        super.onStateReplaced(state, world, pos, newState, notify)
     }
 
     override fun onUse(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, hand: Hand, hit: BlockHitResult): ActionResult {

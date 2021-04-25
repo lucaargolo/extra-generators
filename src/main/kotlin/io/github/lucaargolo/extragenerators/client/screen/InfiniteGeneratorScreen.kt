@@ -11,6 +11,7 @@ import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.math.MathHelper
+import kotlin.math.max
 
 class InfiniteGeneratorScreen(handler: InfiniteGeneratorScreenHandler, inventory: PlayerInventory, title: Text): AbstractGeneratorScreen<InfiniteGeneratorScreenHandler, InfiniteGeneratorBlockEntity>(handler, inventory, title) {
 
@@ -34,15 +35,18 @@ class InfiniteGeneratorScreen(handler: InfiniteGeneratorScreenHandler, inventory
         var itemY = 16
         BlockCompendium.generatorIdentifierMap().forEach { (identifier, block) ->
             val qnt = handler.activeGenerators.getOrDefault(identifier, 0)
+            val stack = ItemStack(block, max(1, qnt))
             if(qnt == 0) {
-                itemRenderer.renderInGui(ItemStack(block), x+itemX, y+itemY)
+                itemRenderer.renderInGui(stack, x+itemX, y+itemY)
                 matrices.translate(0.0, 0.0, 200.0)
                 fill(matrices, x+itemX, y+itemY, x+itemX + 18, y+itemY + 18, 0xC6C6C6C6.toInt())
                 matrices.translate(0.0, 0.0, -200.0)
             }else{
-                val stack = ItemStack(block, qnt)
                 itemRenderer.renderInGui(stack, x+itemX, y+itemY)
                 itemRenderer.renderGuiItemOverlay(textRenderer, stack, x+itemX, y+itemY)
+            }
+            if(mouseX in (x+itemX..x+itemX+17) && mouseY in (y+itemY..y+itemY+17)) {
+                renderTooltip(matrices, stack, mouseX, mouseY)
             }
             itemX += 18
             if(itemX >= 147) {

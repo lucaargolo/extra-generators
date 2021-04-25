@@ -2,7 +2,10 @@ package io.github.lucaargolo.extragenerators.client.screen
 
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.FluidItemGeneratorScreenHandler
+import io.github.lucaargolo.extragenerators.network.PacketCompendium
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.LiteralText
@@ -18,6 +21,15 @@ class FluidItemGeneratorScreen(handler: FluidItemGeneratorScreenHandler, invento
     override fun init() {
         super.init()
         titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2
+    }
+
+    override fun mouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
+        if(button == 0 && (x+134.0..x+150.0).contains(mouseX) && (y+17.0..y+69.0).contains(mouseY)) {
+            val buf = PacketByteBufs.create()
+            buf.writeBlockPos(handler.entity.pos)
+            ClientPlayNetworking.send(PacketCompendium.INTERACT_CURSOR_WITH_TANK, buf)
+        }
+        return super.mouseClicked(mouseX, mouseY, button)
     }
 
     override fun render(matrices: MatrixStack?, mouseX: Int, mouseY: Int, delta: Float) {

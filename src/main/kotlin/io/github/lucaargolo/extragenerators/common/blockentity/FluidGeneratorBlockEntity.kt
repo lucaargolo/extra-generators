@@ -25,7 +25,7 @@ class FluidGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidGeneratorBloc
         override fun getFilterForSlot(slot: Int): ItemFilter {
             return when(slot) {
                 0 -> ItemFilter { initialized && (it.isEmpty || FluidContainerRegistry.getContainedFluid(it.item).let { volume -> !volume.isEmpty && fluidFuelMap?.invoke(volume.fluidKey) != null }) }
-                1 -> ItemFilter { it.isEmpty || it.item == Items.BUCKET }
+                1 -> ItemFilter { it.isEmpty || FluidContainerRegistry.getEmptyContainers().contains(it.item)}
                 else -> ItemFilter { true }
             }
         }

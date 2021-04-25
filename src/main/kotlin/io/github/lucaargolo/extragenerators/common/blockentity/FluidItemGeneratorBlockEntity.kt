@@ -27,7 +27,7 @@ class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGener
             return when(slot) {
                 0 -> ItemFilter { initialized && (it.isEmpty || fluidItemFuelMap?.invoke(it) != null) }
                 1 -> ItemFilter { initialized && (it.isEmpty || FluidContainerRegistry.getContainedFluid(it.item).fluidKey == fluidKey) }
-                2 -> ItemFilter { it.isEmpty || it.item == Items.BUCKET }
+                2 -> ItemFilter { it.isEmpty || FluidContainerRegistry.getEmptyContainers().contains(it.item) }
                 else -> ItemFilter { true }
             }
         }

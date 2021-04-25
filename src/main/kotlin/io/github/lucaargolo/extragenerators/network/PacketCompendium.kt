@@ -1,5 +1,7 @@
 package io.github.lucaargolo.extragenerators.network
 
+import alexiil.mc.lib.attributes.fluid.FluidAttributes
+import alexiil.mc.lib.attributes.fluid.FluidInvUtil
 import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
 import io.github.lucaargolo.extragenerators.client.screen.*
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
@@ -25,7 +27,9 @@ object PacketCompendium {
     val SYNC_ITEM_GENERATORS = ModIdentifier("sync_item_generators")
     val SYNC_FLUID_GENERATORS = ModIdentifier("sync_fluid_generators")
     val SYNC_BLOCK_TEMPERATURE = ModIdentifier("sync_block_temperature")
+
     val REQUEST_RESOURCES = ModIdentifier("request_resources")
+    val INTERACT_CURSOR_WITH_TANK = ModIdentifier("interact_cursor_with_tank")
 
     fun onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_ITEM_GENERATOR_SCREEN) { client, _, buf, _ ->
@@ -126,6 +130,14 @@ object PacketCompendium {
             ServerPlayNetworking.send(player, SYNC_ITEM_GENERATORS, PacketByteBufs.create().also { ResourceCompendium.ITEM_GENERATORS.toBuf(it) })
             ServerPlayNetworking.send(player, SYNC_FLUID_GENERATORS, PacketByteBufs.create().also { ResourceCompendium.FLUID_GENERATORS.toBuf(it) })
             ServerPlayNetworking.send(player, SYNC_BLOCK_TEMPERATURE, PacketByteBufs.create().also { ResourceCompendium.BLOCK_TEMPERATURE.toBuf(it) })
+        }
+
+        ServerPlayNetworking.registerGlobalReceiver(INTERACT_CURSOR_WITH_TANK) { server, player, _, buf, _ ->
+            val world = player.world
+            val blockPos = buf.readBlockPos()
+            server.execute {
+                FluidInvUtil.interactCursorWithTank(FluidAttributes.FIXED_INV.get(world, blockPos), player)
+            }
         }
     }
 

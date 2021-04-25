@@ -12,8 +12,8 @@ class InfiniteGeneratorBlockEntity: AbstractGeneratorBlockEntity<InfiniteGenerat
 
     override fun tick() {
         super.tick()
-        isInfinite = ownerUUID?.let { ActiveGenerators.test(it) } ?: false
         if(world?.isClient == false) {
+            isInfinite = ownerUUID?.let { ActiveGenerators.test(it) } ?: false
             if(isInfinite && storedPower + 102400.0 <= maxStoredPower) {
                 storedPower += 102400.0
             }
