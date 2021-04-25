@@ -27,8 +27,9 @@ class FluidGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generat
 
     override fun addAllAttributes(world: World, pos: BlockPos, state: BlockState, to: AttributeList<*>) {
         (world.getBlockEntity(pos) as? FluidGeneratorBlockEntity)?.let{
-            to.offer(it.itemInv)
-            to.offer(it.fluidInv)
+            to.offer(it.fluidInv.insertable)
+            to.offer(it.itemInv.getSlot(0).pureInsertable)
+            to.offer(it.itemInv.getSlot(1).pureExtractable)
         }
     }
 

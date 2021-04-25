@@ -24,7 +24,7 @@ class ColorfulGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Gene
 
     override fun addAllAttributes(world: World, pos: BlockPos, state: BlockState, to: AttributeList<*>) {
         (world.getBlockEntity(pos) as? ColorfulGeneratorBlockEntity)?.let{
-            to.offer(it.itemInv)
+            to.offer(it.itemInv.insertable)
         }
     }
 

@@ -26,7 +26,7 @@ class ItemGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generato
 
     override fun addAllAttributes(world: World, pos: BlockPos, state: BlockState, to: AttributeList<*>) {
         (world.getBlockEntity(pos) as? ItemGeneratorBlockEntity)?.let{
-            to.offer(it.itemInv)
+            to.offer(it.itemInv.insertable)
         }
     }
 
