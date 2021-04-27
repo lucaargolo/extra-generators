@@ -22,7 +22,7 @@ class ExtraGeneratorsClient: ClientModInitializer {
         BlockEntityRendererCompendium.initialize()
         EntityRendererCompendium.initialize()
 
-        ClientPlayConnectionEvents.INIT.register{ handler, _ ->
+        ClientPlayConnectionEvents.JOIN.register{ handler, _, _ ->
             handler.sendPacket(ClientPlayNetworking.createC2SPacket(PacketCompendium.REQUEST_RESOURCES, PacketByteBufs.create()))
         }
         ModelLoadingRegistry.INSTANCE.registerModelProvider { _, out ->
