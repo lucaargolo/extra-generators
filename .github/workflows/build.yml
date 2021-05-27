@@ -12,11 +12,11 @@ jobs:
       options: --user root
 
     steps:
-      - uses: actions/checkout@v2.2.0
-      - run: |
+    - uses: actions/checkout@v2.2.0
+    - run: |
           chmod +x ./gradlew
           ./gradlew build
-      - uses: actions/upload-artifact@v2
-        with:
-          name: build-artifacts
-          path: build/libs/
+    - uses: actions/upload-artifact@v2
+      with:
+        name: build-artifacts
+        path: build/libs/
