@@ -7,10 +7,11 @@ import io.github.lucaargolo.extragenerators.common.block.ItemGeneratorBlock
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 
-class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockEntity>(BlockEntityCompendium.ITEM_GENERATOR_TYPE) {
+class ItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGeneratorBlockEntity<ItemGeneratorBlockEntity>(BlockEntityCompendium.ITEM_GENERATOR_TYPE, pos, state) {
 
     private var itemFuelMap: ((ItemStack) -> GeneratorFuel?)? = null
     private var burnCallback: ((ItemGeneratorBlockEntity) -> Unit)? = null
@@ -60,25 +61,25 @@ class ItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<ItemGeneratorBlockE
         }
     }
 
-    override fun toTag(tag: CompoundTag): CompoundTag {
+    override fun writeNbt(tag: NbtCompound): NbtCompound {
         tag.put("itemInv", itemInv.toTag())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
-        return super.toTag(tag)
+        return super.writeNbt(tag)
     }
 
-    override fun fromTag(state: BlockState?, tag: CompoundTag) {
-        super.fromTag(state, tag)
+    override fun readNbt(tag: NbtCompound) {
+        super.readNbt(tag)
         itemInv.fromTag(tag.getCompound("itemInv"))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
-    override fun toClientTag(tag: CompoundTag): CompoundTag {
+    override fun toClientTag(tag: NbtCompound): NbtCompound {
         tag.put("itemInv", itemInv.toTag())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.toClientTag(tag)
     }
 
-    override fun fromClientTag(tag: CompoundTag) {
+    override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
         itemInv.fromTag(tag.getCompound("itemInv"))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))

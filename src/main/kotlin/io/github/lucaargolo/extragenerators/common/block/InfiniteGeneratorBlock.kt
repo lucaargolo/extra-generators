@@ -1,11 +1,16 @@
 package io.github.lucaargolo.extragenerators.common.block
 
 import alexiil.mc.lib.attributes.AttributeList
+import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.BlockEntityCompendium
 import io.github.lucaargolo.extragenerators.common.blockentity.InfiniteGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.InfiniteGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
+import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
+import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.network.PacketByteBuf
@@ -39,6 +44,10 @@ class InfiniteGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Gene
         return ActionResult.SUCCESS
     }
 
-    override fun createBlockEntity(world: BlockView?) = InfiniteGeneratorBlockEntity()
+    override fun createBlockEntity(pos: BlockPos, state: BlockState) = InfiniteGeneratorBlockEntity(pos, state)
+
+    override fun <T : BlockEntity?> getTicker(world: World?, state: BlockState?, type: BlockEntityType<T>?): BlockEntityTicker<T>? {
+        return checkType(type, BlockEntityCompendium.INFINITE_GENERATOR_TYPE, AbstractGeneratorBlockEntity.Companion::commonTick)
+    }
 
 }

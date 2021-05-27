@@ -3,9 +3,7 @@ package io.github.lucaargolo.extragenerators.common.block
 import alexiil.mc.lib.attributes.AttributeProvider
 import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.utils.ModConfig
-import net.minecraft.block.Block
-import net.minecraft.block.BlockEntityProvider
-import net.minecraft.block.BlockState
+import net.minecraft.block.*
 import net.minecraft.entity.LivingEntity
 import net.minecraft.item.ItemPlacementContext
 import net.minecraft.item.ItemStack
@@ -16,7 +14,7 @@ import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.world.World
 
-abstract class AbstractGeneratorBlock(settings: Settings, val generatorConfig: ModConfig.Generator): Block(settings), BlockEntityProvider, AttributeProvider {
+abstract class AbstractGeneratorBlock(settings: Settings, val generatorConfig: ModConfig.Generator): BlockWithEntity(settings), AttributeProvider {
 
     init {
         defaultState = stateManager.defaultState.with(Properties.HORIZONTAL_FACING, Direction.SOUTH)
@@ -38,5 +36,7 @@ abstract class AbstractGeneratorBlock(settings: Settings, val generatorConfig: M
     }
 
     override fun hasSidedTransparency(state: BlockState?) = true
+
+    override fun getRenderType(state: BlockState?) = BlockRenderType.MODEL
 
 }

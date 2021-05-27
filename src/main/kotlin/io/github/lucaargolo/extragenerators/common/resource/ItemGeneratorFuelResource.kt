@@ -51,7 +51,7 @@ class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
     override fun getFabricId() = ModIdentifier("item_generators")
 
-    override fun apply(manager: ResourceManager) {
+    override fun reload(manager: ResourceManager) {
         ingredientsMap.clear()
         ExtraGenerators.LOGGER.info("Loading item generators resource.")
         manager.findResources("item_generators") { r -> r.endsWith(".json") }.forEach { itemsResource ->

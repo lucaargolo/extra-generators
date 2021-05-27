@@ -52,7 +52,7 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
     override fun getFabricId() = ModIdentifier("fluid_generators")
 
-    override fun apply(manager: ResourceManager) {
+    override fun reload(manager: ResourceManager) {
         fluidKeysMap.clear()
         ExtraGenerators.LOGGER.info("Loading fluid generators resource.")
         manager.findResources("fluid_generators") { r -> r.endsWith(".json") }.forEach { fluidsResource ->

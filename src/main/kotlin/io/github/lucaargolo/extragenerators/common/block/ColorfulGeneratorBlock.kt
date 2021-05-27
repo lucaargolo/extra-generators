@@ -1,11 +1,18 @@
 package io.github.lucaargolo.extragenerators.common.block
 
 import alexiil.mc.lib.attributes.AttributeList
+import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.BlockEntityCompendium
 import io.github.lucaargolo.extragenerators.common.blockentity.ColorfulGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.ColorfulGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
+import net.minecraft.block.BlockWithEntity
+import net.minecraft.block.entity.AbstractFurnaceBlockEntity
+import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
+import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.network.PacketByteBuf
@@ -18,7 +25,6 @@ import net.minecraft.util.Hand
 import net.minecraft.util.ItemScatterer
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.BlockView
 import net.minecraft.world.World
 
 class ColorfulGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator): AbstractGeneratorBlock(settings, generatorConfig) {
@@ -56,6 +62,10 @@ class ColorfulGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Gene
         return ActionResult.SUCCESS
     }
 
-    override fun createBlockEntity(world: BlockView?) = ColorfulGeneratorBlockEntity()
+    override fun createBlockEntity(pos: BlockPos, state: BlockState) = ColorfulGeneratorBlockEntity(pos, state)
+
+    override fun <T : BlockEntity?> getTicker(world: World?, state: BlockState?, type: BlockEntityType<T>?): BlockEntityTicker<T>? {
+        return checkType(type, BlockEntityCompendium.COLORFUL_GENERATOR_TYPE, AbstractGeneratorBlockEntity.Companion::commonTick)
+    }
 
 }

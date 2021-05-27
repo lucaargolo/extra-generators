@@ -1,5 +1,6 @@
 package io.github.lucaargolo.extragenerators.client.screen
 
+import com.mojang.blaze3d.systems.RenderSystem
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.FluidGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.network.PacketCompendium
@@ -51,7 +52,7 @@ class FluidGeneratorScreen(handler: FluidGeneratorScreenHandler, inventory: Play
     }
 
     override fun drawBackground(matrices: MatrixStack, delta: Float, mouseX: Int, mouseY: Int) {
-        client?.textureManager?.bindTexture(texture)
+        RenderSystem.setShaderTexture(0, texture)
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight)
         val energyPercentage = handler.energyStored/handler.entity.maxStoredPower
         val energyOffset = MathHelper.lerp(energyPercentage, 0.0, 52.0).toInt()
@@ -69,7 +70,7 @@ class FluidGeneratorScreen(handler: FluidGeneratorScreenHandler, inventory: Play
                 it.renderGuiRect(x + 134.0, y + 17.0 + 52.0 - fluidOffset, x+150.0, y + 69.0)
             }
         }
-        client?.textureManager?.bindTexture(texture)
+        RenderSystem.setShaderTexture(0, texture)
         drawTexture(matrices, x+134, y+17, 198, 0, 16, 52)
     }
 

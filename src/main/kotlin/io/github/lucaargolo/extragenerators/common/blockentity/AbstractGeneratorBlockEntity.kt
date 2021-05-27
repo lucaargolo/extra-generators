@@ -9,19 +9,20 @@ import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
 import net.minecraft.block.entity.BlockEntityType
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 import net.minecraft.util.ItemScatterer
-import net.minecraft.util.Tickable
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.registry.Registry
+import net.minecraft.world.World
 import team.reborn.energy.*
 import java.util.*
 import kotlin.math.floor
 
-abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(type: BlockEntityType<B>): SynchronizeableBlockEntity(type), Tickable, EnergyStorage {
+abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(type: BlockEntityType<B>, pos: BlockPos, state: BlockState): SynchronizeableBlockEntity(type, pos, state), EnergyStorage {
 
     var ownerUUID: UUID? = null
     var initialized = false
@@ -53,7 +54,7 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         return generatorIdentifier != null && generatorConfig != null && ownerUUID != null
     }
 
-    override fun tick() {
+    open fun tick() {
         //Check if generator was properly initialized
         if(!initialized) {
             initialized = (world?.getBlockState(pos)?.block as? AbstractGeneratorBlock)?.let { initialize(it) } ?: false
@@ -94,28 +95,28 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         }
     }
 
-    override fun toTag(tag: CompoundTag): CompoundTag {
+    override fun writeNbt(tag: NbtCompound): NbtCompound {
         ownerUUID?.let { tag.putUuid("ownerUUID", it) }
         tag.putDouble("storedPower", storedPower)
-        return super.toTag(tag)
+        return super.writeNbt(tag)
     }
 
-    override fun fromTag(state: BlockState?, tag: CompoundTag) {
-        super.fromTag(state, tag)
+    override fun readNbt(tag: NbtCompound) {
+        super.readNbt(tag)
         storedPower = tag.getDouble("storedPower")
         if(tag.contains("ownerUUID")) {
             ownerUUID = tag.getUuid("ownerUUID")
         }
     }
 
-    override fun toClientTag(tag: CompoundTag): CompoundTag {
+    override fun toClientTag(tag: NbtCompound): NbtCompound {
         ownerUUID?.let { tag.putUuid("ownerUUID", it) }
         tag.putDouble("storedPower", storedPower)
         tag.putBoolean("isClientRunning", isClientRunning)
         return tag
     }
 
-    override fun fromClientTag(tag: CompoundTag) {
+    override fun fromClientTag(tag: NbtCompound) {
         storedPower = tag.getDouble("storedPower")
         isClientRunning = tag.getBoolean("isClientRunning")
         if(tag.contains("ownerUUID")) {
@@ -145,6 +146,13 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
             }else{
                 sourceHandler.side(direction).into(targetHandler).move(targetHandler.maxStored-targetHandler.energy)
             }
+        }
+    }
+
+    companion object {
+        @Suppress("UNUSED_PARAMETER")
+        fun <G: AbstractGeneratorBlockEntity<G>> commonTick(world: World, pos: BlockPos, state: BlockState, entity: G) {
+            entity.tick()
         }
     }
 

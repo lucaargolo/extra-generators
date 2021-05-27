@@ -21,7 +21,6 @@ import net.minecraft.client.resource.language.I18n
 import net.minecraft.client.texture.Sprite
 import net.minecraft.client.util.ModelIdentifier
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.client.util.math.Vector3f
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.text.LiteralText
 import net.minecraft.text.TextColor
@@ -29,6 +28,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec3f
 import java.awt.Color
 
 class ThermoelectricGeneratorCategory(private val id: String, private val block: Block): RecipeCategory<ThermoelectricGeneratorCategory.Display> {
@@ -103,25 +103,27 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
 
     @Suppress("deprecation")
     private fun startWeirdStuff() {
-        RenderSystem.pushMatrix()
-        RenderSystem.enableRescaleNormal()
-        RenderSystem.enableAlphaTest()
-        RenderSystem.defaultAlphaFunc()
-        RenderSystem.enableBlend()
-        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA)
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
+//        FIXME: When REI updates
+//        RenderSystem.pushMatrix()
+//        RenderSystem.enableRescaleNormal()
+//        RenderSystem.enableAlphaTest()
+//        RenderSystem.defaultAlphaFunc()
+//        RenderSystem.enableBlend()
+//        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA)
+//        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
     }
 
     @Suppress("deprecation")
     private fun endWeirdStuff() {
-        RenderSystem.enableDepthTest()
-        RenderSystem.disableAlphaTest()
-        RenderSystem.disableRescaleNormal()
-        RenderSystem.popMatrix()
+//        FIXME: When REI updates
+//        RenderSystem.enableDepthTest()
+//        RenderSystem.disableAlphaTest()
+//        RenderSystem.disableRescaleNormal()
+//        RenderSystem.popMatrix()
     }
 
     @Suppress("SameParameterValue")
-    private fun renderFluidVertices(bb: VertexConsumer, entry: MatrixStack.Entry, normal: Vector3f, fluidColor: Int, fluidSprite: Sprite, f: Float, g: Float, h: Float, i: Float, j: Float, k: Float, l: Float, m: Float) {
+    private fun renderFluidVertices(bb: VertexConsumer, entry: MatrixStack.Entry, normal: Vec3f, fluidColor: Int, fluidSprite: Sprite, f: Float, g: Float, h: Float, i: Float, j: Float, k: Float, l: Float, m: Float) {
         bb.vertex(entry.model, f, h, j).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.maxU, fluidSprite.minV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normal, normal.x, normal.y, normal.z).next()
         bb.vertex(entry.model, g, h, k).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.minU, fluidSprite.minV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normal, normal.x, normal.y, normal.z).next()
         bb.vertex(entry.model, g, i, l).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.minU, fluidSprite.maxV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normal, normal.x, normal.y, normal.z).next()

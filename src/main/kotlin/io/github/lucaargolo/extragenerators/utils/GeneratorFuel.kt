@@ -8,7 +8,7 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.LingeringPotionItem
 import net.minecraft.item.SplashPotionItem
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.potion.PotionUtil
 import net.minecraft.potion.Potions
@@ -20,7 +20,7 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
 
     constructor(burnTime: Int, energyOutput: Double): this(burnTime, burnTime, energyOutput)
 
-    fun toTag(): CompoundTag = CompoundTag().also {
+    fun toTag(): NbtCompound = NbtCompound().also {
         it.putInt("burnTime", burnTime)
         it.putInt("currentBurnTime", currentBurnTime)
         it.putDouble("energyOutput", energyOutput)
@@ -34,7 +34,7 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
 
     companion object {
 
-        fun fromTag(tag: CompoundTag): GeneratorFuel? {
+        fun fromTag(tag: NbtCompound): GeneratorFuel? {
             val burnTime = tag.getInt("burnTime")
             val currentBurnTime = tag.getInt("currentBurnTime")
             val energyOutput = tag.getDouble("energyOutput")

@@ -14,10 +14,11 @@ import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 
-class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGeneratorBlockEntity>(BlockEntityCompendium.FLUID_ITEM_GENERATOR_TYPE) {
+class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGeneratorBlockEntity<FluidItemGeneratorBlockEntity>(BlockEntityCompendium.FLUID_ITEM_GENERATOR_TYPE, pos, state) {
 
     private var fluidKey: FluidKey? = null
     private var fluidItemFuelMap: ((ItemStack) -> FluidGeneratorFuel?)? = null
@@ -110,28 +111,28 @@ class FluidItemGeneratorBlockEntity: AbstractGeneratorBlockEntity<FluidItemGener
         }
     }
 
-    override fun toTag(tag: CompoundTag): CompoundTag {
+    override fun writeNbt(tag: NbtCompound): NbtCompound {
         tag.put("itemInv", itemInv.toTag())
         tag.put("fluidInv", fluidInv.toTag())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
-        return super.toTag(tag)
+        return super.writeNbt(tag)
     }
 
-    override fun fromTag(state: BlockState?, tag: CompoundTag) {
-        super.fromTag(state, tag)
+    override fun readNbt(tag: NbtCompound) {
+        super.readNbt(tag)
         itemInv.fromTag(tag.getCompound("itemInv"))
         fluidInv.fromTag(tag.getCompound("fluidInv"))
         burningFuel = FluidGeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
-    override fun toClientTag(tag: CompoundTag): CompoundTag {
+    override fun toClientTag(tag: NbtCompound): NbtCompound {
         tag.put("itemInv", itemInv.toTag())
         tag.put("fluidInv", fluidInv.toTag())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.toClientTag(tag)
     }
 
-    override fun fromClientTag(tag: CompoundTag) {
+    override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
         itemInv.fromTag(tag.getCompound("itemInv"))
         fluidInv.fromTag(tag.getCompound("fluidInv"))

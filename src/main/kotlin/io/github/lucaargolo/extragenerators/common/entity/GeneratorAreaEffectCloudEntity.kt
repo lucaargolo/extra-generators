@@ -8,7 +8,7 @@ import net.minecraft.entity.AreaEffectCloudEntity
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.effect.StatusEffect
 import net.minecraft.entity.effect.StatusEffectInstance
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.Packet
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
@@ -24,21 +24,21 @@ class GeneratorAreaEffectCloudEntity(entityType: EntityType<GeneratorAreaEffectC
     }
 
     override fun tick() {
-        val gbe = generatorBlockEntity ?: blockEntityPos?.let{ world.getBlockEntity(it) as? ItemGeneratorBlockEntity}?.also { generatorBlockEntity = it } ?: return this.remove()
+        val gbe = generatorBlockEntity ?: blockEntityPos?.let{ world.getBlockEntity(it) as? ItemGeneratorBlockEntity}?.also { generatorBlockEntity = it } ?: return this.remove(RemovalReason.DISCARDED)
         when {
-            gbe.isRemoved -> this.remove()
+            gbe.isRemoved -> this.remove(RemovalReason.DISCARDED)
             gbe.isRunning() -> super.tick()
             else -> --this.age
         }
     }
 
-    override fun writeCustomDataToTag(tag: CompoundTag) {
-        super.writeCustomDataToTag(tag)
+    override fun writeCustomDataToNbt(tag: NbtCompound) {
+        super.writeCustomDataToNbt(tag)
         blockEntityPos?.let { tag.putLong("blockEntityPos", it.asLong()) }
     }
 
-    override fun readCustomDataFromTag(tag: CompoundTag) {
-        super.readCustomDataFromTag(tag)
+    override fun readCustomDataFromNbt(tag: NbtCompound) {
+        super.readCustomDataFromNbt(tag)
         if(tag.contains("blockEntityPos")) {
             blockEntityPos = BlockPos.fromLong(tag.getLong("blockEntityPos"))
         }
@@ -46,7 +46,7 @@ class GeneratorAreaEffectCloudEntity(entityType: EntityType<GeneratorAreaEffectC
 
     override fun createSpawnPacket(): Packet<*> {
         val buf = PacketByteBufs.create()
-        buf.writeVarInt(entityId)
+        buf.writeVarInt(id)
         buf.writeUuid(getUuid())
         buf.writeDouble(x)
         buf.writeDouble(y)

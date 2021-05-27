@@ -11,16 +11,16 @@ import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.render.model.BakedQuad
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.client.util.math.Vector3f
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.state.property.Properties
 import net.minecraft.util.Util
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.Vec3f
 import java.awt.Color
 import java.util.*
 
-class GeneratorBlockEntityRenderer(dispatcher: BlockEntityRenderDispatcher?) : BlockEntityRenderer<AbstractGeneratorBlockEntity<*>>(dispatcher) {
+class GeneratorBlockEntityRenderer : BlockEntityRenderer<AbstractGeneratorBlockEntity<*>> {
 
     override fun render(entity: AbstractGeneratorBlockEntity<*>, tickDelta: Float, matrices: MatrixStack, vertexConsumers: VertexConsumerProvider, light: Int, overlay: Int) {
         val client = MinecraftClient.getInstance()
@@ -30,15 +30,15 @@ class GeneratorBlockEntityRenderer(dispatcher: BlockEntityRenderDispatcher?) : B
         matrices.push()
         matrices.translate(0.5, 0.5, 0.5)
         when(facing) {
-            Direction.SOUTH -> matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(270f))
-            Direction.NORTH -> matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90f))
-            Direction.WEST -> matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180f))
+            Direction.SOUTH -> matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(270f))
+            Direction.NORTH -> matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90f))
+            Direction.WEST -> matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180f))
             else -> {}
         }
         matrices.translate(-0.5, -0.5, -0.5)
         val cogWheelRotation = MathHelper.lerp(tickDelta, entity.lastCogWheelRotationDegree, entity.cogWheelRotationDegree)
         matrices.translate(8.5/16.0, 6.0/16.0, 6.0/16.0)
-        matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(cogWheelRotation))
+        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(cogWheelRotation))
         matrices.translate(-8.5/16.0, -6.0/16.0, -6.0/16.0)
         entity.lastCogWheelRotationDegree = cogWheelRotation
         val quads = mutableListOf<BakedQuad>()

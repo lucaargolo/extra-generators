@@ -28,7 +28,7 @@ class FluidGeneratorScreenHandler(syncId: Int, playerInventory: PlayerInventory,
     override fun transferSlot(player: PlayerEntity?, index: Int): ItemStack {
         var itemStack = ItemStack.EMPTY
         val slot = this.slots[index]
-        if (slot != null && slot.hasStack()) {
+        if (slot.hasStack()) {
             val itemStack2 = slot.stack
             itemStack = itemStack2.copy()
             if (slot is SlotFixedItemInv) {

@@ -1,12 +1,17 @@
 package io.github.lucaargolo.extragenerators.common.block
 
 import alexiil.mc.lib.attributes.AttributeList
+import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.BlockEntityCompendium
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.ItemGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
+import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
+import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
@@ -58,6 +63,10 @@ class ItemGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generato
         return ActionResult.SUCCESS
     }
 
-    override fun createBlockEntity(world: BlockView?) = ItemGeneratorBlockEntity()
+    override fun createBlockEntity(pos: BlockPos, state: BlockState) = ItemGeneratorBlockEntity(pos, state)
+
+    override fun <T : BlockEntity?> getTicker(world: World?, state: BlockState?, type: BlockEntityType<T>?): BlockEntityTicker<T>? {
+        return checkType(type, BlockEntityCompendium.ITEM_GENERATOR_TYPE, AbstractGeneratorBlockEntity.Companion::commonTick)
+    }
 
 }

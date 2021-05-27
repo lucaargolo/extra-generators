@@ -3,12 +3,17 @@ package io.github.lucaargolo.extragenerators.common.block
 import alexiil.mc.lib.attributes.AttributeList
 import alexiil.mc.lib.attributes.fluid.FluidInvUtil
 import alexiil.mc.lib.attributes.fluid.volume.FluidKey
+import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
+import io.github.lucaargolo.extragenerators.common.blockentity.BlockEntityCompendium
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.FluidGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
+import net.minecraft.block.entity.BlockEntity
+import net.minecraft.block.entity.BlockEntityTicker
+import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.network.PacketByteBuf
@@ -64,6 +69,10 @@ class FluidGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generat
         return ActionResult.SUCCESS
     }
 
-    override fun createBlockEntity(world: BlockView?) = FluidGeneratorBlockEntity()
+    override fun createBlockEntity(pos: BlockPos, state: BlockState) = FluidGeneratorBlockEntity(pos, state)
+
+    override fun <T : BlockEntity?> getTicker(world: World?, state: BlockState?, type: BlockEntityType<T>?): BlockEntityTicker<T>? {
+        return checkType(type, BlockEntityCompendium.FLUID_GENERATOR_TYPE, AbstractGeneratorBlockEntity.Companion::commonTick)
+    }
 
 }

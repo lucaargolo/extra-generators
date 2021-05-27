@@ -1,12 +1,14 @@
 package io.github.lucaargolo.extragenerators.common.blockentity
 
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
+import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import kotlin.math.abs
 
-class ThermoelectricGeneratorBlockEntity: AbstractGeneratorBlockEntity<ThermoelectricGeneratorBlockEntity>(BlockEntityCompendium.THERMOELECTRIC_GENERATOR_TYPE) {
+class ThermoelectricGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGeneratorBlockEntity<ThermoelectricGeneratorBlockEntity>(BlockEntityCompendium.THERMOELECTRIC_GENERATOR_TYPE, pos, state) {
 
     val axisTemperatureDifferenceCache = linkedMapOf<Direction.Axis, Int>()
     var clientGeneration = 0
@@ -44,12 +46,12 @@ class ThermoelectricGeneratorBlockEntity: AbstractGeneratorBlockEntity<Thermoele
         }
     }
 
-    override fun toClientTag(tag: CompoundTag): CompoundTag {
+    override fun toClientTag(tag: NbtCompound): NbtCompound {
         tag.putInt("clientGeneration", clientGeneration)
         return super.toClientTag(tag)
     }
 
-    override fun fromClientTag(tag: CompoundTag) {
+    override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
         clientGeneration = tag.getInt("clientGeneration")
     }

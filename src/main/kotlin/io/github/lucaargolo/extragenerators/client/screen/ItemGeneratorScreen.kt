@@ -1,5 +1,6 @@
 package io.github.lucaargolo.extragenerators.client.screen
 
+import com.mojang.blaze3d.systems.RenderSystem
 import io.github.lucaargolo.extragenerators.common.blockentity.ItemGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.ItemGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
@@ -32,7 +33,7 @@ class ItemGeneratorScreen(handler: ItemGeneratorScreenHandler, inventory: Player
     }
 
     override fun drawBackground(matrices: MatrixStack, delta: Float, mouseX: Int, mouseY: Int) {
-        client?.textureManager?.bindTexture(texture)
+        RenderSystem.setShaderTexture(0, texture)
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight)
         val energyPercentage = handler.energyStored/handler.entity.maxStoredPower
         val energyOffset = MathHelper.lerp(energyPercentage, 0.0, 52.0).toInt()

@@ -37,7 +37,7 @@ class BlockTemperatureResource: SimpleSynchronousResourceReloadListener {
 
     override fun getFabricId() = ModIdentifier("block_temperature")
 
-    override fun apply(manager: ResourceManager) {
+    override fun reload(manager: ResourceManager) {
         temperatureMap.clear()
         ExtraGenerators.LOGGER.info("Loading block temperature resource.")
         manager.findResources("block_temperature") { r -> r.endsWith(".json") }.forEach { itemsResource ->

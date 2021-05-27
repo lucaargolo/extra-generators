@@ -9,7 +9,7 @@ import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.network.PacketByteBuf
 import kotlin.math.round
 
@@ -17,7 +17,7 @@ data class FluidGeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val f
 
     constructor(burnTime: Int, fluidInput: FluidVolume, energyOutput: Double): this(burnTime, burnTime, fluidInput, energyOutput)
 
-    fun toTag(): CompoundTag = CompoundTag().also {
+    fun toTag(): NbtCompound = NbtCompound().also {
         it.putInt("burnTime", burnTime)
         it.putInt("currentBurnTime", currentBurnTime)
         it.put("fluidInput", fluidInput.toTag())
@@ -33,7 +33,7 @@ data class FluidGeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val f
 
     companion object {
 
-        fun fromTag(tag: CompoundTag): FluidGeneratorFuel? {
+        fun fromTag(tag: NbtCompound): FluidGeneratorFuel? {
             val burnTime = tag.getInt("burnTime")
             val currentBurnTime = tag.getInt("currentBurnTime")
             val fluidInput = FluidVolume.fromTag(tag.getCompound("fluidInput"))
