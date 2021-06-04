@@ -1,54 +1,53 @@
 package io.github.lucaargolo.extragenerators.compat
 
-import com.mojang.blaze3d.platform.GlStateManager
-import com.mojang.blaze3d.systems.RenderSystem
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
-import me.shedaniel.rei.api.EntryStack
-import me.shedaniel.rei.api.RecipeCategory
-import me.shedaniel.rei.api.RecipeDisplay
-import me.shedaniel.rei.api.RecipeHelper
-import me.shedaniel.rei.api.widgets.Widgets
-import me.shedaniel.rei.gui.widget.Widget
+import me.shedaniel.rei.api.client.gui.Renderer
+import me.shedaniel.rei.api.client.gui.widgets.Widget
+import me.shedaniel.rei.api.client.gui.widgets.Widgets
+import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
+import me.shedaniel.rei.api.client.registry.display.DisplayCategory
+import me.shedaniel.rei.api.common.category.CategoryIdentifier
+import me.shedaniel.rei.api.common.display.Display
+import me.shedaniel.rei.api.common.entry.EntryIngredient
+import me.shedaniel.rei.api.common.util.EntryStacks
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.minecraft.block.Block
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.OverlayTexture
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumer
-import net.minecraft.client.resource.language.I18n
 import net.minecraft.client.texture.Sprite
 import net.minecraft.client.util.ModelIdentifier
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.text.LiteralText
 import net.minecraft.text.TextColor
-import net.minecraft.util.Identifier
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3f
 import java.awt.Color
 
-class ThermoelectricGeneratorCategory(private val id: String, private val block: Block): RecipeCategory<ThermoelectricGeneratorCategory.Display> {
+class ThermoelectricGeneratorCategory(private val id: String, private val block: Block): DisplayCategory<ThermoelectricGeneratorCategory.RecipeDisplay> {
 
     init { set.add(this) }
 
-    override fun getIdentifier() = ModIdentifier(id)
+    override fun getCategoryIdentifier(): CategoryIdentifier<RecipeDisplay> = CategoryIdentifier.of(ModIdentifier(id))
 
-    override fun getLogo(): EntryStack = EntryStack.create(block)
+    override fun getIcon(): Renderer = EntryStacks.of(block)
 
-    override fun getCategoryName(): String = I18n.translate(block.translationKey)
+    override fun getTitle() = TranslatableText(block.translationKey)
 
-    @Suppress("deprecation")
-    override fun setupDisplay(display: Display, bounds: Rectangle): MutableList<Widget> {
+    override fun setupDisplay(display: RecipeDisplay, bounds: Rectangle): MutableList<Widget> {
         val widgets = mutableListOf<Widget>()
 
         widgets.add(Widgets.createCategoryBase(bounds))
 
         widgets.add(Widgets.createDrawableWidget { _, m, _, _, _ -> m.scale(2f, 2f, 1f)})
-        widgets.add(Widgets.createSlot(Point(bounds.x/2 + 3, bounds.y/2 + 3)).entry(EntryStack.create(block)).disableBackground().disableHighlight().disableTooltips())
+        widgets.add(Widgets.createSlot(Point(bounds.x/2 + 3, bounds.y/2 + 3)).entry(EntryStacks.of(block)).disableBackground().disableHighlight().disableTooltips())
         widgets.add(Widgets.createDrawableWidget { _, m, _, _, _ -> m.scale(0.5f, 0.5f, 1f)})
 
         val baseColor = Triple(1f, 1f, 1f)
@@ -71,7 +70,6 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
         widgets.add(Widgets.createLabel(Point(bounds.x+75, bounds.y+18), text))
 
         widgets.add(Widgets.createDrawableWidget { draw, matrices, _, _, _ ->
-            startWeirdStuff()
             matrices.push()
             matrices.translate(bounds.x + 143.0, bounds.y + 31.0, draw.zOffset + 100.0)
             matrices.scale(33f, -33f, 1f)
@@ -95,31 +93,9 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
             }
             client.bufferBuilders.entityVertexConsumers.draw()
             matrices.pop()
-            endWeirdStuff()
         })
 
         return widgets
-    }
-
-    @Suppress("deprecation")
-    private fun startWeirdStuff() {
-//        FIXME: When REI updates
-//        RenderSystem.pushMatrix()
-//        RenderSystem.enableRescaleNormal()
-//        RenderSystem.enableAlphaTest()
-//        RenderSystem.defaultAlphaFunc()
-//        RenderSystem.enableBlend()
-//        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA)
-//        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
-    }
-
-    @Suppress("deprecation")
-    private fun endWeirdStuff() {
-//        FIXME: When REI updates
-//        RenderSystem.enableDepthTest()
-//        RenderSystem.disableAlphaTest()
-//        RenderSystem.disableRescaleNormal()
-//        RenderSystem.popMatrix()
     }
 
     @Suppress("SameParameterValue")
@@ -132,25 +108,27 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
 
     override fun getDisplayHeight() = 44
 
-    fun createDisplay(block: Block, temperature: Int) = Display(identifier, block, temperature)
+    fun createDisplay(block: Block, temperature: Int) = RecipeDisplay(categoryIdentifier, block, temperature)
 
-    class Display(private val category: Identifier, val block: Block, val temperature: Int): RecipeDisplay {
+    class RecipeDisplay(private val category: CategoryIdentifier<RecipeDisplay>, val block: Block, val temperature: Int): Display {
 
-        override fun getInputEntries() = mutableListOf(mutableListOf(EntryStack.create(block)))
+        override fun getInputEntries() = mutableListOf(EntryIngredient.of(EntryStacks.of(block)))
 
-        override fun getRecipeCategory() = category
+        override fun getOutputEntries() = mutableListOf<EntryIngredient>()
+
+        override fun getCategoryIdentifier() = category
 
     }
 
     companion object {
         private val set = linkedSetOf<ThermoelectricGeneratorCategory>()
 
-        fun registerCategories(recipeHelper: RecipeHelper) = set.forEach { recipeHelper.registerCategory(it) }
-
-        fun registerOthers(recipeHelper: RecipeHelper) = set.forEach {
-            recipeHelper.removeAutoCraftButton(it.identifier)
-            recipeHelper.registerWorkingStations(it.identifier, EntryStack.create(it.block))
+        fun register(registry: CategoryRegistry) = set.forEach {
+            registry.add(it)
+            registry.addWorkstations(it.categoryIdentifier, EntryStacks.of(it.block))
+            registry.removePlusButton(it.categoryIdentifier)
         }
+
     }
 
 

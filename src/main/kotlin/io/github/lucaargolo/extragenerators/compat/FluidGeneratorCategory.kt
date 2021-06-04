@@ -4,38 +4,39 @@ import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import me.shedaniel.math.Point
 import me.shedaniel.math.Rectangle
-import me.shedaniel.rei.api.EntryStack
-import me.shedaniel.rei.api.RecipeCategory
-import me.shedaniel.rei.api.RecipeDisplay
-import me.shedaniel.rei.api.RecipeHelper
-import me.shedaniel.rei.api.widgets.Widgets
-import me.shedaniel.rei.gui.widget.Widget
+import me.shedaniel.rei.api.client.gui.Renderer
+import me.shedaniel.rei.api.client.gui.widgets.Widget
+import me.shedaniel.rei.api.client.gui.widgets.Widgets
+import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
+import me.shedaniel.rei.api.client.registry.display.DisplayCategory
+import me.shedaniel.rei.api.common.category.CategoryIdentifier
+import me.shedaniel.rei.api.common.display.Display
+import me.shedaniel.rei.api.common.entry.EntryIngredient
+import me.shedaniel.rei.api.common.util.EntryStacks
 import net.minecraft.block.Block
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.resource.language.I18n
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
-import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 
-class FluidGeneratorCategory(private val id: String, private val block: Block): RecipeCategory<FluidGeneratorCategory.Display> {
+class FluidGeneratorCategory(private val id: String, private val block: Block): DisplayCategory<FluidGeneratorCategory.RecipeDisplay> {
 
     init { set.add(this) }
 
-    override fun getIdentifier() = ModIdentifier(id)
+    override fun getCategoryIdentifier(): CategoryIdentifier<RecipeDisplay> = CategoryIdentifier.of(ModIdentifier(id))
 
-    override fun getLogo(): EntryStack = EntryStack.create(block)
+    override fun getIcon(): Renderer = EntryStacks.of(block)
 
-    override fun getCategoryName(): String = I18n.translate(block.translationKey)
+    override fun getTitle() = TranslatableText(block.translationKey)
 
-    @Suppress("deprecation")
-    override fun setupDisplay(display: Display, bounds: Rectangle): MutableList<Widget> {
+    override fun setupDisplay(display: RecipeDisplay, bounds: Rectangle): MutableList<Widget> {
         val widgets = mutableListOf<Widget>()
 
         widgets.add(Widgets.createCategoryBase(bounds))
 
         widgets.add(Widgets.createDrawableWidget { _, m, _, _, _ -> m.scale(2f, 2f, 1f)})
-        widgets.add(Widgets.createSlot(Point(bounds.x/2 + 3, bounds.y/2 + 3)).entry(EntryStack.create(block)).disableBackground().disableHighlight().disableTooltips())
+        widgets.add(Widgets.createSlot(Point(bounds.x/2 + 3, bounds.y/2 + 3)).entry(EntryStacks.of(block)).disableBackground().disableHighlight().disableTooltips())
         widgets.add(Widgets.createDrawableWidget { _, m, _, _, _ -> m.scale(0.5f, 0.5f, 1f)})
 
         widgets.add(Widgets.createBurningFire(Point(bounds.x+44, bounds.y+4)).animationDurationTicks(display.output.burnTime.toDouble()))
@@ -58,13 +59,15 @@ class FluidGeneratorCategory(private val id: String, private val block: Block): 
 
     override fun getDisplayHeight() = 44
 
-    fun createDisplay(input: EntryStack, output: FluidGeneratorFuel) = Display(identifier, mutableListOf(input), output)
+    fun createDisplay(input: EntryIngredient, output: FluidGeneratorFuel) = RecipeDisplay(categoryIdentifier, input, output)
 
-    class Display(private val category: Identifier, val input: MutableList<EntryStack>, val output: FluidGeneratorFuel): RecipeDisplay {
+    class RecipeDisplay(private val category: CategoryIdentifier<RecipeDisplay>, val input: EntryIngredient, val output: FluidGeneratorFuel): Display {
 
         override fun getInputEntries() = mutableListOf(input)
 
-        override fun getRecipeCategory() = category
+        override fun getOutputEntries() = mutableListOf<EntryIngredient>()
+
+        override fun getCategoryIdentifier() = category
 
     }
 
@@ -73,11 +76,10 @@ class FluidGeneratorCategory(private val id: String, private val block: Block): 
 
         fun getMatching(id: String) = set.firstOrNull { id == it.identifier.toString().split(":")[1].replace("_generator", "") }
 
-        fun registerCategories(recipeHelper: RecipeHelper) = set.forEach { recipeHelper.registerCategory(it) }
-
-        fun registerOthers(recipeHelper: RecipeHelper) = set.forEach {
-            recipeHelper.removeAutoCraftButton(it.identifier)
-            recipeHelper.registerWorkingStations(it.identifier, EntryStack.create(it.block))
+        fun register(registry: CategoryRegistry) = set.forEach {
+            registry.add(it)
+            registry.addWorkstations(it.categoryIdentifier, EntryStacks.of(it.block))
+            registry.removePlusButton(it.categoryIdentifier)
         }
     }
 
