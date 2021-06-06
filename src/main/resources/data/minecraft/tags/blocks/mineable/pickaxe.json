@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "extragenerators:blast_generator",
+    "extragenerators:brew_generator",
+    "extragenerators:burnable_generator",
+    "extragenerators:dragon_generator",
+    "extragenerators:enchanted_generator",
+    "extragenerators:gluttony_generator",
+    "extragenerators:icy_generator",
+    "extragenerators:scalding_generator",
+    "extragenerators:demise_generator",
+    "extragenerators:sludgy_generator",
+    "extragenerators:teleport_generator",
+    "extragenerators:withered_generator",
+    "extragenerators:steam_generator",
+    "extragenerators:redstone_generator",
+    "extragenerators:colorful_generator",
+    "extragenerators:thermoelectric_generator",
+    "extragenerators:heavenly_generator",
+    "extragenerators:infernal_generator"
+  ]
+}
