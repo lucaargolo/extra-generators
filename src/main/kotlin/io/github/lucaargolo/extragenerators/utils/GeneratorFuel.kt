@@ -2,6 +2,7 @@ package io.github.lucaargolo.extragenerators.utils
 
 import com.google.gson.JsonObject
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
+import io.github.lucaargolo.extragenerators.mixin.StatusEffectAccessor
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.effect.StatusEffectType
@@ -69,7 +70,7 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
             val energyBonus = foodComponent.statusEffects.sumOf {
                 val statusEffectInstance = it.first
                 val statusEffect = statusEffectInstance.effectType
-                statusEffectInstance.duration * statusEffectInstance.amplifier * if(statusEffect.type == StatusEffectType.BENEFICIAL) { 1 } else { 0 }
+                statusEffectInstance.duration * statusEffectInstance.amplifier * if((statusEffect as? StatusEffectAccessor)?.type == StatusEffectType.BENEFICIAL) { 1 } else { 0 }
             }
             val energyOutput = (foodComponent.hunger * foodComponent.saturationModifier * 8000.0) + (energyBonus * 100.0)
             val energyPerTick = MathHelper.clamp((foodComponent.hunger * 8.0) + (energyBonus * 0.1), 32.0, 128.0)

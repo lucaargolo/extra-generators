@@ -7,6 +7,9 @@
     "BakedModelManagerAccessor",
     "KeyBindingAccessor"
   ],
+  "mixins": [
+    "StatusEffectAccessor"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
