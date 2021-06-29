@@ -35,11 +35,15 @@ class ThermoelectricGeneratorBlockEntity: AbstractGeneratorBlockEntity<Thermoele
                         axisTemperatureDifferenceCache[it] = abs(firstTemperature - secondTemperature)
                     }
                 }
-                clientGeneration = getGeneration()
-                markDirtyAndSync()
             }
-            if(storedPower + getGeneration() <= maxStoredPower) {
-                storedPower += getGeneration()
+            getGeneration().let { generation ->
+                if(clientGeneration != generation) {
+                    clientGeneration = generation
+                    markDirtyAndSync()
+                }
+                if(storedPower + generation <= maxStoredPower) {
+                    storedPower += generation
+                }
             }
         }
     }
