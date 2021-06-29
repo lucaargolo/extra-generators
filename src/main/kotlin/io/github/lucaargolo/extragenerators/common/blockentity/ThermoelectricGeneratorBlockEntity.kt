@@ -37,11 +37,15 @@ class ThermoelectricGeneratorBlockEntity(pos: BlockPos, state: BlockState): Abst
                         axisTemperatureDifferenceCache[it] = abs(firstTemperature - secondTemperature)
                     }
                 }
-                clientGeneration = getGeneration()
-                markDirtyAndSync()
             }
-            if(storedPower + getGeneration() <= maxStoredPower) {
-                storedPower += getGeneration()
+            getGeneration().let { generation ->
+                if(clientGeneration != generation) {
+                    clientGeneration = generation
+                    markDirtyAndSync()
+                }
+                if(storedPower + generation <= maxStoredPower) {
+                    storedPower += generation
+                }
             }
         }
     }
