@@ -130,8 +130,8 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
         tooltip.add(TranslatableText("tooltip.extragenerators.tier", tier).formatted(Formatting.DARK_GRAY))
         tooltip.add(TranslatableText("tooltip.extragenerators.total_storage", LiteralText(generatorConfig.storage.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
         tooltip.add(TranslatableText("tooltip.extragenerators.output", LiteralText(generatorConfig.output.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
-        if(stack.hasTag()) {
-            val blockEntityTag = stack.orCreateTag.getCompound("BlockEntityTag")
+        if(stack.hasNbt()) {
+            val blockEntityTag = stack.orCreateNbt.getCompound("BlockEntityTag")
             if(blockEntityTag.contains("storedPower")) {
                 tooltip.add(TranslatableText("tooltip.extragenerators.stored_energy", LiteralText(blockEntityTag.getDouble("storedPower").toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
             }
