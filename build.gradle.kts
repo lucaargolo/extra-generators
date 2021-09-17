@@ -93,15 +93,6 @@ dependencies {
     modApi("teamreborn:energy:${project["energy_version"]}")
     include("teamreborn:energy:${project["energy_version"]}")
 
-    modApi("alexiil.mc.lib:libblockattributes-core:${project["lba_version"]}")
-    include("alexiil.mc.lib:libblockattributes-core:${project["lba_version"]}")
-
-    modApi("alexiil.mc.lib:libblockattributes-items:${project["lba_version"]}")
-    include("alexiil.mc.lib:libblockattributes-items:${project["lba_version"]}")
-
-    modApi("alexiil.mc.lib:libblockattributes-fluids:${project["lba_version"]}")
-    include("alexiil.mc.lib:libblockattributes-fluids:${project["lba_version"]}")
-
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project["rei_version"]}")
     modRuntime("com.terraformersmc:modmenu:${project["modmenu_version"]}")
 }
