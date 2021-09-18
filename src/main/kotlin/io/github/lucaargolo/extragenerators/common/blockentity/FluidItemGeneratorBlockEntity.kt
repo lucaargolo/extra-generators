@@ -113,7 +113,7 @@ class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractG
     }
 
     override fun writeNbt(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toNbtList())
+        tag.put("itemInv", itemInv.toNbt())
         tag.put("fluidInv", fluidInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.writeNbt(tag)
@@ -121,13 +121,13 @@ class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractG
 
     override fun readNbt(tag: NbtCompound) {
         super.readNbt(tag)
-        itemInv.readNbtList(tag.getList("itemInv", 10))
+        itemInv.fromNbt(tag.get("itemInv"))
         fluidInv.fromNbt(tag.getCompound("fluidInv"))
         burningFuel = FluidGeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
     override fun toClientTag(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toNbtList())
+        tag.put("itemInv", itemInv.toNbt())
         tag.put("fluidInv", fluidInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.toClientTag(tag)
@@ -135,7 +135,7 @@ class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractG
 
     override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
-        itemInv.readNbtList(tag.getList("itemInv", 10))
+        itemInv.fromNbt(tag.get("itemInv"))
         fluidInv.fromNbt(tag.getCompound("fluidInv"))
         burningFuel = FluidGeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }

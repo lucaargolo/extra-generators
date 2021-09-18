@@ -4,6 +4,8 @@ package io.github.lucaargolo.extragenerators.utils
 
 import com.google.gson.JsonObject
 import com.mojang.blaze3d.systems.RenderSystem
+import io.github.lucaargolo.extragenerators.ExtraGenerators
+import io.github.lucaargolo.extragenerators.mixin.ItemStackInvoker
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext
@@ -23,6 +25,7 @@ import net.minecraft.inventory.SidedInventory
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtList
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.slot.Slot
@@ -34,7 +37,9 @@ import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.registry.Registry
+import org.apache.commons.lang3.math.Fraction
 
 typealias ItemFilter = (slot: Int, stack: ItemStack) -> Boolean
 
@@ -81,7 +86,7 @@ object InventoryUtils {
         if(resource.fluid == Fluids.EMPTY) {
             list.add(TranslatableText("tooltip.extragenerators.empty"))
         } else {
-            list.add(FluidVariantRendering.getName(resource).shallowCopy())
+            list.add(FluidVariantRendering.getName(resource).shallowCopy().also { it.style = it.style.withColor(FluidVariantRendering.getColor(resource)) })
         }
         val storedMb = if(amount in 1..80) {
             "< 1"
@@ -158,7 +163,67 @@ object InventoryUtils {
 
 }
 
+fun SimpleSidedInventory.fromNbt(nbt: NbtElement?) {
+    when(nbt?.nbtType) {
+        NbtList.TYPE -> readNbtList(nbt as NbtList)
+        NbtCompound.TYPE -> {
+            //Found potential LBA inventory
+            ExtraGenerators.LOGGER.info("Found old LBA inventory. Converting it")
+            val nbtCompound = nbt as NbtCompound
+            nbtCompound.getList("slots", 10).forEachIndexed { slot, listElement ->
+                try {
+                    val elementCompound = listElement as NbtCompound
+                    val elementStack = if(elementCompound.contains("id")) try {
+                        ItemStackInvoker.unsafeFromNbt(elementCompound)
+                    } catch (e: RuntimeException) {
+                        ExtraGenerators.LOGGER.debug("Failed to load old LBA inventorty item: {}", nbt, e)
+                        ItemStack.EMPTY
+                    } else ItemStack.EMPTY
+                    setStack(slot, elementStack)
+                    ExtraGenerators.LOGGER.info("Old LBA item loaded with id ${Registry.ITEM.getId(elementStack.item)} at slot $slot")
+
+                } catch (e: ClassCastException) {
+                    ExtraGenerators.LOGGER.error("Failed to convert old LBA inventory", e)
+                }
+            }
+            ExtraGenerators.LOGGER.info("LBA inventory conversion finished.")
+        }
+    }
+}
+
+fun SimpleSidedInventory.toNbt(): NbtList {
+    return toNbtList()
+}
+
 fun SingleVariantStorage<FluidVariant>.fromNbt(nbt: NbtCompound) {
+    if(nbt.contains("tanks")) {
+        //Found potential LBA fluid inventory
+        ExtraGenerators.LOGGER.info("Found old LBA fluid inventory. Converting it")
+        nbt.getList("tanks", 10).forEach { listElement ->
+            try {
+                val oldTank = listElement as NbtCompound
+                val oldAmount = oldTank.getCompound("AmountF")
+                val fluidId = oldTank.getString("ObjName")
+                val fluid = Registry.FLUID.get(Identifier(fluidId))
+                if(fluid != Fluids.EMPTY) {
+                    val fraction = Fraction.getFraction(oldAmount.getLong("w").toInt(), oldAmount.getLong("n").toInt(), oldAmount.getLong("d").toInt())
+                    val newAmount = MathHelper.floor(fraction.toFloat()*81000f)
+                    if(newAmount <= capacity) {
+                        ExtraGenerators.LOGGER.info("Successfully converted old LBA fluid inventory with $newAmount droplets of $fluidId")
+                        variant = FluidVariant.of(fluid)
+                        amount = newAmount.toLong()
+                        return
+                    }else{
+                        ExtraGenerators.LOGGER.info("Old LBA fluid inventory had $newAmount droplets while maximum accepted was $capacity")
+                    }
+                }else{
+                    ExtraGenerators.LOGGER.info("Old LBA fluid inventory was empty.")
+                }
+            } catch (e: Exception) {
+                ExtraGenerators.LOGGER.error("Failed to convert old LBA fluid inventory", e)
+            }
+        }
+    }
     variant = FluidVariant.fromNbt(nbt.getCompound("variant"))
     amount = nbt.getLong("amount")
 }

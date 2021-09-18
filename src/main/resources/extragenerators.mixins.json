@@ -3,6 +3,9 @@
   "minVersion": "0.8",
   "package": "io.github.lucaargolo.extragenerators.mixin",
   "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "ItemStackInvoker"
+  ],
   "client": [
     "BakedModelManagerAccessor",
     "KeyBindingAccessor"

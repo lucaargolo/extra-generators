@@ -6,6 +6,8 @@ import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.common.block.ItemGeneratorBlock
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.SimpleSidedInventory
+import io.github.lucaargolo.extragenerators.utils.fromNbt
+import io.github.lucaargolo.extragenerators.utils.toNbt
 import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
@@ -63,26 +65,26 @@ class ItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGenera
     }
 
     override fun writeNbt(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toNbtList())
+        tag.put("itemInv", itemInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
         super.readNbt(tag)
-        itemInv.readNbtList(tag.getList("itemInv", 10))
+        itemInv.fromNbt(tag.get("itemInv"))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
     override fun toClientTag(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toNbtList())
+        tag.put("itemInv", itemInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.toClientTag(tag)
     }
 
     override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
-        itemInv.readNbtList(tag.getList("itemInv", 10))
+        itemInv.fromNbt(tag.get("itemInv"))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 

@@ -68,10 +68,6 @@ repositories {
         url = uri("https://maven.modmuss50.me/")
     }
     maven {
-        name = "BuildCraft"
-        url = uri("https://mod-buildcraft.com/maven")
-    }
-    maven {
         name = "TerraformersMC"
         url = uri("https://maven.terraformersmc.com/releases")
     }
@@ -160,7 +156,6 @@ curseforge {
         mainArtifact(file(releaseFile), closureOf<CurseArtifact> {
             displayName = releaseName
             relations(closureOf<CurseRelation> {
-                embeddedLibrary("libblockattributes")
                 optionalDependency("roughly-enough-items")
                 requiredDependency("fabric-api")
                 requiredDependency("fabric-language-kotlin")
