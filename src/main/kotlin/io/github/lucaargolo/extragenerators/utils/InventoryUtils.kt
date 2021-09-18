@@ -18,6 +18,7 @@ import net.minecraft.client.render.*
 import net.minecraft.client.texture.SpriteAtlasTexture
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.fluid.Fluids
 import net.minecraft.inventory.SidedInventory
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.ItemStack
@@ -25,7 +26,11 @@ import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtList
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.slot.Slot
+import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
+import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
+import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.Direction
@@ -70,6 +75,22 @@ class SimpleSidedInventory(slots: Int, private val insertFilter: ItemFilter, pri
 }
 
 object InventoryUtils {
+
+    fun ResourceAmount<FluidVariant>.getTankFluidTooltip(capacity: Long): List<Text> {
+        val list = mutableListOf<Text>()
+        if(resource.fluid == Fluids.EMPTY) {
+            list.add(TranslatableText("tooltip.extragenerators.empty"))
+        } else {
+            list.add(FluidVariantRendering.getName(resource).shallowCopy())
+        }
+        val storedMb = if(amount in 1..80) {
+            "< 1"
+        }else{
+            "${amount/81}"
+        }
+        list.add(LiteralText("$storedMb / ${capacity/81} mB").formatted(Formatting.GRAY))
+        return list
+    }
 
     fun interactPlayerHand(tank: Storage<FluidVariant>, player: PlayerEntity, hand: Hand, canInsert: Boolean = true, canExtract: Boolean = true): ActionResult {
         val interacted = let {

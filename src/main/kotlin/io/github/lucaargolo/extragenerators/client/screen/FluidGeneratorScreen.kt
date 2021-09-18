@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.FluidGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.network.PacketCompendium
+import io.github.lucaargolo.extragenerators.utils.InventoryUtils.getTankFluidTooltip
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import io.github.lucaargolo.extragenerators.utils.renderGuiRect
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
@@ -47,10 +48,7 @@ class FluidGeneratorScreen(handler: FluidGeneratorScreenHandler, inventory: Play
             renderTooltip(matrices, listOf(a, b), mouseX, mouseY)
         }
         if((x+134..x+150).contains(mouseX) && (y+17..y+69).contains(mouseY)) {
-            val fluid = handler.fluidVolume.resource.fluid
-            val stored = handler.fluidVolume.amount
-            val capacity = handler.entity.fluidInv.capacity
-            renderTooltip(matrices, listOf(if(fluid == Fluids.EMPTY) TranslatableText("tooltip.extragenerators.empty") else fluid.defaultState.blockState.block.name, LiteralText("${stored/81} / ${capacity/81} mB").formatted(Formatting.GRAY)), mouseX, mouseY)
+            renderTooltip(matrices, handler.fluidVolume.getTankFluidTooltip(handler.entity.fluidInv.capacity), mouseX, mouseY)
         }
     }
 
