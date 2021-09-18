@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.common.blockentity
 
 import io.github.lucaargolo.extragenerators.ExtraGenerators
@@ -5,6 +7,9 @@ import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.utils.ActiveGenerators
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import io.github.lucaargolo.extragenerators.utils.SynchronizeableBlockEntity
+import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
 import net.minecraft.block.Blocks
@@ -16,13 +21,15 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.ItemScatterer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
+import net.minecraft.util.math.MathHelper
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
-import team.reborn.energy.*
+import team.reborn.energy.api.EnergyStorage
+import team.reborn.energy.api.EnergyStorageUtil
+import team.reborn.energy.api.base.SimpleEnergyStorage
 import java.util.*
-import kotlin.math.floor
 
-abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(type: BlockEntityType<B>, pos: BlockPos, state: BlockState): SynchronizeableBlockEntity(type, pos, state), EnergyStorage {
+abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(type: BlockEntityType<B>, pos: BlockPos, state: BlockState): SynchronizeableBlockEntity(type, pos, state) {
 
     var ownerUUID: UUID? = null
     var initialized = false
@@ -34,17 +41,41 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     var lastCogWheelRotationDegree = 0f
     var cogWheelRotationDegree = 0f
     var isClientRunning = false
+
     open fun isRunning() = if(world?.isClient == true) isClientRunning else isServerRunning()
     abstract fun isServerRunning(): Boolean
     abstract fun getCogWheelRotation(): Float
 
-    var storedPower = 0.0
-    override fun getMaxStoredPower() = generatorConfig?.storage ?: 0.0
-    override fun getTier(): EnergyTier = EnergyTier.INSANE
-    override fun getMaxInput(side: EnergySide?) = 0.0
-    override fun getMaxOutput(side: EnergySide?) = generatorConfig?.output ?: 0.0
-    override fun getStored(face: EnergySide?) = storedPower
-    override fun setStored(amount: Double) { storedPower = amount }
+    val energyStorage = object: SimpleEnergyStorage(0L, 0L, 0L) {
+        private fun getMaxExtract(): Long {
+            return generatorConfig?.output ?: super.maxExtract
+        }
+
+        override fun getCapacity(): Long {
+            return generatorConfig?.storage ?: super.getCapacity()
+        }
+
+        override fun supportsExtraction(): Boolean {
+            return getMaxExtract() > 0
+        }
+
+        @Suppress("DEPRECATION", "UnstableApiUsage")
+        override fun extract(maxAmount: Long, transaction: TransactionContext?): Long {
+            StoragePreconditions.notNegative(maxAmount)
+            val extracted = getMaxExtract().coerceAtMost(maxAmount.coerceAtMost(amount))
+            if (extracted > 0) {
+                updateSnapshots(transaction)
+                amount -= extracted
+                return extracted
+            }
+            return 0
+        }
+
+        override fun onFinalCommit() {
+            markDirtyAndSync()
+            super.onFinalCommit()
+        }
+    }
 
     open fun initialize(block: AbstractGeneratorBlock): Boolean {
         (world?.getBlockState(pos)?.block as? AbstractGeneratorBlock)?.let {
@@ -97,13 +128,18 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
 
     override fun writeNbt(tag: NbtCompound): NbtCompound {
         ownerUUID?.let { tag.putUuid("ownerUUID", it) }
-        tag.putDouble("storedPower", storedPower)
+        tag.putLong("storedEnergy", energyStorage.amount)
         return super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
         super.readNbt(tag)
-        storedPower = tag.getDouble("storedPower")
+        if(tag.contains("storedPower")) {
+            //Found a generator using the old energy system
+            energyStorage.amount = MathHelper.floor(tag.getDouble("storedPower")).toLong()
+        }else{
+            energyStorage.amount = tag.getLong("storedEnergy")
+        }
         if(tag.contains("ownerUUID")) {
             ownerUUID = tag.getUuid("ownerUUID")
         }
@@ -111,13 +147,13 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
 
     override fun toClientTag(tag: NbtCompound): NbtCompound {
         ownerUUID?.let { tag.putUuid("ownerUUID", it) }
-        tag.putDouble("storedPower", storedPower)
+        tag.putLong("storedEnergy", energyStorage.amount)
         tag.putBoolean("isClientRunning", isClientRunning)
         return tag
     }
 
     override fun fromClientTag(tag: NbtCompound) {
-        storedPower = tag.getDouble("storedPower")
+        energyStorage.amount = tag.getLong("storedEnergy")
         isClientRunning = tag.getBoolean("isClientRunning")
         if(tag.contains("ownerUUID")) {
             ownerUUID = tag.getUuid("ownerUUID")
@@ -125,26 +161,19 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     }
 
     private fun moveEnergy() {
-        val sourceHandler = Energy.of(this)
-        val targets = linkedMapOf<Direction, EnergyHandler>()
+        val targets = linkedSetOf<EnergyStorage>()
         Direction.values().forEach { direction ->
             val targetPos = pos.offset(direction)
-            world?.getBlockEntity(targetPos)?.let { target ->
-                if(Energy.valid(target)) {
-                    val targetHandler = Energy.of(target).side(direction.opposite)
-                    if (targetHandler.maxInput > 0 && targetHandler.energy < targetHandler.maxStored) {
-                        targets[direction] = targetHandler
-                    }
+            EnergyStorage.SIDED.find(world, targetPos, direction.opposite)?.let { target ->
+                if(target.supportsInsertion() && target.amount < target.capacity) {
+                    targets.add(target)
                 }
             }
         }
-        val transferAmount = floor(sourceHandler.energy.coerceAtMost(sourceHandler.maxOutput)/targets.size)
-        targets.forEach { (direction, targetHandler) ->
-            val maxTransferAmount = transferAmount.coerceAtMost(targetHandler.maxInput)
-            if (targetHandler.energy + maxTransferAmount <= targetHandler.maxStored) {
-                sourceHandler.side(direction).into(targetHandler).move(maxTransferAmount)
-            }else{
-                sourceHandler.side(direction).into(targetHandler).move(targetHandler.maxStored-targetHandler.energy)
+        if(targets.size > 0) {
+            val transferAmount = energyStorage.amount.coerceAtMost(energyStorage.maxExtract) / targets.size
+            targets.forEach { target ->
+                EnergyStorageUtil.move(energyStorage, target, transferAmount, null)
             }
         }
     }

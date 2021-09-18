@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.client.screen
 
 import com.mojang.blaze3d.systems.RenderSystem
@@ -5,10 +7,12 @@ import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGenerato
 import io.github.lucaargolo.extragenerators.common.containers.FluidItemGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.network.PacketCompendium
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
+import io.github.lucaargolo.extragenerators.utils.renderGuiRect
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.fluid.Fluids
 import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -39,35 +43,34 @@ class FluidItemGeneratorScreen(handler: FluidItemGeneratorScreenHandler, invento
         drawMouseoverTooltip(matrices, mouseX, mouseY)
         if((x+25..x+33).contains(mouseX) && (y+17..y+69).contains(mouseY)) {
             val a = TranslatableText("screen.extragenerators.common.stored_energy").append(": ").formatted(Formatting.RED)
-            val b = LiteralText("%.0f/%.0f E".format(handler.energyStored, handler.entity.maxStoredPower)).formatted(Formatting.GRAY)
+            val b = LiteralText("%d/%d E".format(handler.energyStored, handler.entity.energyStorage.getCapacity())).formatted(Formatting.GRAY)
             renderTooltip(matrices, listOf(a, b), mouseX, mouseY)
         }
         if((x+134..x+150).contains(mouseX) && (y+17..y+69).contains(mouseY)) {
-            val tank = handler.entity.fluidInv.getTank(0)
-            val volume = handler.fluidVolume
-            val stored = handler.fluidVolume?.amount()
-            val capacity = tank.maxAmount_F
-            renderTooltip(matrices, listOf(if(volume?.isEmpty != false) TranslatableText("tooltip.extragenerators.empty") else volume.name, LiteralText("${stored?.asInt(1000) ?: 0} / ${capacity.asInt(1000)} mB").formatted(Formatting.GRAY)), mouseX, mouseY)
+            val fluid = handler.fluidVolume.resource.fluid
+            val stored = handler.fluidVolume.amount
+            val capacity = handler.entity.fluidInv.capacity
+            renderTooltip(matrices, listOf(if(fluid == Fluids.EMPTY) TranslatableText("tooltip.extragenerators.empty") else fluid.defaultState.blockState.block.name, LiteralText("${stored/81} / ${capacity/81} mB").formatted(Formatting.GRAY)), mouseX, mouseY)
         }
     }
 
     override fun drawBackground(matrices: MatrixStack, delta: Float, mouseX: Int, mouseY: Int) {
         RenderSystem.setShaderTexture(0, texture)
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight)
-        val energyPercentage = handler.energyStored/handler.entity.maxStoredPower
-        val energyOffset = MathHelper.lerp(energyPercentage, 0.0, 52.0).toInt()
+        val energyPercentage = handler.energyStored/handler.entity.energyStorage.getCapacity().toFloat()
+        val energyOffset = MathHelper.lerp(energyPercentage, 0F, 52F).toInt()
         drawTexture(matrices, x+25, y+17+(52-energyOffset), 176, 52-energyOffset, 8, energyOffset)
         handler.burningFuel?.let {
             val p = (it.currentBurnTime * 13f /it.burnTime).toInt()
             drawTexture(matrices, x+81, y+37+(12-p), 184, 12-p, 14, p+1)
         }
-        handler.fluidVolume?.let {
-            if(!it.isEmpty) {
-                val a = it.amount().asInt(1000).toDouble()
-                val b = handler.entity.fluidInv.getMaxAmount_F(0).asInt(1000).toDouble()
+        handler.fluidVolume.let {
+            if(!it.resource.isBlank) {
+                val a = it.amount/81
+                val b = handler.entity.fluidInv.capacity/81F
                 val fluidPercentage = a/b
-                val fluidOffset = MathHelper.lerp(fluidPercentage, 0.0, 52.0)
-                it.renderGuiRect(x + 134.0, y + 17.0 + 52.0 - fluidOffset, x+150.0, y + 69.0)
+                val fluidOffset = MathHelper.lerp(fluidPercentage, 0F, 52F)
+                handler.fluidVolume.resource.renderGuiRect(matrices, x+134f, y+69f, fluidOffset)
             }
         }
         RenderSystem.setShaderTexture(0, texture)

@@ -27,7 +27,7 @@ class ItemGeneratorScreen(handler: ItemGeneratorScreenHandler, inventory: Player
         drawMouseoverTooltip(matrices, mouseX, mouseY)
         if((x+25..x+33).contains(mouseX) && (y+17..y+69).contains(mouseY)) {
             val a = TranslatableText("screen.extragenerators.common.stored_energy").append(": ").formatted(Formatting.RED)
-            val b = LiteralText("%.0f/%.0f E".format(handler.energyStored, handler.entity.maxStoredPower)).formatted(Formatting.GRAY)
+            val b = LiteralText("%d/%d E".format(handler.energyStored, handler.entity.energyStorage.getCapacity())).formatted(Formatting.GRAY)
             renderTooltip(matrices, listOf(a, b), mouseX, mouseY)
         }
     }
@@ -35,8 +35,8 @@ class ItemGeneratorScreen(handler: ItemGeneratorScreenHandler, inventory: Player
     override fun drawBackground(matrices: MatrixStack, delta: Float, mouseX: Int, mouseY: Int) {
         RenderSystem.setShaderTexture(0, texture)
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight)
-        val energyPercentage = handler.energyStored/handler.entity.maxStoredPower
-        val energyOffset = MathHelper.lerp(energyPercentage, 0.0, 52.0).toInt()
+        val energyPercentage = handler.energyStored/handler.entity.energyStorage.getCapacity().toFloat()
+        val energyOffset = MathHelper.lerp(energyPercentage, 0F, 52F).toInt()
         drawTexture(matrices, x+25, y+17+(52-energyOffset), 176, 52-energyOffset, 8, energyOffset)
         handler.burningFuel?.let {
             val p = (it.currentBurnTime * 13f /it.burnTime).toInt()

@@ -1,20 +1,22 @@
+@file:Suppress("DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.common.block
 
-import alexiil.mc.lib.attributes.AttributeList
 import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.blockentity.BlockEntityCompendium
 import io.github.lucaargolo.extragenerators.common.blockentity.ColorfulGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.containers.ColorfulGeneratorScreenHandler
 import io.github.lucaargolo.extragenerators.utils.ModConfig
+import io.github.lucaargolo.extragenerators.utils.SimpleSidedInventory
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory
 import net.minecraft.block.BlockState
-import net.minecraft.block.BlockWithEntity
-import net.minecraft.block.entity.AbstractFurnaceBlockEntity
+import net.minecraft.block.InventoryProvider
 import net.minecraft.block.entity.BlockEntity
 import net.minecraft.block.entity.BlockEntityTicker
 import net.minecraft.block.entity.BlockEntityType
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.inventory.SidedInventory
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
@@ -26,21 +28,19 @@ import net.minecraft.util.ItemScatterer
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
+import net.minecraft.world.WorldAccess
 
-class ColorfulGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator): AbstractGeneratorBlock(settings, generatorConfig) {
+class ColorfulGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator): AbstractGeneratorBlock(settings, generatorConfig), InventoryProvider {
 
-    override fun addAllAttributes(world: World, pos: BlockPos, state: BlockState, to: AttributeList<*>) {
-        (world.getBlockEntity(pos) as? ColorfulGeneratorBlockEntity)?.let{
-            to.offer(it.itemInv.insertable)
-        }
+    override fun getInventory(state: BlockState?, world: WorldAccess?, pos: BlockPos?): SidedInventory {
+        return (world?.getBlockEntity(pos) as? ColorfulGeneratorBlockEntity)?.itemInv ?: SimpleSidedInventory(0, { _, _ -> false }, { _, _ -> false }, { intArrayOf(0) })
     }
 
-    @Suppress("deprecation")
     override fun onStateReplaced(state: BlockState, world: World, pos: BlockPos, newState: BlockState, notify: Boolean) {
         if (!state.isOf(newState.block)) {
             (world.getBlockEntity(pos) as? ColorfulGeneratorBlockEntity)?.let{
-                it.itemInv.stackIterable().forEach {
-                    ItemScatterer.spawn(world, pos.x+0.0, pos.y+0.0, pos.z+0.0, it)
+                repeat(it.itemInv.size()) { slot ->
+                    ItemScatterer.spawn(world, pos.x+0.0, pos.y+0.0, pos.z+0.0, it.itemInv.getStack(slot))
                 }
             }
         }

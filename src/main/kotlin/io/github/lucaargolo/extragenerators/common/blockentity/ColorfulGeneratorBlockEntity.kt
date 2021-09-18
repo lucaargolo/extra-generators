@@ -1,30 +1,29 @@
+@file:Suppress("DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.common.blockentity
 
-import alexiil.mc.lib.attributes.item.filter.ItemFilter
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv
 import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
+import io.github.lucaargolo.extragenerators.utils.SimpleSidedInventory
 import net.minecraft.block.BlockState
-import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 
 class ColorfulGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGeneratorBlockEntity<ColorfulGeneratorBlockEntity>(BlockEntityCompendium.COLORFUL_GENERATOR_TYPE, pos, state) {
 
-    val itemInv = object: FullFixedItemInv(3) {
-        override fun getFilterForSlot(slot: Int): ItemFilter = when(slot) {
-            0 -> ItemFilter { initialized && (it.isEmpty || ExtraGenerators.RED_ITEMS.contains(it.item)) }
-            1 -> ItemFilter { initialized && (it.isEmpty || ExtraGenerators.GREEN_ITEMS.contains(it.item)) }
-            2 -> ItemFilter { initialized && (it.isEmpty || ExtraGenerators.BLUE_ITEMS.contains(it.item)) }
-            else -> ItemFilter { true }
+    val itemInv = SimpleSidedInventory(3, { slot, stack ->
+        when(slot) {
+            0 -> initialized && (stack.isEmpty || ExtraGenerators.RED_ITEMS.contains(stack.item))
+            1 -> initialized && (stack.isEmpty || ExtraGenerators.GREEN_ITEMS.contains(stack.item))
+            2 -> initialized && (stack.isEmpty || ExtraGenerators.BLUE_ITEMS.contains(stack.item))
+            else -> true
         }
-        override fun isItemValidForSlot(slot: Int, item: ItemStack) = getFilterForSlot(slot).matches(item)
-    }
+    }, { _, _ ->  false }, { intArrayOf(0, 1, 2) })
 
     var burningFuel: GeneratorFuel? = null
 
-    override fun isServerRunning() = burningFuel?.let { storedPower + MathHelper.floor(it.energyOutput/it.burnTime) <= maxStoredPower } ?: false
+    override fun isServerRunning() = burningFuel?.let { energyStorage.amount + MathHelper.floor(it.energyOutput/it.burnTime) <= energyStorage.getCapacity() } ?: false
 
     override fun getCogWheelRotation(): Float = burningFuel?.let { MathHelper.floor(it.energyOutput/it.burnTime)/10f } ?: 0f
 
@@ -33,8 +32,8 @@ class ColorfulGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGe
         if(world?.isClient == false) {
             burningFuel?.let {
                 val energyPerTick = MathHelper.floor(it.energyOutput/it.burnTime)
-                if (storedPower + energyPerTick <= maxStoredPower) {
-                    storedPower += energyPerTick
+                if (energyStorage.amount + energyPerTick <= energyStorage.getCapacity()) {
+                    energyStorage.amount += energyPerTick
                     it.currentBurnTime--
                 }
                 if (it.currentBurnTime <= 0) {
@@ -43,13 +42,13 @@ class ColorfulGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGe
                 }
             }
             if (burningFuel == null) {
-                val redStack = itemInv.getInvStack(0)
-                val greenStack = itemInv.getInvStack(1)
-                val blueStack = itemInv.getInvStack(2)
+                val redStack = itemInv.getStack(0)
+                val greenStack = itemInv.getStack(1)
+                val blueStack = itemInv.getStack(2)
                 if (!redStack.isEmpty && !greenStack.isEmpty && !blueStack.isEmpty) {
-                    itemInv.getSlot(0).extract(1)
-                    itemInv.getSlot(1).extract(1)
-                    itemInv.getSlot(2).extract(1)
+                    redStack.decrement(1)
+                    greenStack.decrement(1)
+                    blueStack.decrement(1)
                     burningFuel = getFuel()
                     markDirtyAndSync()
                 }
@@ -58,26 +57,26 @@ class ColorfulGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGe
     }
 
     override fun writeNbt(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toTag())
+        tag.put("itemInv", itemInv.toNbtList())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
         super.readNbt(tag)
-        itemInv.fromTag(tag.getCompound("itemInv"))
+        itemInv.readNbtList(tag.getList("itemInv", 10))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
     override fun toClientTag(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toTag())
+        tag.put("itemInv", itemInv.toNbtList())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.toClientTag(tag)
     }
 
     override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
-        itemInv.fromTag(tag.getCompound("itemInv"))
+        itemInv.readNbtList(tag.getList("itemInv", 10))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 

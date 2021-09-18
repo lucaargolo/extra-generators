@@ -1,22 +1,25 @@
+@file:Suppress("DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.common.resource
 
-import alexiil.mc.lib.attributes.fluid.amount.FluidAmount
-import alexiil.mc.lib.attributes.fluid.volume.FluidKey
-import alexiil.mc.lib.attributes.fluid.volume.FluidKeys
 import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
+import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount
+import net.minecraft.fluid.Fluid
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.resource.ResourceManager
+import net.minecraft.util.registry.Registry
 import java.io.InputStreamReader
 
 class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
 
-    private val fluidKeysMap = linkedMapOf<String, LinkedHashMap<FluidKey, FluidGeneratorFuel>>()
-    val clientFluidKeysMap = linkedMapOf<String, LinkedHashMap<FluidKey, FluidGeneratorFuel>>()
+    private val fluidKeysMap = linkedMapOf<String, LinkedHashMap<Fluid, FluidGeneratorFuel>>()
+    val clientFluidKeysMap = linkedMapOf<String, LinkedHashMap<Fluid, FluidGeneratorFuel>>()
 
-    fun test(id: String, fluidKey: FluidKey): FluidGeneratorFuel? {
+    fun test(id: String, fluidKey: Fluid): FluidGeneratorFuel? {
         val map = if(clientFluidKeysMap.isEmpty()) fluidKeysMap else clientFluidKeysMap
         map[id]?.forEach { (key, fuel) ->
             if(key == fluidKey) return fuel
@@ -30,7 +33,7 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
             buf.writeString(id)
             buf.writeInt(fluidKeyMap.size)
             fluidKeyMap.forEach { (fluidKey, fuel) ->
-                fluidKey.toMcBuffer(buf)
+                buf.writeVarInt(Registry.FLUID.getRawId(fluidKey))
                 fuel.toBuf(buf)
             }
         }
@@ -43,8 +46,8 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
             val fluidKeysMapId = buf.readString()
             val fluidKeyMapSize = buf.readInt()
             repeat(fluidKeyMapSize) {
-                val fluidKey = FluidKey.fromMcBuffer(buf)
-                val fuel = FluidGeneratorFuel.fromBuf(buf) ?: FluidGeneratorFuel(0, FluidKeys.EMPTY.withAmount(FluidAmount.ZERO), 0.0)
+                val fluidKey = Registry.FLUID.get(buf.readVarInt())
+                val fuel = FluidGeneratorFuel.fromBuf(buf) ?: FluidGeneratorFuel(0, ResourceAmount(FluidVariant.blank(), 0), 0.0)
                 clientFluidKeysMap.getOrPut(fluidKeysMapId) { linkedMapOf() } [fluidKey] = fuel
             }
         }
@@ -66,7 +69,7 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
                     val jsonObject = jsonElement.asJsonObject
                     val generatorFuel = FluidGeneratorFuel.fromJson(jsonObject.get("fuel").asJsonObject)
                     generatorFuel?.let {
-                        fluidKeysMap.getOrPut(id) { linkedMapOf() }[it.fluidInput.fluidKey] = it
+                        fluidKeysMap.getOrPut(id) { linkedMapOf() }[it.fluidInput.resource.fluid] = it
                     }
                 }
             }catch (e: Exception) {

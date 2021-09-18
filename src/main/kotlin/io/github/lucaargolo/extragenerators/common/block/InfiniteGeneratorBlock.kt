@@ -1,6 +1,5 @@
 package io.github.lucaargolo.extragenerators.common.block
 
-import alexiil.mc.lib.attributes.AttributeList
 import io.github.lucaargolo.extragenerators.common.blockentity.AbstractGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.blockentity.BlockEntityCompendium
 import io.github.lucaargolo.extragenerators.common.blockentity.InfiniteGeneratorBlockEntity
@@ -22,12 +21,9 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.hit.BlockHitResult
 import net.minecraft.util.math.BlockPos
-import net.minecraft.world.BlockView
 import net.minecraft.world.World
 
 class InfiniteGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Generator): AbstractGeneratorBlock(settings, generatorConfig) {
-
-    override fun addAllAttributes(world: World?, pos: BlockPos?, state: BlockState?, to: AttributeList<*>?) {}
 
     override fun onUse(state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, hand: Hand, hit: BlockHitResult): ActionResult {
         player.openHandledScreen(object: ExtendedScreenHandlerFactory {

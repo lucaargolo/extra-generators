@@ -1,10 +1,11 @@
+@file:Suppress("DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.common.blockentity
 
-import alexiil.mc.lib.attributes.item.filter.ItemFilter
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv
 import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.common.block.ItemGeneratorBlock
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
+import io.github.lucaargolo.extragenerators.utils.SimpleSidedInventory
 import net.minecraft.block.BlockState
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
@@ -16,14 +17,13 @@ class ItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGenera
     private var itemFuelMap: ((ItemStack) -> GeneratorFuel?)? = null
     private var burnCallback: ((ItemGeneratorBlockEntity) -> Unit)? = null
 
-    val itemInv = object: FullFixedItemInv(1) {
-        override fun getFilterForSlot(slot: Int): ItemFilter = ItemFilter { initialized && (it.isEmpty || itemFuelMap?.invoke(it) != null) }
-        override fun isItemValidForSlot(slot: Int, item: ItemStack) = getFilterForSlot(slot).matches(item)
-    }
+    val itemInv = SimpleSidedInventory(1, { _, stack ->
+        initialized && (stack.isEmpty || itemFuelMap?.invoke(stack) != null)
+    }, { _, _ ->  false }, { intArrayOf(0) })
 
     var burningFuel: GeneratorFuel? = null
 
-    override fun isServerRunning() = burningFuel?.let { storedPower + MathHelper.floor(it.energyOutput/it.burnTime) <= maxStoredPower } ?: false
+    override fun isServerRunning() = burningFuel?.let { energyStorage.amount + MathHelper.floor(it.energyOutput/it.burnTime) <= energyStorage.getCapacity() } ?: false
 
     override fun getCogWheelRotation(): Float = burningFuel?.let { MathHelper.floor(it.energyOutput/it.burnTime)/10f } ?: 0f
 
@@ -41,8 +41,8 @@ class ItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGenera
         if(world?.isClient == false) {
             burningFuel?.let {
                 val energyPerTick = MathHelper.floor(it.energyOutput/it.burnTime)
-                if (storedPower + energyPerTick <= maxStoredPower) {
-                    storedPower += energyPerTick
+                if (energyStorage.amount + energyPerTick <= energyStorage.getCapacity()) {
+                    energyStorage.amount += energyPerTick
                     it.currentBurnTime--
                 }
                 if (it.currentBurnTime <= 0) {
@@ -51,8 +51,9 @@ class ItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGenera
                 }
             }
             if (burningFuel == null) {
-                val stack = itemInv.extract(1)
+                val stack = itemInv.getStack(0)
                 if (!stack.isEmpty) {
+                    stack.decrement(1)
                     burningFuel = itemFuelMap?.invoke(stack)?.copy()
                     burningFuel?.let { burnCallback?.invoke(this) }
                     markDirtyAndSync()
@@ -62,26 +63,26 @@ class ItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGenera
     }
 
     override fun writeNbt(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toTag())
+        tag.put("itemInv", itemInv.toNbtList())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
         super.readNbt(tag)
-        itemInv.fromTag(tag.getCompound("itemInv"))
+        itemInv.readNbtList(tag.getList("itemInv", 10))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
     override fun toClientTag(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toTag())
+        tag.put("itemInv", itemInv.toNbtList())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.toClientTag(tag)
     }
 
     override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
-        itemInv.fromTag(tag.getCompound("itemInv"))
+        itemInv.readNbtList(tag.getList("itemInv", 10))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 

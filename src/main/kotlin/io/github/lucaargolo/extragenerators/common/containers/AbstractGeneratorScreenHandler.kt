@@ -20,7 +20,7 @@ abstract class AbstractGeneratorScreenHandler<S: AbstractGeneratorScreenHandler<
     val server: Boolean
         get() = !playerInventory.player.world.isClient
 
-    var energyStored = 0.0
+    var energyStored = 0L
 
     init {
         (0..2).forEach { n ->
@@ -34,14 +34,14 @@ abstract class AbstractGeneratorScreenHandler<S: AbstractGeneratorScreenHandler<
         }
     }
 
-    open fun shouldSync() = entity.getStored(null) != energyStored
+    open fun shouldSync() = entity.energyStorage.amount != energyStored
 
     open fun postSync() {
-        energyStored = entity.getStored(null)
+        energyStored = entity.energyStorage.amount
     }
 
     open fun writeToBuf(buf: PacketByteBuf) {
-        buf.writeDouble(entity.getStored(null))
+        buf.writeLong(entity.energyStorage.amount)
     }
 
     override fun sendContentUpdates() {

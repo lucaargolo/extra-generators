@@ -13,7 +13,7 @@ class ThermoelectricGeneratorBlockEntity(pos: BlockPos, state: BlockState): Abst
     val axisTemperatureDifferenceCache = linkedMapOf<Direction.Axis, Int>()
     var clientGeneration = 0
 
-    override fun isServerRunning() = getGeneration() > 0 && storedPower + getGeneration() <= maxStoredPower
+    override fun isServerRunning() = getGeneration() > 0 && energyStorage.amount + getGeneration() <= energyStorage.getCapacity()
 
     override fun getCogWheelRotation(): Float = clientGeneration/10f
 
@@ -43,8 +43,8 @@ class ThermoelectricGeneratorBlockEntity(pos: BlockPos, state: BlockState): Abst
                     clientGeneration = generation
                     markDirtyAndSync()
                 }
-                if(storedPower + generation <= maxStoredPower) {
-                    storedPower += generation
+                if(energyStorage.amount + generation <= energyStorage.getCapacity()) {
+                    energyStorage.amount += generation
                 }
             }
         }

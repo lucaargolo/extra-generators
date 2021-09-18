@@ -1,6 +1,5 @@
 package io.github.lucaargolo.extragenerators.common.block
 
-import alexiil.mc.lib.attributes.fluid.volume.FluidKeys
 import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.ExtraGenerators.Companion.creativeGroupSettings
 import io.github.lucaargolo.extragenerators.common.entity.GeneratorAreaEffectCloudEntity
@@ -16,6 +15,7 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.client.item.TooltipContext
 import net.minecraft.client.util.InputUtil
 import net.minecraft.entity.effect.StatusEffects
+import net.minecraft.fluid.Fluids
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
@@ -43,12 +43,12 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
     val SLUDGY_GENERATOR = register("sludgy_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.sludgyGenerator, { GeneratorFuel.fromItemResource("sludgy", it) })  )
     val TELEPORT_GENERATOR = register("teleport_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.teleportGenerator, { GeneratorFuel.fromItemResource("teleport", it) })  )
     val SCALDING_GENERATOR = register("scalding_generator", FluidGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.scaldingGenerator) { FluidGeneratorFuel.fromFluidResource("scalding", it) })
-    val STEAM_GENERATOR = register("steam_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.steamGenerator, FluidKeys.WATER) { FluidGeneratorFuel.fromSteamGeneratorFuel(it) })
+    val STEAM_GENERATOR = register("steam_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.steamGenerator, Fluids.WATER) { FluidGeneratorFuel.fromSteamGeneratorFuel(it) })
 
     //Tier 3 Generators
     val GLUTTONY_GENERATOR = register("gluttony_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.gluttonyGenerator, { GeneratorFuel.fromGluttonyGeneratorFuel(it.item) })  )
     val BREW_GENERATOR = register("brew_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.brewGenerator, { GeneratorFuel.fromBrewGeneratorFuel(it) })  )
-    val REDSTONE_GENERATOR = register("redstone_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.redstoneGenerator, FluidKeys.LAVA) { FluidGeneratorFuel.fromRedstoneGeneratorFuel(it) })
+    val REDSTONE_GENERATOR = register("redstone_generator", FluidItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.redstoneGenerator, Fluids.LAVA) { FluidGeneratorFuel.fromRedstoneGeneratorFuel(it) })
     val BLAST_GENERATOR = register("blast_generator", ItemGeneratorBlock(FabricBlockSettings.copyOf(Blocks.IRON_BLOCK).nonOpaque(), ExtraGenerators.CONFIG.blastGenerator, { GeneratorFuel.fromItemResource("blast", it) }) {
         val world = it.world as? ServerWorld ?: return@ItemGeneratorBlock
         world.createExplosion(null, it.pos.x+0.5, it.pos.y+0.0, it.pos.z+0.5, 2f, Explosion.DestructionType.NONE)

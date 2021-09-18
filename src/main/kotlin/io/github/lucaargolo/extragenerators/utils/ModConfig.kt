@@ -3,38 +3,38 @@ package io.github.lucaargolo.extragenerators.utils
 class ModConfig {
 
     class Generator(
-        val output: Double = 0.0,
-        val storage: Double = 0.0
+        val output: Long = 0L,
+        val storage: Long = 0L
     )
 
     //Tier 1 Generators
-    val thermoelectricGenerator = Generator(64.0, 32000.0)
-    val burnableGenerator = Generator(64.0, 32000.0)
-    val icyGenerator = Generator(64.0, 32000.0)
-    val colorfulGenerator = Generator(64.0, 32000.0)
+    val thermoelectricGenerator = Generator(64L, 32000L)
+    val burnableGenerator = Generator(64L, 32000L)
+    val icyGenerator = Generator(64L, 32000L)
+    val colorfulGenerator = Generator(64L, 32000L)
 
     //Tier 2 Generators
-    val sludgyGenerator = Generator(128.0, 64000.0)
-    val teleportGenerator = Generator(128.0, 64000.0)
-    val scaldingGenerator = Generator(128.0, 64000.0)
-    val steamGenerator = Generator(128.0, 64000.0)
+    val sludgyGenerator = Generator(128L, 64000L)
+    val teleportGenerator = Generator(128L, 64000L)
+    val scaldingGenerator = Generator(128L, 64000L)
+    val steamGenerator = Generator(128L, 64000L)
 
     //Tier 3 Generators
-    val gluttonyGenerator = Generator(256.0, 128000.0)
-    val brewGenerator = Generator(256.0, 128000.0)
-    val redstoneGenerator = Generator(256.0, 128000.0)
-    val blastGenerator = Generator(256.0, 128000.0)
+    val gluttonyGenerator = Generator(256L, 128000L)
+    val brewGenerator = Generator(256L, 128000L)
+    val redstoneGenerator = Generator(256L, 128000L)
+    val blastGenerator = Generator(256L, 128000L)
 
     //Tier 4 Generators
-    val enchantedGenerator = Generator(512.0, 256000.0)
-    val demiseGenerator = Generator(512.0, 256000.0)
+    val enchantedGenerator = Generator(512L, 256000L)
+    val demiseGenerator = Generator(512L, 256000L)
 
     //Tier 5 Generators
-    val dragonGenerator = Generator(4096.0, 2048000.0)
-    val witheredGenerator = Generator(4096.0, 2048000.0)
+    val dragonGenerator = Generator(4096L, 2048000L)
+    val witheredGenerator = Generator(4096L, 2048000L)
 
     //Tier ∞ Generators
-    val heavenlyGenerator = Generator(204800.0, 102400000.0)
-    val infernalGenerator = Generator(204800.0, 102400000.0)
+    val heavenlyGenerator = Generator(204800L, 102400000L)
+    val infernalGenerator = Generator(204800L, 102400000L)
 
 }

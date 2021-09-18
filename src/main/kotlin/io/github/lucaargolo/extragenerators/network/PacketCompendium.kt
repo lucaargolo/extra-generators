@@ -1,7 +1,5 @@
 package io.github.lucaargolo.extragenerators.network
 
-import alexiil.mc.lib.attributes.fluid.FluidInvUtil
-import alexiil.mc.lib.attributes.fluid.volume.FluidVolume
 import io.github.lucaargolo.extragenerators.client.screen.*
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.blockentity.FluidItemGeneratorBlockEntity
@@ -10,6 +8,8 @@ import io.github.lucaargolo.extragenerators.common.entity.GeneratorAreaEffectClo
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
+import io.github.lucaargolo.extragenerators.utils.InventoryUtils
+import io.github.lucaargolo.extragenerators.utils.InventoryUtils.fluidResourceFromMcBuffer
 import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs
@@ -34,58 +34,58 @@ object PacketCompendium {
 
     fun onInitializeClient() {
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_ITEM_GENERATOR_SCREEN) { client, _, buf, _ ->
-            val double = buf.readDouble()
+            val long = buf.readLong()
             val burningFuel = GeneratorFuel.fromBuf(buf)
             client.execute {
                 (client.currentScreen as? ItemGeneratorScreen)?.screenHandler?.let {
-                    it.energyStored = double
+                    it.energyStored = long
                     it.burningFuel = burningFuel
                 }
             }
         }
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_FLUID_GENERATOR_SCREEN) { client, _, buf, _ ->
-            val double = buf.readDouble()
+            val long = buf.readLong()
             val burningFuel = FluidGeneratorFuel.fromBuf(buf)
-            val fluidVolume = FluidVolume.fromMcBuffer(buf)
+            val fluidVolume = fluidResourceFromMcBuffer(buf)
             client.execute {
                 (client.currentScreen as? FluidGeneratorScreen)?.screenHandler?.let {
-                    it.energyStored = double
+                    it.energyStored = long
                     it.burningFuel = burningFuel
                     it.fluidVolume = fluidVolume
                 }
             }
         }
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_FLUID_ITEM_GENERATOR_SCREEN) { client, _, buf, _ ->
-            val double = buf.readDouble()
+            val long = buf.readLong()
             val burningFuel = FluidGeneratorFuel.fromBuf(buf)
-            val fluidVolume = FluidVolume.fromMcBuffer(buf)
+            val fluidVolume = fluidResourceFromMcBuffer(buf)
             client.execute {
                 (client.currentScreen as? FluidItemGeneratorScreen)?.screenHandler?.let {
-                    it.energyStored = double
+                    it.energyStored = long
                     it.burningFuel = burningFuel
                     it.fluidVolume = fluidVolume
                 }
             }
         }
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_COLORFUL_GENERATOR_SCREEN) { client, _, buf, _ ->
-            val double = buf.readDouble()
+            val long = buf.readLong()
             val burningFuel = GeneratorFuel.fromBuf(buf)
             client.execute {
                 (client.currentScreen as? ColorfulGeneratorScreen)?.screenHandler?.let {
-                    it.energyStored = double
+                    it.energyStored = long
                     it.burningFuel = burningFuel
                 }
             }
         }
         ClientPlayNetworking.registerGlobalReceiver(UPDATE_INFINITE_GENERATOR_SCREEN) { client, _, buf, _ ->
-            val double = buf.readDouble()
+            val long = buf.readLong()
             val activeGenerators = linkedMapOf<Identifier, Int>()
             repeat(buf.readInt()) {
                 activeGenerators[buf.readIdentifier()] = buf.readInt()
             }
             client.execute {
                 (client.currentScreen as? InfiniteGeneratorScreen)?.screenHandler?.let {
-                    it.energyStored = double
+                    it.energyStored = long
                     it.activeGenerators = activeGenerators
                 }
             }
@@ -138,10 +138,10 @@ object PacketCompendium {
             val blockPos = buf.readBlockPos()
             server.execute {
                 (world.getBlockEntity(blockPos) as? FluidGeneratorBlockEntity)?.let {
-                    FluidInvUtil.interactCursorWithTank(it.fluidInv.transferable, player)
+                    InventoryUtils.interactPlayerCursor(it.fluidInv, player, canExtract = false)
                 }
                 (world.getBlockEntity(blockPos) as? FluidItemGeneratorBlockEntity)?.let {
-                    FluidInvUtil.interactCursorWithTank(it.fluidInv.transferable, player)
+                    InventoryUtils.interactPlayerCursor(it.fluidInv, player, canExtract = false)
                 }
             }
         }

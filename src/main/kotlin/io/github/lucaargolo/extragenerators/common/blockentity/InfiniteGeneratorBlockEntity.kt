@@ -8,7 +8,7 @@ class InfiniteGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGe
 
     private var isInfinite = false
 
-    override fun isServerRunning() = isInfinite && storedPower + 102400.0 <= maxStoredPower
+    override fun isServerRunning() = isInfinite && energyStorage.amount + 102400.0 <= energyStorage.getCapacity()
 
     override fun getCogWheelRotation(): Float = 102400/10f
 
@@ -16,8 +16,8 @@ class InfiniteGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGe
         super.tick()
         if(world?.isClient == false) {
             isInfinite = ownerUUID?.let { ActiveGenerators.test(it) } ?: false
-            if(isInfinite && storedPower + 102400.0 <= maxStoredPower) {
-                storedPower += 102400.0
+            if(isInfinite && energyStorage.amount + 102400 <= energyStorage.getCapacity()) {
+                energyStorage.amount += 102400
             }
             if(ownerUUID != null && generatorIdentifier != null) {
                 ActiveGenerators.add(ownerUUID!!, generatorIdentifier!!)

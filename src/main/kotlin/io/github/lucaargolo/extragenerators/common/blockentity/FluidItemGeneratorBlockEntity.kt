@@ -1,52 +1,59 @@
+@file:Suppress("DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.common.blockentity
 
-import alexiil.mc.lib.attributes.Simulation
-import alexiil.mc.lib.attributes.fluid.FluidContainerRegistry
-import alexiil.mc.lib.attributes.fluid.amount.FluidAmount
-import alexiil.mc.lib.attributes.fluid.filter.FluidFilter
-import alexiil.mc.lib.attributes.fluid.impl.SimpleFixedFluidInv
-import alexiil.mc.lib.attributes.fluid.volume.FluidKey
-import alexiil.mc.lib.attributes.item.filter.ItemFilter
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv
 import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.common.block.FluidItemGeneratorBlock
-import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
+import io.github.lucaargolo.extragenerators.utils.*
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
+import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction
 import net.minecraft.block.BlockState
+import net.minecraft.fluid.Fluid
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 
 class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGeneratorBlockEntity<FluidItemGeneratorBlockEntity>(BlockEntityCompendium.FLUID_ITEM_GENERATOR_TYPE, pos, state) {
 
-    private var fluidKey: FluidKey? = null
+    private var fluidKey: Fluid? = null
     private var fluidItemFuelMap: ((ItemStack) -> FluidGeneratorFuel?)? = null
 
-    val itemInv = object: FullFixedItemInv(3) {
-        override fun getFilterForSlot(slot: Int): ItemFilter {
-            return when(slot) {
-                0 -> ItemFilter { initialized && (it.isEmpty || fluidItemFuelMap?.invoke(it) != null) }
-                1 -> ItemFilter { initialized && (it.isEmpty || FluidContainerRegistry.getContainedFluid(it.item).fluidKey == fluidKey) }
-                2 -> ItemFilter { it.isEmpty || FluidContainerRegistry.getEmptyContainers().contains(it.item) }
-                else -> ItemFilter { true }
-            }
+    val itemInv = SimpleSidedInventory(3, { slot, stack ->
+        when(slot) {
+            0 -> initialized && (stack.isEmpty || fluidItemFuelMap?.invoke(stack) != null)
+            1 -> initialized && (stack.isEmpty || InventoryUtils.getExtractableFluid(stack)?.resource?.fluid == fluidKey)
+            2 -> stack.isEmpty || InventoryUtils.canInsertFluid(stack)
+            else -> true
         }
-        override fun isItemValidForSlot(slot: Int, item: ItemStack) = getFilterForSlot(slot).matches(item)
-    }
+    }, { slot, _ -> slot == 2 }, { intArrayOf(0, 1, 2) })
 
-    val fluidInv = object: SimpleFixedFluidInv(1, FluidAmount.ofWhole(4)) {
-        override fun getFilterForTank(tank: Int): FluidFilter = FluidFilter { initialized && (it.isEmpty || it == fluidKey) }
-        override fun isFluidValidForTank(tank: Int, fluid: FluidKey?) = getFilterForTank(tank).matches(fluid)
+    val fluidInv = object: SingleVariantStorage<FluidVariant>() {
+        override fun getCapacity(variant: FluidVariant?) = FluidConstants.BUCKET*4
+        override fun getBlankVariant(): FluidVariant = FluidVariant.blank()
+        override fun canInsert(variant: FluidVariant?): Boolean {
+            return initialized && variant != null && (variant.isBlank || variant.fluid == fluidKey)
+        }
+        override fun onFinalCommit() {
+            markDirtyAndSync()
+            super.onFinalCommit()
+        }
     }
 
     var burningFuel: FluidGeneratorFuel? = null
 
     override fun isServerRunning() = burningFuel?.let {
-        val volume = fluidInv.attemptAnyExtraction(FluidAmount.ABSOLUTE_MAXIMUM, Simulation.SIMULATE)
         val fluidPerTick = it.fluidInput.amount().div(it.burnTime.toLong())
         val energyPerTick = MathHelper.floor(it.energyOutput / it.burnTime)
-        storedPower + energyPerTick <= maxStoredPower && !volume.split(fluidPerTick).isEmpty
+        energyStorage.amount + energyPerTick <= energyStorage.getCapacity() && fluidInv.amount >= fluidPerTick
     } ?: false
 
     override fun getCogWheelRotation(): Float = burningFuel?.let { MathHelper.floor(it.energyOutput/it.burnTime)/10f } ?: 0f
@@ -54,7 +61,7 @@ class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractG
     override fun initialize(block: AbstractGeneratorBlock): Boolean {
         val superInitialized = super.initialize(block)
         (block as? FluidItemGeneratorBlock)?.let {
-            fluidKey = it.fluidKey
+            fluidKey = it.fluid
             fluidItemFuelMap = it.fluidItemFuelMap
         }
         return fluidKey != null && fluidItemFuelMap != null && superInitialized
@@ -64,12 +71,11 @@ class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractG
         super.tick()
         if(world?.isClient == false) {
             burningFuel?.let {
-                val volume = fluidInv.attemptAnyExtraction(FluidAmount.ABSOLUTE_MAXIMUM, Simulation.SIMULATE)
                 val fluidPerTick = it.fluidInput.amount().div(it.burnTime.toLong())
                 val energyPerTick = MathHelper.floor(it.energyOutput/it.burnTime)
-                if (storedPower + energyPerTick <= maxStoredPower && !volume.split(fluidPerTick).isEmpty) {
-                    fluidInv.extract(fluidPerTick)
-                    storedPower += energyPerTick
+                if (energyStorage.amount + energyPerTick <= energyStorage.getCapacity() && fluidInv.amount >= fluidPerTick) {
+                    fluidInv.amount -= fluidPerTick
+                    energyStorage.amount += energyPerTick
                     it.currentBurnTime--
                 }
                 if (it.currentBurnTime <= 0) {
@@ -78,64 +84,59 @@ class FluidItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractG
                 }
             }
             if (burningFuel == null) {
-                val stack = itemInv.getSlot(0).attemptAnyExtraction(1, Simulation.SIMULATE)
+                val stack = itemInv.getStack(0)
                 if (!stack.isEmpty) {
                     fluidItemFuelMap?.invoke(stack)?.copy()?.let {
-                        val volume = fluidInv.attemptAnyExtraction(FluidAmount.ABSOLUTE_MAXIMUM, Simulation.SIMULATE)
                         val fluidPerTick = it.fluidInput.amount().div(it.burnTime.toLong())
-                        if(!volume.split(fluidPerTick).isEmpty) {
+                        if(fluidInv.amount >= fluidPerTick) {
                             burningFuel = it
-                            itemInv.getSlot(0).extract(1)
+                            stack.decrement(1)
                         }
                     }
                 }
             }
-            if(!itemInv.getInvStack(1).isEmpty) {
-                val inputStack = itemInv.getSlot(1).get()
-                val stackFluid = FluidContainerRegistry.getContainedFluid(inputStack.item)
-                if(fluidInv.getTank(0).attemptInsertion(stackFluid.copy(), Simulation.SIMULATE).isEmpty) {
-                    val outputStack = itemInv.getSlot(2).get()
-                    if (outputStack.isEmpty) {
-                        itemInv.getSlot(1).set(inputStack.also { it.decrement(1) })
-                        itemInv.getSlot(2).set(ItemStack(Items.BUCKET))
-                        fluidInv.getTank(0).insert(stackFluid.copy())
-                        markDirtyAndSync()
-                    } else if (outputStack.isItemEqual(ItemStack(Items.BUCKET)) && outputStack.count + 1 < outputStack.maxCount) {
-                        itemInv.getSlot(1).set(inputStack.also { it.decrement(1) })
-                        itemInv.getSlot(2).set(outputStack.also { it.increment(1) })
-                        fluidInv.getTank(0).insert(stackFluid.copy())
-                        markDirtyAndSync()
+            val inputStack = itemInv.getStack(1)
+            val transactionInventory = InventoryStorage.of(itemInv, null)
+            if(!inputStack.isEmpty) {
+                val fluidStorage = ContainerItemContext.ofSingleSlot(transactionInventory.getSlot(1)).find(FluidStorage.ITEM)
+                if(fluidStorage != null) {
+                    StorageUtil.move(fluidStorage, fluidInv, { true }, FluidConstants.BUCKET, null)
+                    val storedFluid = StorageUtil.findExtractableContent(fluidStorage, null)
+                    if(storedFluid == null || storedFluid.amount == 0L || storedFluid.resource.isBlank) {
+                        StorageUtil.move(transactionInventory.getSlot(1), transactionInventory.getSlot(2), { true }, 1, null)
                     }
+                }else{
+                    StorageUtil.move(transactionInventory.getSlot(1), transactionInventory.getSlot(2), { true }, 1, null)
                 }
             }
         }
     }
 
     override fun writeNbt(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toTag())
-        tag.put("fluidInv", fluidInv.toTag())
+        tag.put("itemInv", itemInv.toNbtList())
+        tag.put("fluidInv", fluidInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
         super.readNbt(tag)
-        itemInv.fromTag(tag.getCompound("itemInv"))
-        fluidInv.fromTag(tag.getCompound("fluidInv"))
+        itemInv.readNbtList(tag.getList("itemInv", 10))
+        fluidInv.fromNbt(tag.getCompound("fluidInv"))
         burningFuel = FluidGeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
     override fun toClientTag(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toTag())
-        tag.put("fluidInv", fluidInv.toTag())
+        tag.put("itemInv", itemInv.toNbtList())
+        tag.put("fluidInv", fluidInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
         return super.toClientTag(tag)
     }
 
     override fun fromClientTag(tag: NbtCompound) {
         super.fromClientTag(tag)
-        itemInv.fromTag(tag.getCompound("itemInv"))
-        fluidInv.fromTag(tag.getCompound("fluidInv"))
+        itemInv.readNbtList(tag.getList("itemInv", 10))
+        fluidInv.fromNbt(tag.getCompound("fluidInv"))
         burningFuel = FluidGeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 

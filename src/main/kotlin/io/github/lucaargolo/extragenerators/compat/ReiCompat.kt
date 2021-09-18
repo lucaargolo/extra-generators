@@ -1,3 +1,5 @@
+@file:Suppress("unused", "DEPRECATION", "UnstableApiUsage")
+
 package io.github.lucaargolo.extragenerators.compat
 
 import io.github.lucaargolo.extragenerators.common.block.BlockCompendium
@@ -16,7 +18,6 @@ import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.util.collection.DefaultedList
 
-@Suppress("unused")
 class ReiCompat: REIClientPlugin {
 
     override fun registerCategories(registry: CategoryRegistry) {
@@ -37,7 +38,7 @@ class ReiCompat: REIClientPlugin {
         ResourceCompendium.FLUID_GENERATORS.clientFluidKeysMap.forEach { (id, fluidKeyMap) ->
             val category = FluidGeneratorCategory.getMatching(id) ?: return@forEach
             fluidKeyMap.forEach { (fluidKey, fuel) ->
-                registry.add(category.createDisplay(EntryIngredients.of(fluidKey.rawFluid, fuel.fluidInput.amount().asLong(1000L)), fuel))
+                registry.add(category.createDisplay(EntryIngredients.of(fluidKey, fuel.fluidInput.amount/81), fuel))
             }
         }
         ResourceCompendium.BLOCK_TEMPERATURE.clientTemperatureMap.forEach { (block, temperature) ->
@@ -59,10 +60,10 @@ class ReiCompat: REIClientPlugin {
                 BREW_GENERATOR.createDisplay(EntryIngredients.of(it), this)
             }?.let { display -> registry.add(display) }
             FluidGeneratorFuel.fromRedstoneGeneratorFuel(it)?.run {
-                REDSTONE_GENERATOR.createDisplay(EntryIngredients.of(it), EntryIngredients.of(fluidInput.rawFluid, fluidInput.amount().asLong(1000L)), this)
+                REDSTONE_GENERATOR.createDisplay(EntryIngredients.of(it), EntryIngredients.of(fluidInput.resource.fluid, fluidInput.amount/81), this)
             }?.let { display -> registry.add(display) }
             FluidGeneratorFuel.fromSteamGeneratorFuel(it)?.run {
-                STEAM_GENERATOR.createDisplay(EntryIngredients.of(it), EntryIngredients.of(fluidInput.rawFluid, fluidInput.amount().asLong(1000L)), this)
+                STEAM_GENERATOR.createDisplay(EntryIngredients.of(it), EntryIngredients.of(fluidInput.resource.fluid, fluidInput.amount/81), this)
             }?.let { display -> registry.add(display) }
         }
         val redInput = TagRegistry.item(ModIdentifier("red_items")).values().map { EntryStacks.of(it) }

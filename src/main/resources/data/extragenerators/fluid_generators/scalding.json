@@ -4,7 +4,7 @@
       "burnTime": 100,
       "fluidInput": {
         "fluid": "minecraft:lava",
-        "amount":"1/20"
+        "amount": "4050"
       },
       "energyOutput": 6400
     }

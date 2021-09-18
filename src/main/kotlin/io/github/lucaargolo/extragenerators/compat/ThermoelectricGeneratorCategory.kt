@@ -41,6 +41,7 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
 
     override fun getTitle() = TranslatableText(block.translationKey)
 
+    @Suppress("DEPRECATION")
     override fun setupDisplay(display: RecipeDisplay, bounds: Rectangle): MutableList<Widget> {
         val widgets = mutableListOf<Widget>()
 
