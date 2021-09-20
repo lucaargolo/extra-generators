@@ -55,9 +55,9 @@ class ItemGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGenera
             if (burningFuel == null) {
                 val stack = itemInv.getStack(0)
                 if (!stack.isEmpty) {
-                    stack.decrement(1)
                     burningFuel = itemFuelMap?.invoke(stack)?.copy()
                     burningFuel?.let { burnCallback?.invoke(this) }
+                    stack.decrement(1)
                     markDirtyAndSync()
                 }
             }

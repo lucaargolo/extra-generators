@@ -171,7 +171,7 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
             }
         }
         if(targets.size > 0) {
-            val transferAmount = energyStorage.amount.coerceAtMost(energyStorage.maxExtract) / targets.size
+            val transferAmount = energyStorage.amount.coerceAtMost(generatorConfig?.output ?: energyStorage.maxExtract) / targets.size
             targets.forEach { target ->
                 EnergyStorageUtil.move(energyStorage, target, transferAmount, null)
             }
