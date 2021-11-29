@@ -101,10 +101,10 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
 
     @Suppress("SameParameterValue")
     private fun renderFluidVertices(bb: VertexConsumer, entry: MatrixStack.Entry, normal: Vec3f, fluidColor: Int, fluidSprite: Sprite, f: Float, g: Float, h: Float, i: Float, j: Float, k: Float, l: Float, m: Float) {
-        bb.vertex(entry.model, f, h, j).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.maxU, fluidSprite.minV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normal, normal.x, normal.y, normal.z).next()
-        bb.vertex(entry.model, g, h, k).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.minU, fluidSprite.minV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normal, normal.x, normal.y, normal.z).next()
-        bb.vertex(entry.model, g, i, l).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.minU, fluidSprite.maxV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normal, normal.x, normal.y, normal.z).next()
-        bb.vertex(entry.model, f, i, m).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.maxU, fluidSprite.maxV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normal, normal.x, normal.y, normal.z).next()
+        bb.vertex(entry.positionMatrix, f, h, j).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.maxU, fluidSprite.minV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normalMatrix, normal.x, normal.y, normal.z).next()
+        bb.vertex(entry.positionMatrix, g, h, k).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.minU, fluidSprite.minV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normalMatrix, normal.x, normal.y, normal.z).next()
+        bb.vertex(entry.positionMatrix, g, i, l).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.minU, fluidSprite.maxV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normalMatrix, normal.x, normal.y, normal.z).next()
+        bb.vertex(entry.positionMatrix, f, i, m).color((fluidColor shr 16 and 255)/255f, (fluidColor shr 8 and 255)/255f, (fluidColor and 255)/255f, 1f).texture(fluidSprite.maxU, fluidSprite.maxV).overlay(OverlayTexture.DEFAULT_UV).light(15728880).normal(entry.normalMatrix, normal.x, normal.y, normal.z).next()
     }
 
     override fun getDisplayHeight() = 44

@@ -282,7 +282,7 @@ private fun FluidVariant.innerRenderGuiRect(ms: MatrixStack, i: Float, j: Float,
     val v1 = sprite.maxV
     val v0 = v1 + (sprite.minV - v1) * fractionUp
     val u1 = sprite.maxU
-    val model = ms.peek().model
+    val model = ms.peek().positionMatrix
     bufferBuilder.vertex(model, i, y1, z).color(r, g, b, a).texture(u0, v1).next()
     bufferBuilder.vertex(model, x1, y1, z).color(r, g, b, a).texture(u1, v1).next()
     bufferBuilder.vertex(model, x1, j, z).color(r, g, b, a).texture(u1, v0).next()

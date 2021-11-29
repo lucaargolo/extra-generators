@@ -96,8 +96,8 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
                     stacks.forEach {
                         ItemScatterer.spawn(serverWorld, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble(), it)
                     }
+                    world?.setBlockState(pos, Blocks.AIR.defaultState)
                 }
-                world?.setBlockState(pos, Blocks.AIR.defaultState)
             }
         }
 
@@ -126,10 +126,11 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         }
     }
 
-    override fun writeNbt(tag: NbtCompound): NbtCompound {
+    override fun writeNbt(tag: NbtCompound) {
         ownerUUID?.let { tag.putUuid("ownerUUID", it) }
         tag.putLong("storedEnergy", energyStorage.amount)
-        return super.writeNbt(tag)
+        tag.putBoolean("isClientRunning", isClientRunning)
+        super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
@@ -143,22 +144,9 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         if(tag.contains("ownerUUID")) {
             ownerUUID = tag.getUuid("ownerUUID")
         }
-    }
-
-    override fun toClientTag(tag: NbtCompound): NbtCompound {
-        ownerUUID?.let { tag.putUuid("ownerUUID", it) }
-        tag.putLong("storedEnergy", energyStorage.amount)
-        tag.putBoolean("isClientRunning", isClientRunning)
-        return tag
-    }
-
-    override fun fromClientTag(tag: NbtCompound) {
-        energyStorage.amount = tag.getLong("storedEnergy")
         isClientRunning = tag.getBoolean("isClientRunning")
-        if(tag.contains("ownerUUID")) {
-            ownerUUID = tag.getUuid("ownerUUID")
-        }
     }
+
 
     private fun moveEnergy() {
         val targets = linkedSetOf<EnergyStorage>()

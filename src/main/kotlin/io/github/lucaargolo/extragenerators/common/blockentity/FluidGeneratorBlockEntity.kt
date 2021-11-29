@@ -12,12 +12,10 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleVariantStorage
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction
 import net.minecraft.block.BlockState
 import net.minecraft.fluid.Fluid
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 
 class FluidGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGeneratorBlockEntity<FluidGeneratorBlockEntity>(BlockEntityCompendium.FLUID_GENERATOR_TYPE, pos, state) {
@@ -99,11 +97,11 @@ class FluidGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGener
         }
     }
 
-    override fun writeNbt(tag: NbtCompound): NbtCompound {
+    override fun writeNbt(tag: NbtCompound) {
         tag.put("itemInv", itemInv.toNbt())
         tag.put("fluidInv", fluidInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
-        return super.writeNbt(tag)
+        super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
@@ -113,18 +111,5 @@ class FluidGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGener
         burningFuel = FluidGeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
 
-    override fun toClientTag(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toNbt())
-        tag.put("fluidInv", fluidInv.toNbt())
-        burningFuel?.let { tag.put("burningFuel", it.toTag()) }
-        return super.toClientTag(tag)
-    }
-
-    override fun fromClientTag(tag: NbtCompound) {
-        super.fromClientTag(tag)
-        itemInv.fromNbt(tag.get("itemInv"))
-        fluidInv.fromNbt(tag.getCompound("fluidInv"))
-        burningFuel = FluidGeneratorFuel.fromTag(tag.getCompound("burningFuel"))
-    }
 
 }

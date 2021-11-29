@@ -50,13 +50,13 @@ class ThermoelectricGeneratorBlockEntity(pos: BlockPos, state: BlockState): Abst
         }
     }
 
-    override fun toClientTag(tag: NbtCompound): NbtCompound {
+    override fun writeNbt(tag: NbtCompound) {
         tag.putInt("clientGeneration", clientGeneration)
-        return super.toClientTag(tag)
+        super.writeNbt(tag)
     }
 
-    override fun fromClientTag(tag: NbtCompound) {
-        super.fromClientTag(tag)
+    override fun readNbt(tag: NbtCompound) {
+        super.readNbt(tag)
         clientGeneration = tag.getInt("clientGeneration")
     }
 

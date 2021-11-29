@@ -58,26 +58,14 @@ class ColorfulGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGe
         }
     }
 
-    override fun writeNbt(tag: NbtCompound): NbtCompound {
+    override fun writeNbt(tag: NbtCompound) {
         tag.put("itemInv", itemInv.toNbt())
         burningFuel?.let { tag.put("burningFuel", it.toTag()) }
-        return super.writeNbt(tag)
+        super.writeNbt(tag)
     }
 
     override fun readNbt(tag: NbtCompound) {
         super.readNbt(tag)
-        itemInv.fromNbt(tag.get("itemInv"))
-        burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
-    }
-
-    override fun toClientTag(tag: NbtCompound): NbtCompound {
-        tag.put("itemInv", itemInv.toNbt())
-        burningFuel?.let { tag.put("burningFuel", it.toTag()) }
-        return super.toClientTag(tag)
-    }
-
-    override fun fromClientTag(tag: NbtCompound) {
-        super.fromClientTag(tag)
         itemInv.fromNbt(tag.get("itemInv"))
         burningFuel = GeneratorFuel.fromTag(tag.getCompound("burningFuel"))
     }
