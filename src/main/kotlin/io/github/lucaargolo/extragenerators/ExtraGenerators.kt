@@ -15,11 +15,11 @@ import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
-import net.fabricmc.fabric.api.tag.TagRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
-import net.minecraft.tag.Tag
+import net.minecraft.tag.TagKey
+import net.minecraft.util.registry.Registry
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
@@ -76,17 +76,10 @@ class ExtraGenerators: ModInitializer {
             finalConfig
         }
 
-        val RED_ITEMS: Tag<Item> by lazy {
-            TagRegistry.item(ModIdentifier("red_items"))
-        }
+        val RED_ITEMS = TagKey.of(Registry.ITEM_KEY, ModIdentifier("red_items"))
+        val GREEN_ITEMS = TagKey.of(Registry.ITEM_KEY, ModIdentifier("green_items"))
+        val BLUE_ITEMS = TagKey.of(Registry.ITEM_KEY, ModIdentifier("blue_items"))
 
-        val GREEN_ITEMS: Tag<Item> by lazy {
-            TagRegistry.item(ModIdentifier("green_items"))
-        }
-
-        val BLUE_ITEMS: Tag<Item> by lazy {
-            TagRegistry.item(ModIdentifier("blue_items"))
-        }
 
         fun creativeGroupSettings(): Item.Settings = Item.Settings().group(creativeTab)
     }

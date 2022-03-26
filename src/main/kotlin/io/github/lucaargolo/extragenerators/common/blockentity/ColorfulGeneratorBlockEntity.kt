@@ -16,9 +16,9 @@ class ColorfulGeneratorBlockEntity(pos: BlockPos, state: BlockState): AbstractGe
 
     val itemInv = SimpleSidedInventory(3, { slot, stack ->
         when(slot) {
-            0 -> initialized && (stack.isEmpty || ExtraGenerators.RED_ITEMS.contains(stack.item))
-            1 -> initialized && (stack.isEmpty || ExtraGenerators.GREEN_ITEMS.contains(stack.item))
-            2 -> initialized && (stack.isEmpty || ExtraGenerators.BLUE_ITEMS.contains(stack.item))
+            0 -> initialized && (stack.isEmpty || stack.isIn(ExtraGenerators.RED_ITEMS))
+            1 -> initialized && (stack.isEmpty || stack.isIn(ExtraGenerators.GREEN_ITEMS))
+            2 -> initialized && (stack.isEmpty || stack.isIn(ExtraGenerators.BLUE_ITEMS))
             else -> true
         }
     }, { _, _ ->  false }, { intArrayOf(0, 1, 2) })

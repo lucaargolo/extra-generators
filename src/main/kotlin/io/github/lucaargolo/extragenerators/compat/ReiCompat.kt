@@ -2,6 +2,7 @@
 
 package io.github.lucaargolo.extragenerators.compat
 
+import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.common.block.BlockCompendium
 import io.github.lucaargolo.extragenerators.common.blockentity.ColorfulGeneratorBlockEntity
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
@@ -13,10 +14,10 @@ import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.common.util.EntryIngredients
 import me.shedaniel.rei.api.common.util.EntryStacks
-import net.fabricmc.fabric.api.tag.TagRegistry
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
 import net.minecraft.util.collection.DefaultedList
+import net.minecraft.util.registry.Registry
 
 class ReiCompat: REIClientPlugin {
 
@@ -66,9 +67,9 @@ class ReiCompat: REIClientPlugin {
                 STEAM_GENERATOR.createDisplay(EntryIngredients.of(it), EntryIngredients.of(fluidInput.resource.fluid, fluidInput.amount/81), this)
             }?.let { display -> registry.add(display) }
         }
-        val redInput = TagRegistry.item(ModIdentifier("red_items")).values().map { EntryStacks.of(it) }
-        val blueInput = TagRegistry.item(ModIdentifier("green_items")).values().map { EntryStacks.of(it) }
-        val greenInput = TagRegistry.item(ModIdentifier("blue_items")).values().map { EntryStacks.of(it) }
+        val redInput = Registry.ITEM.indexedEntries.filter { it.isIn(ExtraGenerators.RED_ITEMS) }.map { EntryStacks.of(it.value()) }
+        val blueInput = Registry.ITEM.indexedEntries.filter { it.isIn(ExtraGenerators.GREEN_ITEMS) }.map { EntryStacks.of(it.value()) }
+        val greenInput = Registry.ITEM.indexedEntries.filter { it.isIn(ExtraGenerators.BLUE_ITEMS) }.map { EntryStacks.of(it.value()) }
         COLORFUL_GENERATOR.createDisplay(redInput, blueInput, greenInput, ColorfulGeneratorBlockEntity.getFuel()).let { registry.add(it) }
     }
 
