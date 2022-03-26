@@ -8,7 +8,6 @@ import io.github.lucaargolo.extragenerators.utils.ActiveGenerators
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import io.github.lucaargolo.extragenerators.utils.SynchronizeableBlockEntity
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions
-import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext
 import net.minecraft.block.Block
 import net.minecraft.block.BlockState
@@ -153,7 +152,7 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
         Direction.values().forEach { direction ->
             val targetPos = pos.offset(direction)
             EnergyStorage.SIDED.find(world, targetPos, direction.opposite)?.let { target ->
-                if(target.supportsInsertion() && target.amount < target.capacity) {
+                if(target.supportsInsertion()) {
                     targets.add(target)
                 }
             }
