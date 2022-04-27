@@ -1,0 +1,35 @@
+{
+  "itemGroup.extragenerators.creative_tab": "Extra Generators",
+
+  "block.extragenerators.blast_generator": "Взрывной генератор",
+  "block.extragenerators.brew_generator": "Генератор на зельях",
+  "block.extragenerators.burnable_generator": "Печной генератор",
+  "block.extragenerators.dragon_generator": "Дракониевый генератор",
+  "block.extragenerators.enchanted_generator": "Зачарованный генератор",
+  "block.extragenerators.gluttony_generator": "Пищевой Генератор",
+  "block.extragenerators.icy_generator": "Ледяной генератор",
+  "block.extragenerators.scalding_generator": "Высокотемпературный генератор",
+  "block.extragenerators.demise_generator": "Мёртвый генератор",
+  "block.extragenerators.sludgy_generator": "Слизевый генератор",
+  "block.extragenerators.teleport_generator": "Генератор на эндер-жемчуге",
+  "block.extragenerators.withered_generator": "Визер генератор",
+  "block.extragenerators.steam_generator": "Паровой генератор",
+  "block.extragenerators.redstone_generator": "Редстоуновый генератор",
+  "block.extragenerators.colorful_generator": "Генератор на красителях",
+  "block.extragenerators.thermoelectric_generator": "Термоэлектрический генератор",
+  "block.extragenerators.heavenly_generator": "Небесный генератор",
+  "block.extragenerators.infernal_generator": "Дьявольский генератор",
+
+  "tooltip.extragenerators.sneak_for_more": "Нажмите %s для большей информации.",
+  "tooltip.extragenerators.empty": "Пусто",
+  "tooltip.extragenerators.tier": "Уровень %s",
+  "tooltip.extragenerators.total_storage": "Ёмкость: %s E",
+  "tooltip.extragenerators.output": "Выход энергии: %s E/tick",
+  "tooltip.extragenerators.stored_energy": "Запасено энергии: %s E",
+
+  "screen.extragenerators.common.stored_energy": "Запасено энергии",
+
+  "screen.extragenerators.rei.burn_time": "Время горения: %s Ticks",
+  "screen.extragenerators.rei.burn_rate": "Скорость горения: %s E/Tick",
+  "screen.extragenerators.rei.energy_output": "Выход энергии:"
+}
