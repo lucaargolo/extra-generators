@@ -3,8 +3,8 @@ package io.github.lucaargolo.extragenerators.common.containers
 import io.github.lucaargolo.extragenerators.client.screen.*
 import io.github.lucaargolo.extragenerators.common.blockentity.*
 import io.github.lucaargolo.extragenerators.utils.RegistryCompendium
-import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry
-import net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType
+import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.util.registry.Registry
@@ -53,11 +53,11 @@ object ScreenHandlerCompendium: RegistryCompendium<ScreenHandlerType<*>>(Registr
     }) as ScreenHandlerType<InfiniteGeneratorScreenHandler>
 
     fun onInitializeClient() {
-        ScreenRegistry.register(ITEM_GENERATOR) { handler, playerInventory, title -> ItemGeneratorScreen(handler, playerInventory, title) }
-        ScreenRegistry.register(FLUID_GENERATOR) { handler, playerInventory, title -> FluidGeneratorScreen(handler, playerInventory, title) }
-        ScreenRegistry.register(FLUID_ITEM_GENERATOR) { handler, playerInventory, title -> FluidItemGeneratorScreen(handler, playerInventory, title) }
-        ScreenRegistry.register(COLORFUL_GENERATOR) { handler, playerInventory, title -> ColorfulGeneratorScreen(handler, playerInventory, title) }
-        ScreenRegistry.register(INFINITE_GENERATOR) { handler, playerInventory, title -> InfiniteGeneratorScreen(handler, playerInventory, title) }
+        HandledScreens.register(ITEM_GENERATOR, ::ItemGeneratorScreen)
+        HandledScreens.register(FLUID_GENERATOR, ::FluidGeneratorScreen)
+        HandledScreens.register(FLUID_ITEM_GENERATOR, ::FluidItemGeneratorScreen)
+        HandledScreens.register(COLORFUL_GENERATOR, ::ColorfulGeneratorScreen)
+        HandledScreens.register(INFINITE_GENERATOR, ::InfiniteGeneratorScreen)
 
     }
 

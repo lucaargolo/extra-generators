@@ -94,7 +94,7 @@ dependencies {
     }
 
     modImplementation("me.shedaniel:RoughlyEnoughItems-fabric:${project["rei_version"]}")
-    modRuntime("com.terraformersmc:modmenu:${project["modmenu_version"]}")
+    modRuntimeOnly("com.terraformersmc:modmenu:${project["modmenu_version"]}")
 }
 
 tasks.processResources {
