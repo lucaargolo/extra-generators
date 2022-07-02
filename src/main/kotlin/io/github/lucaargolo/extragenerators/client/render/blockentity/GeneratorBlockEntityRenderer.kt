@@ -7,7 +7,6 @@ import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumerProvider
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher
 import net.minecraft.client.render.block.entity.BlockEntityRenderer
 import net.minecraft.client.render.model.BakedQuad
 import net.minecraft.client.util.math.MatrixStack
@@ -17,8 +16,8 @@ import net.minecraft.util.Util
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.Vec3f
+import net.minecraft.util.math.random.Random
 import java.awt.Color
-import java.util.*
 
 class GeneratorBlockEntityRenderer : BlockEntityRenderer<AbstractGeneratorBlockEntity<*>> {
 
@@ -26,7 +25,7 @@ class GeneratorBlockEntityRenderer : BlockEntityRenderer<AbstractGeneratorBlockE
         val client = MinecraftClient.getInstance()
         val model = (client.bakedModelManager as? BakedModelManagerAccessor)?.models?.get(ModIdentifier("block/cog_wheels")) ?: return
         val facing = entity.cachedState[Properties.HORIZONTAL_FACING]
-        val random = Random()
+        val random = Random.create()
         matrices.push()
         matrices.translate(0.5, 0.5, 0.5)
         when(facing) {

@@ -54,9 +54,9 @@ class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
     override fun reload(manager: ResourceManager) {
         ingredientsMap.clear()
         ExtraGenerators.LOGGER.info("Loading item generators resource.")
-        manager.findResources("item_generators") { r -> r.endsWith(".json") }.forEach { itemsResource ->
-            val id = itemsResource.path.split("/").lastOrNull()?.replace(".json", "") ?: return@forEach
-            val resource = manager.getResource(itemsResource)
+        manager.findResources("item_generators") { r -> r.path.endsWith(".json") }.forEach { itemsResource ->
+            val id = itemsResource.key.path.split("/").lastOrNull()?.replace(".json", "") ?: return@forEach
+            val resource = itemsResource.value
             ExtraGenerators.LOGGER.info("Loading $id item generators resource at $itemsResource.")
             try {
                 val json = ExtraGenerators.PARSER.parse(InputStreamReader(resource.inputStream, "UTF-8"))
@@ -65,11 +65,11 @@ class ItemGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
                     val jsonObject = jsonElement.asJsonObject
                     val generatorFuel = GeneratorFuel.fromJson(jsonObject.get("fuel").asJsonObject)
                     generatorFuel?.let {
-                        ingredientsMap.getOrPut(id) { linkedMapOf() }[Ingredient.fromJson(jsonObject.get("ingredient"))] = it
+                        ingredientsMap.getOrPut(id.toString()) { linkedMapOf() }[Ingredient.fromJson(jsonObject.get("ingredient"))] = it
                     }
                 }
             }catch (e: Exception) {
-                ExtraGenerators.LOGGER.error("Unknown error while trying to read $id item generators resource at $itemsResource", e)
+                ExtraGenerators.LOGGER.error("Unknown error while trying to read $id item generators resource at ${itemsResource.key}", e)
             }
         }
         ExtraGenerators.LOGGER.info("Finished loading item generators resource (${ingredientsMap.map { it.value.size }.sum()} entries loaded).")

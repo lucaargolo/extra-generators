@@ -22,9 +22,8 @@ import net.minecraft.client.texture.Sprite
 import net.minecraft.client.util.ModelIdentifier
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.screen.PlayerScreenHandler
-import net.minecraft.text.LiteralText
+import net.minecraft.text.Text
 import net.minecraft.text.TextColor
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.Direction
 import net.minecraft.util.math.MathHelper
@@ -39,7 +38,7 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
 
     override fun getIcon(): Renderer = EntryStacks.of(block)
 
-    override fun getTitle() = TranslatableText(block.translationKey)
+    override fun getTitle() = Text.translatable(block.translationKey)
 
     @Suppress("DEPRECATION")
     override fun setupDisplay(display: RecipeDisplay, bounds: Rectangle): MutableList<Widget> {
@@ -63,7 +62,7 @@ class ThermoelectricGeneratorCategory(private val id: String, private val block:
         val green = MathHelper.lerp(delta, baseColor.second, finalColor.second)
         val blue = MathHelper.lerp(delta, baseColor.third, finalColor.third)
 
-        val text = LiteralText("${display.temperature} ºC")
+        val text = Text.literal("${display.temperature} ºC")
         val textColor = TextColor.fromRgb(Color(red, green, blue).rgb)
         val style = text.style.withColor(textColor)
         text.style = style

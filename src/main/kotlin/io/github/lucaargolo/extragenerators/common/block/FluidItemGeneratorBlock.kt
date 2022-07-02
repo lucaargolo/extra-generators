@@ -25,7 +25,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerContext
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
 import net.minecraft.util.ItemScatterer
@@ -56,7 +56,7 @@ class FluidItemGeneratorBlock(settings: Settings, generatorConfig: ModConfig.Gen
             if(it.isAccepted) return it
         }
         player.openHandledScreen(object: ExtendedScreenHandlerFactory {
-            override fun getDisplayName() = TranslatableText(translationKey)
+            override fun getDisplayName() = Text.translatable(translationKey)
 
             override fun createMenu(syncId: Int, inv: PlayerInventory, player: PlayerEntity): ScreenHandler {
                 return FluidItemGeneratorScreenHandler(syncId, inv, world.getBlockEntity(pos) as FluidItemGeneratorBlockEntity, ScreenHandlerContext.create(world, pos))

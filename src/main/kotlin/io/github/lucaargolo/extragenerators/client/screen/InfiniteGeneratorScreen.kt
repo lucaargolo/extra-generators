@@ -8,9 +8,7 @@ import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Formatting
 import net.minecraft.util.math.MathHelper
 import kotlin.math.max
@@ -29,8 +27,8 @@ class InfiniteGeneratorScreen(handler: InfiniteGeneratorScreenHandler, inventory
         super.render(matrices, mouseX, mouseY, delta)
         drawMouseoverTooltip(matrices, mouseX, mouseY)
         if((x+25..x+33).contains(mouseX) && (y+17..y+69).contains(mouseY)) {
-            val a = TranslatableText("screen.extragenerators.common.stored_energy").append(": ").formatted(Formatting.RED)
-            val b = LiteralText("%d/%d E".format(handler.energyStored, handler.entity.energyStorage.getCapacity())).formatted(Formatting.GRAY)
+            val a = Text.translatable("screen.extragenerators.common.stored_energy").append(": ").formatted(Formatting.RED)
+            val b = Text.literal("%d/%d E".format(handler.energyStored, handler.entity.energyStorage.getCapacity())).formatted(Formatting.GRAY)
             renderTooltip(matrices, listOf(a, b), mouseX, mouseY)
         }
         var itemX = 39

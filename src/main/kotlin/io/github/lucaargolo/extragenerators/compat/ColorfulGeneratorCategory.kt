@@ -19,7 +19,6 @@ import net.minecraft.client.MinecraftClient
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.math.MathHelper
 
 class ColorfulGeneratorCategory(private val id: String, private val block: Block): DisplayCategory<ColorfulGeneratorCategory.RecipeDisplay> {
@@ -30,7 +29,7 @@ class ColorfulGeneratorCategory(private val id: String, private val block: Block
 
     override fun getIcon(): Renderer = EntryStacks.of(block)
 
-    override fun getTitle() = TranslatableText(block.translationKey)
+    override fun getTitle() = Text.translatable(block.translationKey)
 
     override fun setupDisplay(display: RecipeDisplay, bounds: Rectangle): MutableList<Widget> {
         val widgets = mutableListOf<Widget>()
@@ -46,13 +45,13 @@ class ColorfulGeneratorCategory(private val id: String, private val block: Block
         widgets.add(Widgets.createSlot(Point(bounds.x+62, bounds.y+22)).entries(display.greenInput))
         widgets.add(Widgets.createSlot(Point(bounds.x+80, bounds.y+22)).entries(display.blueInput))
 
-        widgets.add(Widgets.createLabel(Point(bounds.x+67, bounds.y+8), TranslatableText("screen.extragenerators.rei.energy_output")).leftAligned())
+        widgets.add(Widgets.createLabel(Point(bounds.x+67, bounds.y+8), Text.translatable("screen.extragenerators.rei.energy_output")).leftAligned())
         widgets.add(Widgets.createLabel(Point(bounds.x+145, bounds.y+26), Text.of("${display.output.energyOutput} E")).rightAligned())
 
         widgets.add(Widgets.createDrawableWidget { _, matrices, mouseX, mouseY, _ ->
             val tooltip = listOf(
-                TranslatableText("screen.extragenerators.rei.burn_time", display.output.burnTime),
-                TranslatableText("screen.extragenerators.rei.burn_rate", MathHelper.floor(display.output.energyOutput/display.output.burnTime))
+                Text.translatable("screen.extragenerators.rei.burn_time", display.output.burnTime),
+                Text.translatable("screen.extragenerators.rei.burn_rate", MathHelper.floor(display.output.energyOutput/display.output.burnTime))
             )
             if(mouseX in (bounds.x+44..bounds.x+62) && mouseY in (bounds.y+4..bounds.y+22)) {
                 MinecraftClient.getInstance().currentScreen?.renderTooltip(matrices, tooltip, mouseX, mouseY)

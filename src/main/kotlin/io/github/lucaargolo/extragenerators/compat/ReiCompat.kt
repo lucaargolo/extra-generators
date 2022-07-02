@@ -8,7 +8,6 @@ import io.github.lucaargolo.extragenerators.common.blockentity.ColorfulGenerator
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import io.github.lucaargolo.extragenerators.utils.FluidGeneratorFuel
 import io.github.lucaargolo.extragenerators.utils.GeneratorFuel
-import io.github.lucaargolo.extragenerators.utils.ModIdentifier
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry

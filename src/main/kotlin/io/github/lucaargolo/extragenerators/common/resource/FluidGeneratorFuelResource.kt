@@ -58,9 +58,9 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
     override fun reload(manager: ResourceManager) {
         fluidKeysMap.clear()
         ExtraGenerators.LOGGER.info("Loading fluid generators resource.")
-        manager.findResources("fluid_generators") { r -> r.endsWith(".json") }.forEach { fluidsResource ->
-            val id = fluidsResource.path.split("/").lastOrNull()?.replace(".json", "") ?: return@forEach
-            val resource = manager.getResource(fluidsResource)
+        manager.findResources("fluid_generators") { r -> r.path.endsWith(".json") }.forEach { fluidsResource ->
+            val id = fluidsResource.key.path.split("/").lastOrNull()?.replace(".json", "") ?: return@forEach
+            val resource = fluidsResource.value
             ExtraGenerators.LOGGER.info("Loading $id fluid generators resource at $fluidsResource.")
             try {
                 val json = ExtraGenerators.PARSER.parse(InputStreamReader(resource.inputStream, "UTF-8"))
@@ -69,11 +69,11 @@ class FluidGeneratorFuelResource: SimpleSynchronousResourceReloadListener {
                     val jsonObject = jsonElement.asJsonObject
                     val generatorFuel = FluidGeneratorFuel.fromJson(jsonObject.get("fuel").asJsonObject)
                     generatorFuel?.let {
-                        fluidKeysMap.getOrPut(id) { linkedMapOf() }[it.fluidInput.resource.fluid] = it
+                        fluidKeysMap.getOrPut(id.toString()) { linkedMapOf() }[it.fluidInput.resource.fluid] = it
                     }
                 }
             }catch (e: Exception) {
-                ExtraGenerators.LOGGER.error("Unknown error while trying to read $id fluid generators resource at $fluidsResource", e)
+                ExtraGenerators.LOGGER.error("Unknown error while trying to read $id fluid generators resource at ${fluidsResource.key}", e)
             }
         }
         ExtraGenerators.LOGGER.info("Finished loading fluid generators resource (${fluidKeysMap.map { it.value.size }.sum()} entries loaded).")

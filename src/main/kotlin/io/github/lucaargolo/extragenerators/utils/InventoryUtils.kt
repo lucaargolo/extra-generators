@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil
 import net.fabricmc.fabric.api.transfer.v1.storage.base.ResourceAmount
@@ -29,9 +30,7 @@ import net.minecraft.nbt.NbtElement
 import net.minecraft.nbt.NbtList
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.screen.slot.Slot
-import net.minecraft.text.LiteralText
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Formatting
 import net.minecraft.util.Hand
@@ -84,16 +83,16 @@ object InventoryUtils {
     fun ResourceAmount<FluidVariant>.getTankFluidTooltip(capacity: Long): List<Text> {
         val list = mutableListOf<Text>()
         if(resource.fluid == Fluids.EMPTY) {
-            list.add(TranslatableText("tooltip.extragenerators.empty"))
+            list.add(Text.translatable("tooltip.extragenerators.empty"))
         } else {
-            list.add(FluidVariantRendering.getName(resource).shallowCopy().also { it.style = it.style.withColor(FluidVariantRendering.getColor(resource)) })
+            list.add(FluidVariantAttributes.getName(resource).copyContentOnly().also { it.style = it.style.withColor(FluidVariantRendering.getColor(resource)) })
         }
         val storedMb = if(amount in 1..80) {
             "< 1"
         }else{
             "${amount/81}"
         }
-        list.add(LiteralText("$storedMb / ${capacity/81} mB").formatted(Formatting.GRAY))
+        list.add(Text.literal("$storedMb / ${capacity/81} mB").formatted(Formatting.GRAY))
         return list
     }
 
@@ -287,7 +286,6 @@ private fun FluidVariant.innerRenderGuiRect(ms: MatrixStack, i: Float, j: Float,
     bufferBuilder.vertex(model, x1, y1, z).color(r, g, b, a).texture(u1, v1).next()
     bufferBuilder.vertex(model, x1, j, z).color(r, g, b, a).texture(u1, v0).next()
     bufferBuilder.vertex(model, i, j, z).color(r, g, b, a).texture(u0, v0).next()
-    bufferBuilder.end()
-    BufferRenderer.draw(bufferBuilder)
+    BufferRenderer.drawWithShader(bufferBuilder.end())
     RenderSystem.enableDepthTest()
 }

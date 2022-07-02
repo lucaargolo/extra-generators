@@ -40,9 +40,9 @@ class BlockTemperatureResource: SimpleSynchronousResourceReloadListener {
     override fun reload(manager: ResourceManager) {
         temperatureMap.clear()
         ExtraGenerators.LOGGER.info("Loading block temperature resource.")
-        manager.findResources("block_temperature") { r -> r.endsWith(".json") }.forEach { itemsResource ->
-            val id = itemsResource.path.split("/").lastOrNull()?.replace(".json", "") ?: return@forEach
-            val resource = manager.getResource(itemsResource)
+        manager.findResources("block_temperature") { r -> r.path.endsWith(".json") }.forEach { itemsResource ->
+            val id = itemsResource.key.path.split("/").lastOrNull()?.replace(".json", "") ?: return@forEach
+            val resource = itemsResource.value
             ExtraGenerators.LOGGER.info("Loading $id block temperature resource at $itemsResource.")
             try {
                 val json = ExtraGenerators.PARSER.parse(InputStreamReader(resource.inputStream, "UTF-8"))
@@ -54,7 +54,7 @@ class BlockTemperatureResource: SimpleSynchronousResourceReloadListener {
                     temperatureMap[block] = temperature
                 }
             }catch (e: Exception) {
-                ExtraGenerators.LOGGER.error("Unknown error while trying to read $id block temperature resource at $itemsResource", e)
+                ExtraGenerators.LOGGER.error("Unknown error while trying to read $id block temperature resource at ${itemsResource.key}", e)
             }
         }
         ExtraGenerators.LOGGER.info("Finished loading block temperature resource (${temperatureMap.size} entries loaded).")

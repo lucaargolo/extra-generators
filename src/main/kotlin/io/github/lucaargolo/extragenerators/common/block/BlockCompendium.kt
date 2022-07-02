@@ -127,13 +127,13 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
     }
 
     fun appendGeneratorTooltip(stack: ItemStack, tooltip: MutableList<Text>, generatorConfig: ModConfig.Generator, tier: String) {
-        tooltip.add(TranslatableText("tooltip.extragenerators.tier", tier).formatted(Formatting.DARK_GRAY))
-        tooltip.add(TranslatableText("tooltip.extragenerators.total_storage", LiteralText(generatorConfig.storage.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
-        tooltip.add(TranslatableText("tooltip.extragenerators.output", LiteralText(generatorConfig.output.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
+        tooltip.add(Text.translatable("tooltip.extragenerators.tier", tier).formatted(Formatting.DARK_GRAY))
+        tooltip.add(Text.translatable("tooltip.extragenerators.total_storage", Text.literal(generatorConfig.storage.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
+        tooltip.add(Text.translatable("tooltip.extragenerators.output", Text.literal(generatorConfig.output.toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
         if(stack.hasNbt()) {
             val blockEntityTag = stack.orCreateNbt.getCompound("BlockEntityTag")
             if(blockEntityTag.contains("storedPower")) {
-                tooltip.add(TranslatableText("tooltip.extragenerators.stored_energy", LiteralText(blockEntityTag.getDouble("storedPower").toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
+                tooltip.add(Text.translatable("tooltip.extragenerators.stored_energy", Text.literal(blockEntityTag.getDouble("storedPower").toString()).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
             }
         }
     }
@@ -143,18 +143,18 @@ object BlockCompendium: RegistryCompendium<Block>(Registry.BLOCK) {
         val sneakKey = client.options.sneakKey
         val sneak = InputUtil.isKeyPressed(client.window.handle, (sneakKey as KeyBindingAccessor).boundKey.code)
         if (!sneak) {
-            tooltip.add(TranslatableText("tooltip.extragenerators.sneak_for_more", TranslatableText(sneakKey.boundKeyTranslationKey).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
+            tooltip.add(Text.translatable("tooltip.extragenerators.sneak_for_more", Text.translatable(sneakKey.boundKeyTranslationKey).formatted(Formatting.GRAY)).formatted(Formatting.BLUE))
         }else{
             runnable.run()
         }
     }
 
     fun getRainbowText(string: String): MutableText {
-        var finalText: MutableText = LiteralText("")
+        var finalText: MutableText = Text.literal("")
         string.forEachIndexed { x, c ->
             val color = Color.HSBtoRGB((Util.getMeasuringTimeMs() - x*100) % 2000 / 2000f, 0.8f, 0.95f)
             val textColor = TextColor.fromRgb(color)
-            val charText = LiteralText("$c")
+            val charText = Text.literal("$c")
             val textStyle = charText.style.withColor(textColor)
             charText.style = textStyle
             finalText = finalText.append(charText)
