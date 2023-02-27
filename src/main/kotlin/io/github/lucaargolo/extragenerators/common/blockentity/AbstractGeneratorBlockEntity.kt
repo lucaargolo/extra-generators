@@ -7,6 +7,7 @@ import io.github.lucaargolo.extragenerators.common.block.AbstractGeneratorBlock
 import io.github.lucaargolo.extragenerators.utils.ActiveGenerators
 import io.github.lucaargolo.extragenerators.utils.ModConfig
 import io.github.lucaargolo.extragenerators.utils.SynchronizeableBlockEntity
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext
 import net.minecraft.block.Block
@@ -28,6 +29,7 @@ import team.reborn.energy.api.EnergyStorageUtil
 import team.reborn.energy.api.base.SimpleEnergyStorage
 import java.util.*
 
+
 abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(type: BlockEntityType<B>, pos: BlockPos, state: BlockState): SynchronizeableBlockEntity(type, pos, state) {
 
     var ownerUUID: UUID? = null
@@ -40,10 +42,17 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     var lastCogWheelRotationDegree = 0f
     var cogWheelRotationDegree = 0f
     var isClientRunning = false
-
+    private val adjacentCaches: Array<BlockApiCache<EnergyStorage, Direction>?> = arrayOfNulls(6)
     open fun isRunning() = if(world?.isClient == true) isClientRunning else isServerRunning()
     abstract fun isServerRunning(): Boolean
     abstract fun getCogWheelRotation(): Float
+
+    private fun getAdjacentCache(direction: Direction): BlockApiCache<EnergyStorage, Direction>? {
+        if (adjacentCaches[direction.id] == null){
+            adjacentCaches[direction.id] = BlockApiCache.create(EnergyStorage.SIDED, world as ServerWorld?, pos.offset(direction))
+        }
+        return adjacentCaches[direction.id]
+    }
 
     val energyStorage = object: SimpleEnergyStorage(0L, 0L, 0L) {
         private fun getMaxExtract(): Long {
@@ -150,10 +159,11 @@ abstract class AbstractGeneratorBlockEntity<B: AbstractGeneratorBlockEntity<B>>(
     private fun moveEnergy() {
         val targets = linkedSetOf<EnergyStorage>()
         Direction.values().forEach { direction ->
-            val targetPos = pos.offset(direction)
-            EnergyStorage.SIDED.find(world, targetPos, direction.opposite)?.let { target ->
-                if(target.supportsInsertion()) {
-                    targets.add(target)
+            val targetCache = getAdjacentCache(direction)
+            targetCache?.let {
+                val targetStorage = targetCache.find(direction.opposite)
+                if(targetStorage?.supportsInsertion() == true) {
+                    targets.add(targetStorage)
                 }
             }
         }
