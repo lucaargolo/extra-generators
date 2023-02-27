@@ -1,6 +1,7 @@
 package io.github.lucaargolo.extragenerators.utils
 
 import com.google.gson.JsonObject
+import io.github.lucaargolo.extragenerators.ExtraGenerators
 import io.github.lucaargolo.extragenerators.common.resource.ResourceCompendium
 import net.fabricmc.fabric.impl.content.registry.FuelRegistryImpl
 import net.minecraft.enchantment.EnchantmentHelper
@@ -72,7 +73,7 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
                 statusEffectInstance.duration * statusEffectInstance.amplifier * if(statusEffect.category == StatusEffectCategory.BENEFICIAL) { 1 } else { 0 }
             }
             val energyOutput = (foodComponent.hunger * foodComponent.saturationModifier * 8000.0) + (energyBonus * 100.0)
-            val energyPerTick = MathHelper.clamp((foodComponent.hunger * 8.0) + (energyBonus * 0.1), 32.0, 128.0)
+            val energyPerTick = MathHelper.clamp((foodComponent.hunger * 8.0) + (energyBonus * 0.1), 32.0, ExtraGenerators.CONFIG.gluttonyGenerator.output.toDouble())
             val burnTime = energyOutput/energyPerTick
             return GeneratorFuel(round(burnTime).toInt(), round(energyOutput))
         }
@@ -91,7 +92,7 @@ data class GeneratorFuel(val burnTime: Int, var currentBurnTime: Int, val energy
                 in (12800.0..38400.0) -> 32.0
                 in (38400.0..102400.0) -> 64.0
                 in (102400.0..256000.0) -> 128.0
-                else -> 256.0
+                else -> min(ExtraGenerators.CONFIG.enchantedGenerator.output.toDouble() ,energyOutput / 2000)
             }
             val burnTime = round(energyOutput/energyTick).toInt()
             return if(energyOutput <= 0.0) null else GeneratorFuel(burnTime, energyOutput)
